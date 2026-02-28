@@ -61,21 +61,17 @@ export default function TeacherPage() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="schoolName" className="font-semibold text-gray-700">학교명 <span className="text-red-500">*</span></Label>
-                  <Input id="schoolName" placeholder="예: 남대구초등학교" value={data.schoolName} onChange={(e) => update("schoolName", e.target.value)} className="bg-white" />
+                  <Input id="schoolName" placeholder="예: 서울초등학교" value={data.schoolName} onChange={(e) => update("schoolName", e.target.value)} className="bg-white" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="schoolAddress" className="font-semibold text-gray-700">학교 주소</Label>
-                  <Input id="schoolAddress" placeholder="예: 대구광역시 남구 ..." value={data.schoolAddress} onChange={(e) => update("schoolAddress", e.target.value)} className="bg-white" />
+                  <Label htmlFor="adminTeacherName" className="font-semibold text-gray-700">교무부장(개인정보보호책임자)</Label>
+                  <Input id="adminTeacherName" value={data.adminTeacherName} onChange={(e) => update("adminTeacherName", e.target.value)} className="bg-white" />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="principalName" className="font-semibold text-gray-700">교장 성명</Label>
                   <Input id="principalName" value={data.principalName} onChange={(e) => update("principalName", e.target.value)} className="bg-white" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="adminTeacherName" className="font-semibold text-gray-700">교무부장(개인정보보호책임자)</Label>
-                  <Input id="adminTeacherName" value={data.adminTeacherName} onChange={(e) => update("adminTeacherName", e.target.value)} className="bg-white" />
                 </div>
               </div>
             </CardContent>
@@ -99,7 +95,7 @@ export default function TeacherPage() {
                   <Select value={data.grade} onValueChange={(v) => update("grade", v)}>
                     <SelectTrigger id="grade" className="bg-white"><SelectValue placeholder="선택" /></SelectTrigger>
                     <SelectContent>
-                      {["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"].map(g => (
+                      {["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "중1", "중2", "중3", "고1", "고2", "고3"].map(g => (
                         <SelectItem key={g} value={g}>{g}</SelectItem>
                       ))}
                     </SelectContent>
@@ -133,13 +129,13 @@ export default function TeacherPage() {
             <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-gray-800">
                 <Printer className="w-5 h-5 text-purple-600" />
-                담임교사 정보
+                특수교사 정보
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="teacherName" className="font-semibold text-gray-700">담임교사 성명 <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="teacherName" className="font-semibold text-gray-700">특수교사 성명 <span className="text-red-500">*</span></Label>
                   <Input id="teacherName" value={data.teacherName} onChange={(e) => update("teacherName", e.target.value)} className="bg-white" />
                 </div>
                 <div className="space-y-1.5">

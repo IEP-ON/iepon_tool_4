@@ -7,26 +7,23 @@ import type { ParentOpinion } from "@/lib/types";
 
 interface Props {
   data: ParentOpinion;
-  update: (key: keyof ParentOpinion, value: ParentOpinion[keyof ParentOpinion]) => void;
+  update: (key: keyof ParentOpinion, value: string) => void;
 }
 
 export function SectionFamily({ data, update }: Props) {
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-bold border-b pb-2">① 가정 환경</h2>
-
       <div>
-        <Label>주양육자 구성</Label>
+        <Label>가정 내 주 양육자</Label>
         <RadioOption
-          options={["부모 동거", "부만", "모만", "조부모", "시설", "기타"]}
+          options={["부모 공동 양육", "모", "부", "조부모", "기타"]}
           value={data.primaryCaregiver}
           onChange={(v) => update("primaryCaregiver", v)}
-          columns={3}
         />
         {data.primaryCaregiver === "기타" && (
           <Input
             className="mt-2"
-            placeholder="구체적으로 입력"
+            placeholder="기타 양육자"
             value={data.primaryCaregiverOther}
             onChange={(e) => update("primaryCaregiverOther", e.target.value)}
           />
@@ -34,32 +31,33 @@ export function SectionFamily({ data, update }: Props) {
       </div>
 
       <div>
-        <Label>형제자매</Label>
+        <Label>형제자매 여부</Label>
         <RadioOption
-          options={["없음", "있음"]}
+          options={["없음(외동)", "있음"]}
           value={data.siblings}
           onChange={(v) => update("siblings", v)}
         />
         {data.siblings === "있음" && (
-          <div className="mt-2 grid gap-2 grid-cols-2">
-            <div>
-              <Label className="text-xs">총 몇 명</Label>
+          <div className="mt-2 space-y-3 pl-4 border-l-2 border-gray-200">
+            <div className="flex gap-2 items-center">
+              <span>총</span>
               <Input
-                placeholder="예: 3"
+                type="number"
+                className="w-16"
                 value={data.siblingTotal}
                 onChange={(e) => update("siblingTotal", e.target.value)}
               />
-            </div>
-            <div>
-              <Label className="text-xs">몇째</Label>
+              <span>명 중</span>
               <Input
-                placeholder="예: 2"
+                type="number"
+                className="w-16"
                 value={data.siblingOrder}
                 onChange={(e) => update("siblingOrder", e.target.value)}
               />
+              <span>째</span>
             </div>
-            <div className="col-span-2">
-              <Label className="text-xs">형제 중 장애 여부</Label>
+            <div>
+              <Label className="text-sm">형제자매 중 장애 유무</Label>
               <RadioOption
                 options={["없음", "있음"]}
                 value={data.siblingDisability}
@@ -71,7 +69,7 @@ export function SectionFamily({ data, update }: Props) {
       </div>
 
       <div>
-        <Label>다문화 가정</Label>
+        <Label>다문화 가정 여부</Label>
         <RadioOption
           options={["아니오", "예"]}
           value={data.multicultural}
@@ -88,41 +86,28 @@ export function SectionFamily({ data, update }: Props) {
       </div>
 
       <div>
-        <Label>방과 후 주 돌봄</Label>
+        <Label>방과 후 주 돌봄 형태</Label>
         <RadioOption
-          options={["부모", "조부모", "돌봄교실", "지역아동센터", "복지관", "기타"]}
+          options={[
+            "가정 내 돌봄",
+            "지역아동센터",
+            "다함께돌봄센터",
+            "장애인주간보호센터",
+            "방과후아카데미",
+            "기타",
+          ]}
           value={data.afterSchoolCare}
           onChange={(v) => update("afterSchoolCare", v)}
-          columns={3}
         />
         {data.afterSchoolCare === "기타" && (
           <Input
             className="mt-2"
-            placeholder="구체적으로 입력"
+            placeholder="기타 돌봄 형태"
             value={data.afterSchoolCareOther}
             onChange={(e) => update("afterSchoolCareOther", e.target.value)}
           />
         )}
       </div>
-
-      <h2 className="text-lg font-bold border-b pb-2 pt-4">② 협의회 참석 방법 (필수)</h2>
-
-      <RadioOption
-        options={["대면 참석", "유선 참석", "의견서로 갈음"]}
-        value={data.attendanceMethod}
-        onChange={(v) => update("attendanceMethod", v)}
-        columns={1}
-      />
-      {data.attendanceMethod === "유선 참석" && (
-        <div className="mt-2">
-          <Label>연락 가능 시간대</Label>
-          <Input
-            placeholder="예: 오후 2시~4시"
-            value={data.availableTime}
-            onChange={(e) => update("availableTime", e.target.value)}
-          />
-        </div>
-      )}
     </div>
   );
 }

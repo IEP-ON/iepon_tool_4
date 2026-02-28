@@ -7,127 +7,172 @@ import type { ParentOpinion } from "@/lib/types";
 
 interface Props {
   data: ParentOpinion;
-  update: (key: keyof ParentOpinion, value: ParentOpinion[keyof ParentOpinion]) => void;
+  update: (key: keyof ParentOpinion, value: string) => void;
 }
 
 export function SectionDisability({ data, update }: Props) {
+  const disabilityTypes = [
+    "시각장애",
+    "청각장애",
+    "지적장애",
+    "지체장애",
+    "정서·행동장애",
+    "자폐성장애",
+    "의사소통장애",
+    "학습장애",
+    "건강장애",
+    "발달지체",
+    "직접 입력",
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* A. 장애인 등록 현황 */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">A. 장애인 등록 현황 (복지부 등록)</h2>
-
-        <div>
-          <Label>등록 여부</Label>
-          <RadioOption
-            options={["등록됨", "미등록", "신청 중"]}
-            value={data.disabilityRegistration}
-            onChange={(v) => update("disabilityRegistration", v)}
-            columns={3}
-          />
-        </div>
-
-        <div>
-          <Label>주장애 유형</Label>
-          <RadioOption
-            options={[
-              "지체", "뇌병변", "시각", "청각", "언어", "지적",
-              "자폐성", "정신", "신장", "심장", "호흡기", "간",
-              "안면", "장루", "뇨루",
-            ]}
-            value={data.primaryDisability}
-            onChange={(v) => update("primaryDisability", v)}
-            columns={3}
-          />
-        </div>
-
-        <div>
-          <Label>부장애 유형</Label>
-          <RadioOption
-            options={["해당 없음", "있음"]}
-            value={data.secondaryDisability}
-            onChange={(v) => update("secondaryDisability", v)}
-          />
-          {data.secondaryDisability === "있음" && (
-            <Input
-              className="mt-2"
-              placeholder="부장애 유형"
-              value={data.secondaryDisabilityType}
-              onChange={(e) => update("secondaryDisabilityType", e.target.value)}
-            />
-          )}
-        </div>
-
-        <div>
-          <Label>장애 정도</Label>
-          <RadioOption
-            options={["심한 장애 (구 1~3급)", "심하지 않은 장애 (구 4~6급)"]}
-            value={data.disabilitySeverity}
-            onChange={(v) => update("disabilitySeverity", v)}
-            columns={1}
-          />
-        </div>
-
-        <div>
-          <Label>최초 등록일</Label>
-          <Input
-            type="date"
-            value={data.firstRegistrationDate}
-            onChange={(e) => update("firstRegistrationDate", e.target.value)}
-          />
-        </div>
+    <div className="space-y-8">
+      {/* 안내 문구를 맨 위로 이동 */}
+      <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100">
+        💡 <b>안내:</b> 개별화교육지원팀 협의회 진행 전, 학생의 현재 지원 현황을 정확히 파악하기 위한 기초 자료입니다. 
+        해당하는 항목만 작성해 주시면 됩니다.
       </div>
 
-      {/* B. 특수교육대상자 선정 현황 */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold border-b pb-2">B. 특수교육대상자 선정 현황 (교육청 선정)</h2>
-
-        <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg">
-          장애인 등록(복지부)과 특수교육대상자 선정(교육청)은 서로 다른 제도입니다.
-          등록이 없어도 선정될 수 있고, 반대도 마찬가지입니다.
+      <div className="space-y-6">
+        <h2 className="text-lg font-bold border-b pb-2">A. 복지카드 소지 여부 (복지부 등록)</h2>
+        <div>
+          <Label className="font-medium text-gray-700 block mb-2">복지카드 소지</Label>
+          <RadioOption
+            options={["소지", "미소지"]}
+            value={data.disabilityRegistration}
+            onChange={(v) => {
+              update("disabilityRegistration", v);
+              if (v === "미소지") {
+                update("primaryDisability", "");
+                update("secondaryDisability", "없음");
+                update("secondaryDisabilityType", "");
+                update("disabilitySeverity", "");
+                update("firstRegistrationDate", "");
+              }
+            }}
+          />
         </div>
 
+        {data.disabilityRegistration === "소지" && (
+          <div className="space-y-6 pt-4 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">주장애 유형</Label>
+              <RadioOption
+                options={disabilityTypes}
+                value={disabilityTypes.includes(data.primaryDisability) ? data.primaryDisability : (data.primaryDisability ? "직접 입력" : "")}
+                onChange={(v) => {
+                  if (v === "직접 입력") {
+                    update("primaryDisability", " "); // 임시값으로 '직접 입력' 상태 트리거
+                  } else {
+                    update("primaryDisability", v);
+                  }
+                }}
+              />
+              {(!disabilityTypes.slice(0, -1).includes(data.primaryDisability) && data.primaryDisability !== "") && (
+                <Input
+                  className="mt-2 bg-white"
+                  placeholder="장애 유형 직접 입력"
+                  value={data.primaryDisability.trim()}
+                  onChange={(e) => update("primaryDisability", e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">부장애 (중복장애) 여부</Label>
+              <RadioOption
+                options={["없음", "있음"]}
+                value={data.secondaryDisability}
+                onChange={(v) => {
+                  update("secondaryDisability", v);
+                  if (v === "없음") update("secondaryDisabilityType", "");
+                }}
+              />
+              {data.secondaryDisability === "있음" && (
+                <Input
+                  className="mt-2 bg-white"
+                  placeholder="부장애 유형을 입력해 주세요"
+                  value={data.secondaryDisabilityType}
+                  onChange={(e) => update("secondaryDisabilityType", e.target.value)}
+                />
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">장애 정도</Label>
+              <RadioOption
+                options={["심한 장애 (기존 1~3급)", "심하지 않은 장애 (기존 4~6급)"]}
+                value={data.disabilitySeverity}
+                onChange={(v) => update("disabilitySeverity", v)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-6 pt-6">
+        <h2 className="text-lg font-bold border-b pb-2">B. 특수교육대상자 선정 현황 (교육청)</h2>
         <div>
-          <Label>선정 여부</Label>
+          <Label className="font-medium text-gray-700 block mb-2">특수교육대상자 선정 여부</Label>
           <RadioOption
-            options={["선정됨", "미선정", "신청 중"]}
+            options={["선정", "미선정", "진행 중"]}
             value={data.specialEdSelection}
-            onChange={(v) => update("specialEdSelection", v)}
-            columns={3}
+            onChange={(v) => {
+              update("specialEdSelection", v);
+              if (v !== "선정") {
+                update("specialEdArea", "");
+                update("firstSelectionDate", "");
+                update("currentPlacement", "");
+              }
+            }}
           />
         </div>
 
-        <div>
-          <Label>선정 장애 영역</Label>
-          <RadioOption
-            options={[
-              "시각", "청각", "지적", "지체", "정서·행동",
-              "자폐성", "의사소통", "학습", "건강", "발달지체",
-            ]}
-            value={data.specialEdArea}
-            onChange={(v) => update("specialEdArea", v)}
-            columns={3}
-          />
-        </div>
+        {data.specialEdSelection === "선정" && (
+          <div className="space-y-6 pt-4 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">특수교육 대상자 선정 장애 영역</Label>
+              <RadioOption
+                options={disabilityTypes}
+                value={disabilityTypes.includes(data.specialEdArea) ? data.specialEdArea : (data.specialEdArea ? "직접 입력" : "")}
+                onChange={(v) => {
+                  if (v === "직접 입력") {
+                    update("specialEdArea", " ");
+                  } else {
+                    update("specialEdArea", v);
+                  }
+                }}
+              />
+              {(!disabilityTypes.slice(0, -1).includes(data.specialEdArea) && data.specialEdArea !== "") && (
+                <Input
+                  className="mt-2 bg-white"
+                  placeholder="선정 장애 영역 직접 입력"
+                  value={data.specialEdArea.trim()}
+                  onChange={(e) => update("specialEdArea", e.target.value)}
+                />
+              )}
+            </div>
 
-        <div>
-          <Label>최초 선정일</Label>
-          <Input
-            type="date"
-            value={data.firstSelectionDate}
-            onChange={(e) => update("firstSelectionDate", e.target.value)}
-          />
-        </div>
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
+              <Input
+                type="month"
+                className="bg-white max-w-[200px]"
+                value={data.firstSelectionDate}
+                onChange={(e) => update("firstSelectionDate", e.target.value)}
+              />
+            </div>
 
-        <div>
-          <Label>현재 배치 형태</Label>
-          <RadioOption
-            options={["특수학급", "일반학급(순회지원)", "특수학교"]}
-            value={data.currentPlacement}
-            onChange={(v) => update("currentPlacement", v)}
-            columns={1}
-          />
-        </div>
+            <div className="space-y-3">
+              <Label className="font-medium text-gray-700 block">현재 교육 배치 형태</Label>
+              <RadioOption
+                options={["일반학급 (전일제)", "특수학급 (시간제)", "특수학교", "기타"]}
+                value={data.currentPlacement}
+                onChange={(v) => update("currentPlacement", v)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
