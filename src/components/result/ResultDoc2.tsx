@@ -25,6 +25,11 @@ export function ResultDoc2({ teacher, opinion: o }: Props) {
     return `${dt.getFullYear()}년 ${dt.getMonth() + 1}월 ${dt.getDate()}일`;
   };
 
+  const formatHopeDate = (date: string, time: string) => {
+    if (!date) return "";
+    return `${formatDate(date)} ${time ? time + " 경" : ""}`;
+  };
+
   return (
     <div className="mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-0 print:shadow-none text-[11pt] leading-relaxed">
       <div className="text-center mb-8 border-b-2 border-black pb-4">
@@ -96,12 +101,18 @@ export function ResultDoc2({ teacher, opinion: o }: Props) {
 
         <section className="page-break">
           <h2 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            ② 협의회 참석 방법
+            ② 협의회 참석 희망 및 방법
           </h2>
           <table className="w-full border-collapse border border-gray-300">
             <tbody>
               <Field label="참석 방법" value={o.attendanceMethod} />
-              {o.attendanceMethod === "유선 참석" && <Field label="연락 가능 시간대" value={o.availableTime} />}
+              {o.attendanceMethod !== "의견서 제출로 갈음" && (
+                <>
+                  <Field label="희망 일시 (1순위)" value={formatHopeDate(o.hopeDate1, o.hopeTime1)} />
+                  <Field label="희망 일시 (2순위)" value={formatHopeDate(o.hopeDate2, o.hopeTime2)} />
+                  <Field label="희망 일시 (3순위)" value={formatHopeDate(o.hopeDate3, o.hopeTime3)} />
+                </>
+              )}
             </tbody>
           </table>
         </section>

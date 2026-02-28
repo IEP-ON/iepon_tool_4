@@ -10,13 +10,13 @@ export function ResultDoc1({ teacher }: Props) {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "____년 __월 __일";
     const d = new Date(dateStr);
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+    return `${d.getMonth() + 1}월 ${d.getDate()}일`;
   };
 
   const formatDeadline = (dateStr: string, day: string) => {
     if (!dateStr) return "__월 __일(__요일)";
     const d = new Date(dateStr);
-    return `${d.getMonth() + 1}월 ${d.getDate()}일(${day}요일)`;
+    return `${d.getMonth() + 1}월 ${d.getDate()}일`;
   };
 
   return (
@@ -52,15 +52,15 @@ export function ResultDoc1({ teacher }: Props) {
         <section>
           <h2 className="text-[13pt] font-bold mb-4 flex items-center">
             <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 print:bg-black"></span>
-            협의회 일정 안내
+            협의회 일정 및 장소
           </h2>
           <div className="pl-5">
             <table className="w-full border-collapse border border-gray-300">
               <tbody>
                 <tr>
-                  <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50 w-[25%]">일시</th>
+                  <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50 w-[25%]">운영 기간</th>
                   <td className="border border-gray-300 px-4 py-3 font-bold text-blue-900 print:text-black">
-                    {formatDate(teacher.meetingDate)} ({teacher.meetingDay}요일) {teacher.meetingAmPm} {teacher.meetingHour}시 {teacher.meetingMinute || "00"}분
+                    {formatDate(teacher.meetingStartDate)} ~ {formatDate(teacher.meetingEndDate)}
                   </td>
                 </tr>
                 <tr>
@@ -82,19 +82,19 @@ export function ResultDoc1({ teacher }: Props) {
             참석 방법 (택 1)
           </h2>
           <div className="pl-5">
-            <p className="mb-3 text-gray-700">편하신 방법으로 협의회에 참여하실 수 있습니다.</p>
+            <p className="mb-3 text-gray-700">편하신 방법으로 협의회에 참여하실 수 있습니다. 스마트폰으로 희망하시는 날짜와 시간을 선택해 주시면 일정을 조율하여 연락드리겠습니다.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11pt]">
               <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-2">① 학교 방문 (대면)</p>
-                <p className="text-gray-600">안내된 일시에 학교로 방문해 주시면 됩니다.</p>
+                <p className="text-gray-600">안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다.</p>
               </div>
               <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-2">② 전화 상담 (유선)</p>
-                <p className="text-gray-600">약속된 시간에 담임교사가 전화를 드립니다.</p>
+                <p className="text-gray-600">희망하시는 시간에 담임교사가 전화를 드립니다.</p>
               </div>
               <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-2">③ 서면 참여</p>
-                <p className="text-gray-600">스마트폰으로 의견서만 작성하여 제출해 주셔도 됩니다.</p>
+                <p className="text-gray-600">일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다.</p>
               </div>
             </div>
             <p className="text-[11pt] font-medium text-red-600 print:text-black mt-3 flex items-center gap-2">

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, Building2, User, Calendar, Clock, MapPin, Printer } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, User, Calendar, MapPin, Printer } from "lucide-react";
 import { defaultTeacherInput } from "@/lib/defaults";
 import type { TeacherInput } from "@/lib/types";
 import { compress } from "@/lib/codec";
@@ -28,7 +28,7 @@ export default function TeacherPage() {
   };
 
   const handleNext = () => {
-    if (!data.schoolName || !data.studentName || !data.grade || !data.classNum || !data.teacherName || !data.teacherPhone || !data.meetingDate || !data.meetingHour || !data.meetingPlace || !data.submissionDeadline) {
+    if (!data.schoolName || !data.studentName || !data.grade || !data.classNum || !data.teacherName || !data.teacherPhone || !data.meetingStartDate || !data.meetingEndDate || !data.meetingPlace || !data.submissionDeadline) {
       alert("필수 항목을 모두 입력해 주세요.");
       return;
     }
@@ -149,7 +149,7 @@ export default function TeacherPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="consultTime" className="font-semibold text-gray-700">상담 가능 시간</Label>
-                <Input id="consultTime" value={data.consultTime} onChange={(e) => update("consultTime", e.target.value)} className="bg-white" />
+                <Input id="consultTime" placeholder="예: 평일 14:00 ~ 16:30" value={data.consultTime} onChange={(e) => update("consultTime", e.target.value)} className="bg-white" />
               </div>
             </CardContent>
           </Card>
@@ -158,34 +158,19 @@ export default function TeacherPage() {
             <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-gray-800">
                 <Calendar className="w-5 h-5 text-green-600" />
-                협의회 일정
+                협의회 운영 및 일정
               </CardTitle>
+              <CardDescription>협의회를 개최할 수 있는 운영 기간을 지정해주세요. 보호자는 이 기간 내에서 희망 일시를 3순위까지 선택합니다.</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
-              <div className="grid sm:grid-cols-12 gap-4">
-                <div className="sm:col-span-5 space-y-1.5">
-                  <Label htmlFor="meetingDate" className="font-semibold text-gray-700 flex items-center gap-1"><Calendar className="w-3 h-3"/> 일시 (날짜) <span className="text-red-500">*</span></Label>
-                  <Input type="date" id="meetingDate" value={data.meetingDate} onChange={(e) => update("meetingDate", e.target.value)} className="bg-white" />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="meetingStartDate" className="font-semibold text-gray-700 flex items-center gap-1"><Calendar className="w-3 h-3"/> 운영 시작일 <span className="text-red-500">*</span></Label>
+                  <Input type="date" id="meetingStartDate" value={data.meetingStartDate} onChange={(e) => update("meetingStartDate", e.target.value)} className="bg-white" />
                 </div>
-                <div className="sm:col-span-3 space-y-1.5">
-                  <Label htmlFor="meetingAmPm" className="font-semibold text-gray-700 flex items-center gap-1"><Clock className="w-3 h-3"/> 오전/오후</Label>
-                  <Select value={data.meetingAmPm} onValueChange={(v) => update("meetingAmPm", v)}>
-                    <SelectTrigger id="meetingAmPm" className="bg-white"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="오전">오전</SelectItem>
-                      <SelectItem value="오후">오후</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="sm:col-span-4 grid grid-cols-2 gap-2">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meetingHour" className="font-semibold text-gray-700">시 <span className="text-red-500">*</span></Label>
-                    <Input id="meetingHour" placeholder="2" value={data.meetingHour} onChange={(e) => update("meetingHour", e.target.value)} className="bg-white" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meetingMinute" className="font-semibold text-gray-700">분</Label>
-                    <Input id="meetingMinute" placeholder="00" value={data.meetingMinute} onChange={(e) => update("meetingMinute", e.target.value)} className="bg-white" />
-                  </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="meetingEndDate" className="font-semibold text-gray-700 flex items-center gap-1"><Calendar className="w-3 h-3"/> 운영 종료일 <span className="text-red-500">*</span></Label>
+                  <Input type="date" id="meetingEndDate" value={data.meetingEndDate} onChange={(e) => update("meetingEndDate", e.target.value)} className="bg-white" />
                 </div>
               </div>
               <div className="space-y-1.5">
@@ -216,7 +201,7 @@ export default function TeacherPage() {
               size="lg"
               onClick={handleNext}
               className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-8 py-6 text-lg rounded-xl shadow-lg"
-              disabled={!data.schoolName || !data.studentName || !data.grade || !data.classNum || !data.teacherName || !data.teacherPhone || !data.meetingDate || !data.meetingHour || !data.meetingPlace || !data.submissionDeadline}
+              disabled={!data.schoolName || !data.studentName || !data.grade || !data.classNum || !data.teacherName || !data.teacherPhone || !data.meetingStartDate || !data.meetingEndDate || !data.meetingPlace || !data.submissionDeadline}
             >
               안내장 미리보기 <ArrowRight className="ml-2 w-5 h-5" />
             </Button>

@@ -1,40 +1,37 @@
-// 교사 입력 (문서1 안내장 생성용)
 export interface TeacherInput {
   schoolName: string;
+  schoolAddress: string;
+  principalName: string;
+  adminTeacherName: string; // 교무부장 등 개인정보보호책임자
   studentName: string;
   grade: string;
   classNum: string;
-  semester: string;
   year: string;
+  semester: string;
   teacherName: string;
   teacherPhone: string;
-  consultTime: string; // 상담 가능 시간
-  meetingDate: string; // 협의회 일시
-  meetingDay: string; // 요일
-  meetingAmPm: string; // 오전/오후
-  meetingHour: string;
-  meetingMinute: string;
-  meetingPlace: string; // 장소 (교실 호수)
-  submissionDeadline: string; // 제출 기한
-  submissionDay: string; // 제출 기한 요일
-  principalName: string; // 교장
-  adminTeacherName: string; // 교무부장(개인정보보호책임자)
-  schoolAddress: string;
+  consultTime: string;
+
+  // 협의회 운영 기간 (새로 변경됨)
+  meetingStartDate: string;
+  meetingEndDate: string;
+  meetingPlace: string;
+
+  submissionDeadline: string;
+  submissionDay: string;
 }
 
-// 보호자 의견서 (문서2)
 export interface ParentOpinion {
-  // 0. 기본정보
+  // 0. 기본 정보
   studentName: string;
   birthDate: string;
   guardianName: string;
   guardianRelation: string;
   guardianRelationOther: string;
   guardianPhone: string;
-  writeDate: string;
 
   // A. 장애인 등록 현황
-  disabilityRegistration: string; // 등록됨 | 미등록 | 신청중
+  disabilityRegistration: string;
   primaryDisability: string;
   secondaryDisability: string;
   secondaryDisabilityType: string;
@@ -42,58 +39,71 @@ export interface ParentOpinion {
   firstRegistrationDate: string;
 
   // B. 특수교육대상자 선정 현황
-  specialEdSelection: string; // 선정됨 | 미선정 | 신청중
+  specialEdSelection: string;
   specialEdArea: string;
   firstSelectionDate: string;
-  currentPlacement: string;
+  currentPlacement: string; // 특수학급, 일반학급 등
 
-  // ① 가정 환경
+  // 1. 가정 환경
   primaryCaregiver: string;
   primaryCaregiverOther: string;
-  siblings: string; // 없음 | 있음
+  siblings: string; // 있음/없음
   siblingTotal: string;
   siblingOrder: string;
-  siblingDisability: string;
-  multicultural: string; // 아니오 | 예
+  siblingDisability: string; // 형제자매 중 장애 유무
+  multicultural: string; // 예/아니오
   multiculturalLanguage: string;
-  afterSchoolCare: string;
+  afterSchoolCare: string; // 방과 후 주 양육/돌봄 형태
   afterSchoolCareOther: string;
 
-  // ② 협의회 참석 방법
-  attendanceMethod: string; // 대면 | 유선 | 의견서
+  // 2. 협의회 참석 및 연락
+  attendanceMethod: string;
   availableTime: string;
+  // 새로 추가된 희망 일시
+  hopeDate1: string;
+  hopeTime1: string;
+  hopeDate2: string;
+  hopeTime2: string;
+  hopeDate3: string;
+  hopeTime3: string;
 
-  // ③ 건강·의료 정보
-  hasMedication: string; // 없음 | 있음
-  medications: { name: string; dosage: string; time: string }[];
-  schoolMedicationSupport: string; // 없음 | 있음
-  allergies: string[]; // 없음 | 식품 | 약물 | 환경
+  preferredContact: string[]; // 선호 연락 방식 (전화, 문자, 알림장 등) - 다중 선택
+  availableTimeSlot: string[]; // 연락 가능 시간대 - 다중 선택으로 변경
+  emergencyContact2Name: string;
+  emergencyContact2Relation: string;
+  emergencyContact2Phone: string;
+
+  // 3. 건강/의료
+  hasMedication: string;
+  medications: Array<{ name: string; dosage: string; time: string }>;
+  schoolMedicationSupport: string; // 학교 투약 지원 필요 여부
+  allergies: string[];
   allergyFoodDetail: string;
   allergyDrugDetail: string;
   allergyEnvDetail: string;
-  hasSeizure: string; // 없음 | 있음
-  seizureRecent: string;
-  seizureInstruction: string;
-  dietaryRestriction: string[]; // 없음 | 질환 | 종교·문화
+  hasSeizure: string;
+  seizureRecent: string; // 최근 발작 시기
+  seizureInstruction: string; // 대처 지침
+  dietaryRestriction: string[]; // 종교, 질환 등 식단 제한
   dietaryDiseaseDetail: string;
   dietaryCultureDetail: string;
   sleepCharacteristics: string[];
-  sensoryIssues: string[];
+  sensoryIssues: string[]; // 시각, 청각, 촉각 등 민감성
   sensoryOther: string;
 
-  // ④ 보조기기 및 환경 수정
-  assistiveTech: string[];
+  // 4. 보조기기/환경
+  assistiveTech: string[]; // AAC, 시/청각 보조 등
   assistiveTechOther: string;
-  assistiveDevice: string[];
+  assistiveDevice: string[]; // 휠체어, 워커, 보조기 등
   assistiveDeviceOther: string;
-  envModification: string[];
+  envModification: string[]; // 좌석배치, 조명 등 환경 수정
   envModificationOther: string;
 
-  // ⑤ 우리 아이의 강점과 특성
+  // 5. 강점과 특성
   strengths: string;
   uniqueTraits: string;
 
-  // ⑥ 가정에서 바라본 현재 수준
+  // 6. 현재 수준 (가정에서 관찰한)
   levelLearning: string;
   levelCommunication: string;
   levelSocial: string;
@@ -101,69 +111,62 @@ export interface ParentOpinion {
   levelMotor: string;
   levelBehavior: string;
 
-  // ⑦ 이번 학기 교육 목표
-  priorityGoal: string;
-  preferredMethod: string;
-  evaluationOpinion: string;
-  homeConnection: string;
+  // 7. 교육 목표
+  priorityGoal: string; // 가장 우선시하는 교육 목표
+  preferredMethod: string; // 선호하는 지도 방법/접근법
+  evaluationOpinion: string; // 평가 방식에 대한 의견 (예: 수행평가 시 수정 요구)
+  homeConnection: string; // 학교와 연계하여 가정에서 지도하고 싶은 부분
 
-  // ⑧ 외부 치료·방과후 지원 현황
-  afterSchoolActivity: string;
-  therapyServices: { institution: string; area: string; type: string }[];
+  // 8. 외부 지원/치료
+  afterSchoolActivity: string; // 학교 밖 활동 (학원, 복지관 등)
+  therapyServices: Array<{ institution: string; area: string; type: string }>; // 치료/재활
 
-  // ⑨ 특수교육 관련 서비스 신청
-  afterSchoolSpecialEd: string;
-  transportSupport: string;
-  assistantSupport: string;
-  therapySupportInstitution: string;
-  therapySupportArea: string;
-  rehabServiceInstitution: string;
-  rehabServiceArea: string;
+  // 9. 학교 서비스 신청
+  afterSchoolSpecialEd: string; // 방과후학교 특수교육 신청 여부
+  transportSupport: string; // 통학지원 신청 여부/방법
+  assistantSupport: string; // 특수교육보조인력 지원 필요 여부
+  therapySupportInstitution: string; // 교육청 치료지원(기관명)
+  therapySupportArea: string; // 치료영역
+  rehabServiceInstitution: string; // 복지부 발달재활(기관명)
+  rehabServiceArea: string; // 치료영역
 
-  // ⑩ 학교 행사 및 활동
-  survivalSwimming: string; // 참가 | 불참
+  // 10. 행사/체험
+  survivalSwimming: string; // 생존수영 (참여/불참/참관)
   survivalSwimmingReason: string;
-  openClassObservation: string;
-  fieldTrip: string; // 참여 | 불참
+  openClassObservation: string; // 공개수업 참관 여부
+  fieldTrip: string; // 현장체험학습 참여 여부/유의사항
 
-  // ⑪ 미래·전환교육 비전
-  fiveYearVision: string;
-  careerDirection: string;
+  // 11. 진로/미래
+  fiveYearVision: string; // 5년 후 아이의 모습 기대
+  careerDirection: string; // 졸업 후 진로 희망
   careerDirectionOther: string;
-  educationValue: string;
+  educationValue: string; // 교육에서 가장 중요하게 생각하는 가치
 
-  // ⑫ 보호자 소통 선호 방식
-  preferredContact: string[];
-  availableTimeSlot: string[];
-  emergencyContact2Name: string;
-  emergencyContact2Relation: string;
-  emergencyContact2Phone: string;
+  // 13. 기타
+  healthChanges: string; // 최근 건강/복약 변동
+  familyChanges: string; // 최근 가정 내 주요 변화
+  messageToTeacher: string; // 교사에게 남길 말
 
-  // ⑬ 학교에 특별히 알려주실 내용
-  healthChanges: string;
-  familyChanges: string;
-  messageToTeacher: string;
+  writeDate: string;
 }
 
-// 동의서 (문서3) - 각 항목별 동의/미동의
 export interface ConsentForm {
-  // 동의 1 — 기본 개인정보
-  consent1: boolean | null;
+  // 기본정보 (보호자 작성)
+  consentGuardianName: string;
+  consentGuardianRelation: string;
+  consentDate: string;
 
-  // 동의 2 — 건강·장애 정보 (민감정보)
-  consent2: boolean | null;
-
-  // 동의 3 — 제3자 제공
-  consent3: boolean | null;
-
-  // 동의 4 — 특수교육 운영 포괄
+  // 필수 동의 (거부 시 서비스 제한)
+  consent1: boolean | null; // 기본 개인정보 수집
+  consent2: boolean | null; // 건강/장애 민감정보 수집
+  consent3: boolean | null; // 제3자 제공 (보건, 영양, 지원센터 등)
   consent4_iep: boolean | null;
   consent4_curriculum: boolean | null;
   consent4_services: boolean | null;
   consent4_records: boolean | null;
   consent4_handover: boolean | null;
 
-  // 안내 5 — 특수교육실무사 확인
+  // 안내 및 확인
   notice5_teaching: boolean;
   notice5_meal: boolean;
   notice5_restroom: boolean;
@@ -171,60 +174,46 @@ export interface ConsentForm {
   notice5_commute: boolean;
   notice5_note: string;
 
-  // 동의 6 — 촬영 및 초상권
-  consent6_photoRecord: boolean | null;
-  consent6_internalUse: boolean | null;
-  consent6_parentShare: boolean | null;
-  consent6_homepage: boolean | null;
-  consent6_sns: boolean | null;
-  consent6_classChannel: boolean | null;
+  // 권장 동의 (거부 가능, 교육활동 기록 및 홍보)
+  consent6_photoRecord: boolean | null; // 초상권/촬영 (기록)
+  consent6_internalUse: boolean | null; // 내부 활용
+  consent6_parentShare: boolean | null; // 부모 공유
+  consent6_homepage: boolean | null; // 홈페이지
+  consent6_sns: boolean | null; // SNS/홍보
+  consent6_classChannel: boolean | null; // 학급채널
 
-  // 동의 7 — 공개수업·수업연구대회
-  consent7_supervision: boolean | null;
-  consent7_parentOpen: boolean | null;
-  consent7_peerObservation: boolean | null;
-  consent7_competition: boolean | null;
-  consent7_externalMaterial: boolean | null;
+  consent7_supervision: boolean | null; // 장학
+  consent7_parentOpen: boolean | null; // 학부모 공개수업
+  consent7_peerObservation: boolean | null; // 동료 장학
+  consent7_competition: boolean | null; // 연구대회
+  consent7_externalMaterial: boolean | null; // 대외 연수
 
-  // 동의 8 — 현장체험학습
-  consent8_specialFieldTrip: boolean | null;
-  consent8_regularFieldTrip: boolean | null;
-  consent8_events: boolean | null;
-  consent8_publicTransport: boolean | null;
-  consent8_insurance: boolean | null;
+  consent8_specialFieldTrip: boolean | null; // 특수 현체
+  consent8_regularFieldTrip: boolean | null; // 통합 현체
+  consent8_events: boolean | null; // 체험/행사
+  consent8_publicTransport: boolean | null; // 대중교통
+  consent8_insurance: boolean | null; // 안전공제
 
-  // 동의 9 — 응급처치
+  // 필수: 생명/안전
   consent9_firstAid: boolean | null;
   consent9_119: boolean | null;
   consent9_priorTreatment: boolean | null;
   consent9_healthRoom: boolean | null;
-  emergencyContacts: {
-    name: string;
-    relation: string;
-    phone: string;
-  }[];
+  emergencyContacts: Array<{ name: string; relation: string; phone: string }>;
 
-  // 동의 10 — 심리·정서 상담
-  consent10_counseling: boolean | null;
+  // 선택 동의
+  consent10_counseling: boolean | null; // 심리/정서
   consent10_wee: boolean | null;
   consent10_assessment: boolean | null;
   consent10_iepUse: boolean | null;
 
-  // 동의 11 — 장애인식개선교육
-  consent11_anonymousCase: boolean | null;
+  consent11_anonymousCase: boolean | null; // 장애인식개선
   consent11_participation: boolean | null;
 
-  // 동의 12 — 통계·연구 활용
-  consent12_statistics: boolean | null;
+  consent12_statistics: boolean | null; // 통계/연구
   consent12_research: boolean | null;
-
-  // 서명
-  consentGuardianName: string;
-  consentGuardianRelation: string;
-  consentDate: string;
 }
 
-// 전체 데이터 (URL에 담기는 최종 형태)
 export interface FullFormData {
   teacher: TeacherInput;
   opinion: ParentOpinion;

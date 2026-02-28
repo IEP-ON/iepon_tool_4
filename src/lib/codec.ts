@@ -1,23 +1,20 @@
-import LZString from 'lz-string';
+import LZString from "lz-string";
 
-export function compress(data: unknown): string {
-  const json = JSON.stringify(data);
-  const compressed = LZString.compressToEncodedURIComponent(json);
-  return compressed;
+export function compress<T>(data: T): string {
+  try {
+    return LZString.compressToEncodedURIComponent(JSON.stringify(data));
+  } catch (e) {
+    console.error("Compression failed", e);
+    return "";
+  }
 }
 
 export function decompress<T>(encoded: string): T | null {
   try {
     const json = LZString.decompressFromEncodedURIComponent(encoded);
-    if (!json) return null;
-    return JSON.parse(json) as T;
-  } catch {
+    return json ? JSON.parse(json) : null;
+  } catch (e) {
+    console.error("Decompression failed", e);
     return null;
   }
 }
-
-export function getUrlLength(baseUrl: string, data: string): number {
-  return baseUrl.length + data.length;
-}
-
-export const MAX_SAFE_URL_LENGTH = 8000;
