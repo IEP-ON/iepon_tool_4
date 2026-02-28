@@ -119,7 +119,7 @@ export interface ParentOpinion {
 
   // 8. 외부 지원/치료
   afterSchoolActivity: string; // 학교 밖 활동 (학원, 복지관 등)
-  therapyServices: Array<{ institution: string; area: string; type: string }>; // 치료/재활
+  therapyServices: Array<{ institution: string; area: string; type: string }>; // 기존 치료/재활 리스트 (사용 안 할 수도 있지만 유지)
 
   // 9. 학교 서비스 신청
   afterSchoolSpecialEd: string; // 방과후학교 특수교육 신청 여부
@@ -129,13 +129,16 @@ export interface ParentOpinion {
   transportSupport: string; // 통학지원 신청 여부/방법
   assistantSupport: string; // 특수교육보조인력 지원 필요 여부
   
-  therapySupportInstitution: string; // 교육청 치료지원(기관명)
-  therapySupportDays: string; // 치료지원 이용 요일
-  therapySupportArea: string; // 치료영역
+  // 변경됨: 다중 추가를 위한 배열 형태로 변경
+  therapySupportInstitution: string; // (기존 단일) 유지 (하위 호환성)
+  therapySupportDays: string; // (기존 단일) 유지
+  therapySupportArea: string; // (기존 단일) 유지
+  therapySupportList: Array<{ institution: string; days: string; area: string }>; // 새로운 리스트 형태
   
-  rehabServiceInstitution: string; // 복지부 발달재활(기관명)
-  rehabServiceDays: string; // 발달재활 이용 요일
-  rehabServiceArea: string; // 치료영역
+  rehabServiceInstitution: string; // (기존 단일) 유지 (하위 호환성)
+  rehabServiceDays: string; // (기존 단일) 유지
+  rehabServiceArea: string; // (기존 단일) 유지
+  rehabServiceList: Array<{ institution: string; days: string; area: string }>; // 새로운 리스트 형태
 
   // 10. 행사/체험
   survivalSwimming: string; // 생존수영 (참여/불참/참관)

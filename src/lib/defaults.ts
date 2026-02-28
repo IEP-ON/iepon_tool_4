@@ -112,12 +112,16 @@ export const defaultParentOpinion: ParentOpinion = {
   afterSchoolSpecialEdOutSchool: "",
   transportSupport: "해당 없음",
   assistantSupport: "필요 없음",
+  
   therapySupportInstitution: "",
   therapySupportDays: "",
   therapySupportArea: "",
+  therapySupportList: [],
+  
   rehabServiceInstitution: "",
   rehabServiceDays: "",
   rehabServiceArea: "",
+  rehabServiceList: [],
 
   survivalSwimming: "",
   survivalSwimmingReason: "",

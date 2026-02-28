@@ -17,46 +17,85 @@ interface Props {
 export function SectionServices({ data, update }: Props) {
   const [duplicateWarning, setDuplicateWarning] = useState(false);
 
-  const addTherapy = () => {
-    update("therapyServices", [...data.therapyServices, { institution: "", area: "", type: "" }]);
+  // 리스트 관리 함수 (치료지원)
+  const addTherapySupport = () => {
+    update("therapySupportList", [...(data.therapySupportList || []), { institution: "", days: "", area: "" }]);
   };
 
-  const removeTherapy = (index: number) => {
-    update("therapyServices", data.therapyServices.filter((_, i) => i !== index));
+  const removeTherapySupport = (index: number) => {
+    update("therapySupportList", (data.therapySupportList || []).filter((_, i) => i !== index));
   };
 
-  const updateTherapy = (index: number, field: string, value: string) => {
-    const updated = data.therapyServices.map((t, i) =>
+  const updateTherapySupport = (index: number, field: string, value: string) => {
+    const updated = (data.therapySupportList || []).map((t, i) =>
       i === index ? { ...t, [field]: value } : t
     );
-    update("therapyServices", updated);
+    update("therapySupportList", updated);
   };
 
-  // 영역 중복 체크
+  // 리스트 관리 함수 (발달재활)
+  const addRehabService = () => {
+    update("rehabServiceList", [...(data.rehabServiceList || []), { institution: "", days: "", area: "" }]);
+  };
+
+  const removeRehabService = (index: number) => {
+    update("rehabServiceList", (data.rehabServiceList || []).filter((_, i) => i !== index));
+  };
+
+  const updateRehabService = (index: number, field: string, value: string) => {
+    const updated = (data.rehabServiceList || []).map((t, i) =>
+      i === index ? { ...t, [field]: value } : t
+    );
+    update("rehabServiceList", updated);
+  };
+
+  // 영역 중복 체크 (리스트 간의 중복 체크)
   useEffect(() => {
-    if (
-      data.therapySupportArea &&
-      data.rehabServiceArea &&
-      data.therapySupportInstitution && 
-      data.rehabServiceInstitution
-    ) {
-      // 쉼표나 띄어쓰기로 구분된 영역을 배열로 만들어 교집합 확인
-      const therapyAreas = data.therapySupportArea.split(/[\s,]+/).filter(a => a.trim() !== "");
-      const rehabAreas = data.rehabServiceArea.split(/[\s,]+/).filter(a => a.trim() !== "");
+    const therapyAreas = (data.therapySupportList || [])
+      .map(t => t.area)
+      .join(" ")
+      .split(/[\s,]+/)
+      .filter(a => a.trim() !== "");
       
+    const rehabAreas = (data.rehabServiceList || [])
+      .map(r => r.area)
+      .join(" ")
+      .split(/[\s,]+/)
+      .filter(a => a.trim() !== "");
+      
+    if (therapyAreas.length > 0 && rehabAreas.length > 0) {
       const hasDuplicate = therapyAreas.some(area => 
         rehabAreas.some(rArea => rArea.includes(area) || area.includes(rArea))
       );
-      
       setDuplicateWarning(hasDuplicate);
     } else {
       setDuplicateWarning(false);
     }
-  }, [data.therapySupportArea, data.rehabServiceArea, data.therapySupportInstitution, data.rehabServiceInstitution]);
+  }, [data.therapySupportList, data.rehabServiceList]);
+
+  // 구버전 데이터 마이그레이션 효과 (처음 로드 시)
+  useEffect(() => {
+    // 이전 단일 필드에 값이 있는데 리스트가 비어있다면 리스트로 옮기기
+    if (data.therapySupportInstitution && data.therapySupportInstitution.trim() !== "" && (!data.therapySupportList || data.therapySupportList.length === 0)) {
+      update("therapySupportList", [{ 
+        institution: data.therapySupportInstitution, 
+        days: data.therapySupportDays || "", 
+        area: data.therapySupportArea || "" 
+      }]);
+    }
+    
+    if (data.rehabServiceInstitution && data.rehabServiceInstitution.trim() !== "" && (!data.rehabServiceList || data.rehabServiceList.length === 0)) {
+      update("rehabServiceList", [{ 
+        institution: data.rehabServiceInstitution, 
+        days: data.rehabServiceDays || "", 
+        area: data.rehabServiceArea || "" 
+      }]);
+    }
+  }, []);
 
   return (
     <div className="space-y-8">
-      {/* 8. 외부 지원/치료 */}
+      {/* 8. 외부 지원/치료 - '현재 받고 있는 치료/재활 서비스' 입력란은 삭제됨 */}
       <div className="space-y-6">
         <div>
           <Label className="text-base font-bold text-gray-900 mb-2 block">방과 후 주요 활동 (학원 등)</Label>
@@ -66,55 +105,6 @@ export function SectionServices({ data, update }: Props) {
             onChange={(e) => update("afterSchoolActivity", e.target.value)}
             className="bg-gray-50 h-12"
           />
-        </div>
-
-        <div>
-          <Label className="text-base font-bold text-gray-900 mb-2 block">현재 받고 있는 치료/재활 서비스</Label>
-          <div className="space-y-3 mt-2">
-            {data.therapyServices.map((t, i) => (
-              <div key={i} className="flex gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <div className="flex-1">
-                  <Label className="text-xs text-gray-500 mb-1 block">기관명</Label>
-                  <Input
-                    value={t.institution}
-                    onChange={(e) => updateTherapy(i, "institution", e.target.value)}
-                    placeholder="예: 00발달센터"
-                    className="bg-white"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Label className="text-xs text-gray-500 mb-1 block">치료 영역</Label>
-                  <Input
-                    value={t.area}
-                    onChange={(e) => updateTherapy(i, "area", e.target.value)}
-                    placeholder="예: 언어, 놀이"
-                    className="bg-white"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Label className="text-xs text-gray-500 mb-1 block">빈도/시간</Label>
-                  <Input
-                    value={t.type}
-                    onChange={(e) => updateTherapy(i, "type", e.target.value)}
-                    placeholder="예: 주 2회"
-                    className="bg-white"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeTherapy(i)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-10 w-10 shrink-0"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={addTherapy} className="w-full border-dashed border-2 text-blue-600 border-blue-200 hover:bg-blue-50">
-              <Plus className="h-4 w-4 mr-1" /> 치료 서비스 추가
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -172,45 +162,63 @@ export function SectionServices({ data, update }: Props) {
           <Label className="font-bold text-gray-800 text-base">치료지원 (교육청)</Label>
           <RadioOption
             options={["이용 중", "이용하지 않음"]}
-            value={data.therapySupportInstitution ? "이용 중" : "이용하지 않음"}
+            value={data.therapySupportInstitution === "이용 중" || (data.therapySupportList && data.therapySupportList.length > 0) ? "이용 중" : "이용하지 않음"}
             onChange={(v) => {
               if (v === "이용하지 않음") {
-                update("therapySupportInstitution", "");
-                update("therapySupportDays", "");
-                update("therapySupportArea", "");
-              } else if (!data.therapySupportInstitution) {
-                update("therapySupportInstitution", " "); // 트리거
+                update("therapySupportInstitution", ""); // 하위 호환
+                update("therapySupportList", []);
+              } else {
+                update("therapySupportInstitution", "이용 중"); // 상태 플래그로 사용
+                if (!data.therapySupportList || data.therapySupportList.length === 0) {
+                  update("therapySupportList", [{ institution: "", days: "", area: "" }]);
+                }
               }
             }}
             columns={2}
           />
-          {data.therapySupportInstitution !== "" && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">기관명</Label>
-                <Input
-                  placeholder="이용 기관명"
-                  value={data.therapySupportInstitution.trim()}
-                  onChange={(e) => update("therapySupportInstitution", e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">이용 요일</Label>
-                <Input
-                  placeholder="예: 월, 수"
-                  value={data.therapySupportDays}
-                  onChange={(e) => update("therapySupportDays", e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">영역</Label>
-                <Input
-                  placeholder="예: 언어, 미술"
-                  value={data.therapySupportArea}
-                  onChange={(e) => update("therapySupportArea", e.target.value)}
-                  className={duplicateWarning && data.therapySupportArea ? "border-red-400 bg-red-50/30" : ""}
-                />
-              </div>
+          {((data.therapySupportInstitution === "이용 중" || data.therapySupportInstitution === " ") || (data.therapySupportList && data.therapySupportList.length > 0)) && (
+            <div className="space-y-3 mt-3">
+              {(data.therapySupportList || []).map((t, i) => (
+                <div key={i} className="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg border border-gray-200 shadow-sm relative pr-10 sm:pr-3">
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">기관명</Label>
+                    <Input
+                      placeholder="이용 기관명"
+                      value={t.institution}
+                      onChange={(e) => updateTherapySupport(i, "institution", e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">이용 요일</Label>
+                    <Input
+                      placeholder="예: 월, 수"
+                      value={t.days}
+                      onChange={(e) => updateTherapySupport(i, "days", e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">영역</Label>
+                    <Input
+                      placeholder="예: 언어, 미술"
+                      value={t.area}
+                      onChange={(e) => updateTherapySupport(i, "area", e.target.value)}
+                      className={duplicateWarning && t.area ? "border-red-400 bg-red-50/30" : ""}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeTherapySupport(i)}
+                    className="absolute top-2 right-2 sm:relative sm:top-0 sm:right-0 sm:self-end text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" size="sm" onClick={addTherapySupport} className="w-full border-dashed border-2 text-blue-600 border-blue-200 hover:bg-blue-50">
+                <Plus className="h-4 w-4 mr-1" /> 치료지원 기관 추가
+              </Button>
             </div>
           )}
         </div>
@@ -220,45 +228,63 @@ export function SectionServices({ data, update }: Props) {
           <Label className="font-bold text-gray-800 text-base">발달재활서비스 (보건복지부 바우처)</Label>
           <RadioOption
             options={["이용 중", "이용하지 않음"]}
-            value={data.rehabServiceInstitution ? "이용 중" : "이용하지 않음"}
+            value={data.rehabServiceInstitution === "이용 중" || (data.rehabServiceList && data.rehabServiceList.length > 0) ? "이용 중" : "이용하지 않음"}
             onChange={(v) => {
               if (v === "이용하지 않음") {
-                update("rehabServiceInstitution", "");
-                update("rehabServiceDays", "");
-                update("rehabServiceArea", "");
-              } else if (!data.rehabServiceInstitution) {
-                update("rehabServiceInstitution", " "); // 트리거
+                update("rehabServiceInstitution", ""); // 하위 호환
+                update("rehabServiceList", []);
+              } else {
+                update("rehabServiceInstitution", "이용 중"); // 상태 플래그로 사용
+                if (!data.rehabServiceList || data.rehabServiceList.length === 0) {
+                  update("rehabServiceList", [{ institution: "", days: "", area: "" }]);
+                }
               }
             }}
             columns={2}
           />
-          {data.rehabServiceInstitution !== "" && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">기관명</Label>
-                <Input
-                  placeholder="이용 기관명"
-                  value={data.rehabServiceInstitution.trim()}
-                  onChange={(e) => update("rehabServiceInstitution", e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">이용 요일</Label>
-                <Input
-                  placeholder="예: 화, 목"
-                  value={data.rehabServiceDays}
-                  onChange={(e) => update("rehabServiceDays", e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">영역</Label>
-                <Input
-                  placeholder="예: 놀이, 인지"
-                  value={data.rehabServiceArea}
-                  onChange={(e) => update("rehabServiceArea", e.target.value)}
-                  className={duplicateWarning && data.rehabServiceArea ? "border-red-400 bg-red-50/30" : ""}
-                />
-              </div>
+          {((data.rehabServiceInstitution === "이용 중" || data.rehabServiceInstitution === " ") || (data.rehabServiceList && data.rehabServiceList.length > 0)) && (
+            <div className="space-y-3 mt-3">
+              {(data.rehabServiceList || []).map((t, i) => (
+                <div key={i} className="flex flex-col sm:flex-row gap-2 bg-white p-3 rounded-lg border border-gray-200 shadow-sm relative pr-10 sm:pr-3">
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">기관명</Label>
+                    <Input
+                      placeholder="이용 기관명"
+                      value={t.institution}
+                      onChange={(e) => updateRehabService(i, "institution", e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">이용 요일</Label>
+                    <Input
+                      placeholder="예: 화, 목"
+                      value={t.days}
+                      onChange={(e) => updateRehabService(i, "days", e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className="text-xs text-gray-500">영역</Label>
+                    <Input
+                      placeholder="예: 놀이, 인지"
+                      value={t.area}
+                      onChange={(e) => updateRehabService(i, "area", e.target.value)}
+                      className={duplicateWarning && t.area ? "border-red-400 bg-red-50/30" : ""}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeRehabService(i)}
+                    className="absolute top-2 right-2 sm:relative sm:top-0 sm:right-0 sm:self-end text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" size="sm" onClick={addRehabService} className="w-full border-dashed border-2 text-blue-600 border-blue-200 hover:bg-blue-50">
+                <Plus className="h-4 w-4 mr-1" /> 발달재활서비스 기관 추가
+              </Button>
             </div>
           )}
         </div>
@@ -306,8 +332,6 @@ export function SectionServices({ data, update }: Props) {
             className="bg-gray-50 h-12"
           />
         </div>
-
-        {/* 선생님께 남기고 싶은 말씀 항목 삭제됨 */}
       </div>
     </div>
   );

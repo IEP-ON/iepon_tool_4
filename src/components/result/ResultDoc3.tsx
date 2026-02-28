@@ -5,208 +5,166 @@ import type { TeacherInput, ConsentForm } from "@/lib/types";
 interface Props {
   teacher: TeacherInput;
   consent: ConsentForm;
+  isEmptyForm?: boolean;
 }
 
-function ConsentRow({ label, value }: { label: string; value: boolean | null }) {
-  return (
-    <tr>
-      <td className="border border-gray-300 px-4 py-2 text-[11pt]">{label}</td>
-      <td className="border border-gray-300 px-4 py-2 text-center text-[12pt] font-bold w-20">
-        {value === true ? "O" : value === false ? "X" : "-"}
-      </td>
-    </tr>
-  );
-}
-
-export function ResultDoc3({ teacher, consent: c }: Props) {
-  const formatDate = (d: string) => {
-    if (!d) return "";
-    const dt = new Date(d);
-    return `${dt.getFullYear()}년 ${dt.getMonth() + 1}월 ${dt.getDate()}일`;
+export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
+  const isChecked = (val: boolean | null, expected: boolean) => {
+    if (isEmptyForm) return false;
+    return val === expected;
   };
 
+  const renderCheck = (label: string, isAgreed: boolean | null, expected: boolean) => (
+    <span className="inline-flex items-center ml-4">
+      <span className={`w-3.5 h-3.5 inline-block border border-black mr-1 ${isChecked(isAgreed, expected) ? 'bg-black text-white text-center text-[10px] leading-[14px]' : ''}`}>
+        {isChecked(isAgreed, expected) ? '✓' : ''}
+      </span>
+      {label}
+    </span>
+  );
+
   return (
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-0 print:shadow-none text-[11pt] leading-relaxed">
-      <div className="text-center mb-8 border-b-2 border-black pb-4">
-        <h1 className="text-xl font-bold tracking-tight mb-2">
-          {teacher.year}학년도 {teacher.schoolName} 특수학급
+    <div className={`mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-0 print:shadow-none text-[10pt] leading-tight ${isEmptyForm ? 'print-empty-form' : ''}`}>
+      <div className="text-center mb-6 border-b-2 border-black pb-3">
+        <h1 className="text-xl font-bold tracking-tight">
+          특수교육대상자 교육지원 및 정보제공 동의서
         </h1>
-        <h2 className="text-2xl font-bold">
-          개인정보 수집·이용 및 교육활동 포괄 동의서
-        </h2>
       </div>
 
-      <div className="space-y-6">
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-red-600 print:text-black mr-2">[필수]</span> 동의 1 — 기본 개인정보 수집·이용
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="기본 개인정보 수집·이용" value={c.consent1} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-red-600 print:text-black mr-2">[필수]</span> 동의 2 — 건강·장애 정보 (민감정보)
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="건강·장애 정보 수집·이용" value={c.consent2} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-red-600 print:text-black mr-2">[필수]</span> 동의 3 — 개인정보 제3자 제공
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="개인정보 제3자 제공" value={c.consent3} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-red-600 print:text-black mr-2">[필수]</span> 동의 4 — 특수교육 운영 포괄
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="IEP 수립 및 실행" value={c.consent4_iep} />
-            <ConsentRow label="교육과정 참여" value={c.consent4_curriculum} />
-            <ConsentRow label="관련 서비스 제공" value={c.consent4_services} />
-            <ConsentRow label="학교생활기록 작성·보관" value={c.consent4_records} />
-            <ConsentRow label="IEP 결과 인계" value={c.consent4_handover} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-gray-600 print:text-black mr-2">[안내]</span> 안내 5 — 특수교육실무사 역할 확인
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="교수·학습 활동 보조" value={c.notice5_teaching} />
-            <ConsentRow label="식사 지원" value={c.notice5_meal} />
-            <ConsentRow label="용변 지원" value={c.notice5_restroom} />
-            <ConsentRow label="이동 동선 보조" value={c.notice5_mobility} />
-            <ConsentRow label="등하교 지원" value={c.notice5_commute} />
-          </tbody></table>
-          {c.notice5_note && <p className="mt-2 pl-2 text-[11pt]"><strong>알려주실 사항:</strong> {c.notice5_note}</p>}
-        </section>
-
-        <section className="page-break">
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-orange-600 print:text-black mr-2">[권장]</span> 동의 6 — 촬영 및 초상권
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="교육활동 기록용 촬영" value={c.consent6_photoRecord} />
-            <ConsentRow label="학교 내부 문서 활용" value={c.consent6_internalUse} />
-            <ConsentRow label="보호자 개인 전달" value={c.consent6_parentShare} />
-            <ConsentRow label="학교 홈페이지·게시판" value={c.consent6_homepage} />
-            <ConsentRow label="학교 공식 SNS" value={c.consent6_sns} />
-            <ConsentRow label="학급 알림 채널" value={c.consent6_classChannel} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-orange-600 print:text-black mr-2">[권장]</span> 동의 7 — 공개수업·수업연구대회
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="장학공개수업" value={c.consent7_supervision} />
-            <ConsentRow label="학부모 공개수업" value={c.consent7_parentOpen} />
-            <ConsentRow label="동료 교사 상호 참관" value={c.consent7_peerObservation} />
-            <ConsentRow label="수업연구대회 출품" value={c.consent7_competition} />
-            <ConsentRow label="대외 연수·발표 활용" value={c.consent7_externalMaterial} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-orange-600 print:text-black mr-2">[권장]</span> 동의 8 — 현장체험학습
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="특수학급 현장체험학습" value={c.consent8_specialFieldTrip} />
-            <ConsentRow label="통합학급 현장체험학습" value={c.consent8_regularFieldTrip} />
-            <ConsentRow label="교내·교외 체험·행사" value={c.consent8_events} />
-            <ConsentRow label="대중교통 이용 이동" value={c.consent8_publicTransport} />
-            <ConsentRow label="학교안전공제 처리" value={c.consent8_insurance} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-red-600 print:text-black mr-2">[필수]</span> 동의 9 — 응급처치 및 의료 대리
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="학교 내 응급처치" value={c.consent9_firstAid} />
-            <ConsentRow label="119 신고 및 병원 이송" value={c.consent9_119} />
-            <ConsentRow label="보호자 연락 전 의료진 처치" value={c.consent9_priorTreatment} />
-            <ConsentRow label="보건실 연결 및 처치" value={c.consent9_healthRoom} />
-          </tbody></table>
-          {c.emergencyContacts.some(ec => ec.name) && (
-            <div className="mt-3">
-              <p className="font-bold text-[11pt] mb-1 pl-2">응급 연락처:</p>
-              <table className="w-full border-collapse border border-gray-300">
-                <thead className="bg-gray-50"><tr>
-                  <th className="border border-gray-300 px-4 py-2 w-16 text-center">순위</th>
-                  <th className="border border-gray-300 px-4 py-2">성명</th>
-                  <th className="border border-gray-300 px-4 py-2">관계</th>
-                  <th className="border border-gray-300 px-4 py-2">연락처</th>
-                </tr></thead>
-                <tbody>
-                  {c.emergencyContacts.map((ec, i) => ec.name && (
-                    <tr key={i}>
-                      <td className="border border-gray-300 px-4 py-2 text-center">{i + 1}</td>
-                      <td className="border border-gray-300 px-4 py-2">{ec.name}</td>
-                      <td className="border border-gray-300 px-4 py-2">{ec.relation}</td>
-                      <td className="border border-gray-300 px-4 py-2">{ec.phone}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-yellow-600 print:text-black mr-2">[선택]</span> 동의 10 — 심리·정서 상담
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="담임·상담교사 상담" value={c.consent10_counseling} />
-            <ConsentRow label="Wee 클래스·센터 연계" value={c.consent10_wee} />
-            <ConsentRow label="정서·행동특성 검사" value={c.consent10_assessment} />
-            <ConsentRow label="상담 결과 IEP 활용" value={c.consent10_iepUse} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-yellow-600 print:text-black mr-2">[선택]</span> 동의 11 — 장애인식개선교육
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="익명 사례 수업 자료 활용" value={c.consent11_anonymousCase} />
-            <ConsentRow label="장애인식개선 활동 참가" value={c.consent11_participation} />
-          </tbody></table>
-        </section>
-
-        <section>
-          <h3 className="text-[12pt] font-bold mb-2 flex items-center bg-gray-100 p-2 rounded print:bg-transparent print:border-b-2 print:border-gray-800 print:rounded-none">
-            <span className="text-yellow-600 print:text-black mr-2">[선택]</span> 동의 12 — 통계·연구 활용
-          </h3>
-          <table className="w-full border-collapse border border-gray-300"><tbody>
-            <ConsentRow label="통계 연보용 자료 제공" value={c.consent12_statistics} />
-            <ConsentRow label="정책 연구용 가명정보 활용" value={c.consent12_research} />
-          </tbody></table>
-        </section>
-      </div>
-
-      <div className="mt-12 pt-6 border-t-2 border-gray-800">
-        <p className="text-[11pt] font-medium mb-4 italic">
-          &quot;저는 위의 모든 내용을 충분히 읽고 이해하였으며, 각 항목에 대해 자유로운 의사에 따라 동의 여부를 표시하였음을 확인합니다.&quot;
+      <div className="mb-4 text-[10pt]">
+        <p className="text-justify mb-2">
+          {teacher.schoolName}에서는 「장애인 등에 대한 특수교육법」 및 「개인정보보호법」에 따라 
+          학생의 안전하고 효과적인 학교생활 지원을 위해 아래와 같이 동의를 구합니다.
         </p>
-        <div className="text-right space-y-2">
-          <p className="text-[12pt]">작성일: {formatDate(c.consentDate) || "온라인 제출"}</p>
-          <p className="text-[12pt] font-medium">보호자 성명: <span className="font-bold underline underline-offset-4">{c.consentGuardianName}</span> (관계: {c.consentGuardianRelation})</p>
-          <p className="text-sm text-gray-500 mt-2">※ 본 문서는 온라인으로 제출되어 전자서명법 제3조에 따라 전자적 형태의 서명 효력을 가집니다.</p>
+      </div>
+
+      <div className="space-y-4">
+        {/* 1. 필수 동의 */}
+        <section>
+          <h2 className="text-[11pt] font-bold bg-gray-100 p-1.5 border border-black">1. 필수 동의 사항 (교육 및 지원을 위해 반드시 필요)</h2>
+          <table className="w-full border-collapse border border-black mt-[-1px] text-[9.5pt]">
+            <colgroup>
+              <col className="w-[75%]" />
+              <col className="w-[25%]" />
+            </colgroup>
+            <tbody>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">1) 개인정보 및 민감정보 수집·이용 (개별화교육계획 수립, 성적처리, 출결관리 등)</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">- 수집항목: 성명, 생년월일, 연락처, 장애유형/정도, 병력, 복약 정보 등</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent1, true)} {renderCheck("미동의", consent.consent1, false)}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">2) 제3자 정보 제공 (교육청, 특수교육지원센터, 병원, 치료지원 기관 등)</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">- 제공목적: 관련 서비스(치료, 통학 등) 신청, 응급상황 대처, 진로/직업 연계 등</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent3, true)} {renderCheck("미동의", consent.consent3, false)}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">3) 교내 정보 공유 및 협력 지도 (통합학급 담임, 교과교사, 보건/영양교사 등)</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">- 제공목적: 학교생활 적응 지원, 응급처치, 급식 지도, 통합교육 전반 협력</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent4_handover, true)} {renderCheck("미동의", consent.consent4_handover, false)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        {/* 2. 안전 및 응급처치 */}
+        <section>
+          <h2 className="text-[11pt] font-bold bg-gray-100 p-1.5 border border-black">2. 생명 및 안전 보호 (응급처치 동의)</h2>
+          <table className="w-full border-collapse border border-black mt-[-1px] text-[9.5pt]">
+            <colgroup>
+              <col className="w-[75%]" />
+              <col className="w-[25%]" />
+            </colgroup>
+            <tbody>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">1) 응급 상황 발생 시 119 신고 및 병원 이송 조치</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">※ 보호자 연락 지연 시 학교의 판단하에 최우선적으로 응급조치를 실시함에 동의합니다.</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent9_119, true)} {renderCheck("미동의", consent.consent9_119, false)}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">2) 보건실 이용 및 기본 응급처치, 처방약(학교 보관분) 투약 지원</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent9_healthRoom, true)} {renderCheck("미동의", consent.consent9_healthRoom, false)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        {/* 3. 교육활동 참여 및 권장 동의 */}
+        <section>
+          <h2 className="text-[11pt] font-bold bg-gray-100 p-1.5 border border-black">3. 교육활동 참여 및 초상권 (선택)</h2>
+          <table className="w-full border-collapse border border-black mt-[-1px] text-[9.5pt]">
+            <colgroup>
+              <col className="w-[75%]" />
+              <col className="w-[25%]" />
+            </colgroup>
+            <tbody>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">1) 교육활동 중 사진 및 영상 촬영 (학생 포트폴리오, 교내 행사 기록용)</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent6_photoRecord, true)} {renderCheck("미동의", consent.consent6_photoRecord, false)}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">2) 대외 홍보 및 게시 (학교 홈페이지, 학급 밴드, 소식지 등)</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">※ 미동의 시 모자이크 처리 또는 뒷모습 위주로 활용됩니다.</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent6_homepage, true)} {renderCheck("미동의", consent.consent6_homepage, false)}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-black px-2 py-2">
+                  <p className="font-bold mb-1">3) 교내외 체험학습 및 외부 행사 참여 (특수학급 주관 현장체험, 통합학급 행사 등)</p>
+                </td>
+                <td className="border border-black px-2 py-2 text-center align-middle">
+                  {renderCheck("동의", consent.consent8_specialFieldTrip, true)} {renderCheck("미동의", consent.consent8_specialFieldTrip, false)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section className="border-2 border-black p-4 mt-6">
+          <p className="text-[10pt] text-center font-bold mb-4">
+            본인은 「개인정보보호법」 및 관련 법령에 의거하여, 위 사항들을 충분히 숙지하였으며 <br/>학생의 원활한 교육 지원을 위해 동의합니다.
+          </p>
+          <div className="flex justify-end gap-6 text-[11pt]">
+            <p>작성일: {isEmptyForm ? "202  년   월   일" : consent.consentDate || `${new Date().getFullYear()}년 ${new Date().getMonth() + 1}월 ${new Date().getDate()}일`}</p>
+            <p className="flex items-center gap-2">
+              <span>보호자 성명:</span> 
+              <span className={isEmptyForm ? "inline-block w-24 border-b border-black" : ""}>
+                {!isEmptyForm ? consent.consentGuardianName : ""}
+              </span> 
+              <span>(서명 또는 인)</span>
+            </p>
+          </div>
+        </section>
+
+        <div className="mt-8 text-center text-gray-500 text-sm">
+          <p>※ 수집된 정보는 특수교육 지원 목적으로만 사용되며, 목적 달성 시 안전하게 파기됩니다.</p>
         </div>
       </div>
     </div>
