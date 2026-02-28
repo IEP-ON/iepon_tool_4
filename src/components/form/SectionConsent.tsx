@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { ConsentToggle } from "./ConsentToggle";
 import type { ConsentForm } from "@/lib/types";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface Props {
   data: ConsentForm;
@@ -29,315 +31,367 @@ export function SectionConsent({
   adminTeacherName = "○○○",
   schoolAddress = "대구광역시 ○○구 ○○로 ○○",
 }: Props) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (key: string) => {
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const Accordion = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
+    <div className="mt-2 text-sm bg-white border rounded-lg overflow-hidden">
+      <button
+        onClick={() => toggleExpand(id)}
+        className="w-full flex items-center justify-between p-3 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors text-left"
+      >
+        <span className="font-medium">{title}</span>
+        {expanded[id] ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+      </button>
+      {expanded[id] && <div className="p-3 border-t text-gray-600 space-y-1">{children}</div>}
+    </div>
+  );
+
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-bold mb-2">개인정보 수집·이용 및 교육활동 포괄 동의서</h2>
-        <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
-          <p>이 동의서는 아이의 교육을 위해 어떤 정보를 어떻게 사용하는지 투명하게 알리고, 보호자님의 동의를 확인하기 위한 문서입니다.</p>
+        <div className="bg-gray-50 p-4 rounded-xl text-sm space-y-2 border border-gray-200">
+          <p className="font-medium text-gray-800">이 동의서는 우리 아이의 원활한 학교생활과 맞춤형 교육 지원을 위해 꼭 필요한 절차입니다.</p>
           <div className="flex flex-wrap gap-2 mt-2">
-            <Badge variant="destructive">필수 — 거부 시 서비스 제한</Badge>
-            <Badge className="bg-orange-500">강력 권장 — 거부해도 불이익 없음</Badge>
-            <Badge className="bg-yellow-500 text-black">선택 — 자유롭게 결정</Badge>
+            <Badge variant="destructive" className="font-normal text-xs">필수 항목</Badge>
+            <Badge className="bg-orange-500 font-normal text-xs">적극 권장 항목</Badge>
+            <Badge className="bg-yellow-500 text-black font-normal text-xs">선택 항목</Badge>
           </div>
-          <p className="text-xs text-gray-500 mt-1">각 항목은 독립적으로 효력을 가집니다.</p>
+          <p className="text-xs text-gray-500 mt-2">※ 모든 내용은 철저히 암호화되어 보호되며, 교육 목적으로만 안전하게 사용됩니다.</p>
         </div>
       </div>
 
-      <div className="text-xs bg-gray-50 p-3 rounded-lg">
-        <p className="font-medium">개인정보처리자 정보 (「개인정보 보호법」 제30조)</p>
-        <p>처리자: {schoolName}장 {principalName} | 주소: {schoolAddress}</p>
-        <p>담당: 특수학급 담임교사 {teacherName} ☎ {teacherPhone}</p>
-        <p>개인정보보호책임자: 교무부장 {adminTeacherName}</p>
+      <div className="text-xs bg-gray-50 p-3 rounded-lg border border-gray-200 text-gray-600">
+        <p className="font-medium text-gray-800 mb-1">[개인정보처리자 명시]</p>
+        <p>「개인정보 보호법」 제30조에 따라 아래와 같이 처리자를 명시합니다.</p>
+        <p>• 처리기관: {schoolName} (책임자: 교장 {principalName}, 관리자: 교무부장 {adminTeacherName})</p>
+        <p>• 담당부서: 특수학급 (담당교사: {teacherName}, ☎ {teacherPhone})</p>
       </div>
 
       {/* 동의 1 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-2 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge variant="destructive">필수</Badge>
-          <h3 className="font-bold">동의 1 — 기본 개인정보 수집·이용</h3>
-        </div>
-        <div className="text-sm bg-blue-50 p-3 rounded-lg space-y-1">
-          <p><strong>수집 목적:</strong> IEP 수립 및 실행, 특수교육 관련 서비스 제공, 학교생활 안전 관리</p>
-          <p><strong>수집 항목:</strong> 학생 성명·생년월일·학년반, 보호자 성명·관계·연락처, 가정환경 정보, 특수교육 선정 현황, 보조기기 사용 현황</p>
-          <p><strong>보유 기간:</strong> 재학 중 보유, 전출·졸업 후 5년 보존 후 파기</p>
-          <p className="text-red-600"><strong>거부 시:</strong> IEP 수립 및 기본 교육서비스 제공 곤란</p>
+          <h3 className="font-bold text-gray-900">동의 1 — 기본 개인정보 수집·이용</h3>
         </div>
         <ConsentToggle
-          label="기본 개인정보 수집·이용에 동의합니다"
+          label="기본 정보 수집·이용에 동의합니다."
           value={data.consent1}
           onChange={(v) => update("consent1", v)}
         />
+        <Accordion id="consent1" title="자세한 내용 보기 (수집 목적 및 항목)">
+          <p><strong>수집 목적:</strong> 개별화교육계획(IEP) 수립 및 실행, 특수교육 관련 서비스 제공, 학교생활 안전 관리, 출결 및 학적 관리</p>
+          <p><strong>수집 항목:</strong> 학생(성명, 생년월일, 학년/반), 보호자(성명, 관계, 연락처), 가정환경 정보, 특수교육대상자 선정 현황, 보조기기 사용 현황</p>
+          <p><strong>보유 기간:</strong> 재학 중 보유, 졸업 또는 전출 후 5년간 보존 후 파기</p>
+          <p className="text-red-600 mt-1"><strong>※ 미동의 시:</strong> 아이에게 맞는 개별화교육계획 수립 및 기본 교육서비스 제공이 매우 어렵습니다.</p>
+        </Accordion>
       </div>
 
       {/* 동의 2 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-2 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge variant="destructive">필수</Badge>
-          <h3 className="font-bold">동의 2 — 건강·장애 정보 수집·이용 (민감정보)</h3>
-        </div>
-        <div className="text-sm bg-blue-50 p-3 rounded-lg space-y-1">
-          <p className="text-xs text-gray-600 italic">「개인정보 보호법」 제23조에 따라 일반 개인정보와 분리 동의</p>
-          <p><strong>수집 목적:</strong> 장애 유형별 맞춤 지원, 건강·안전 사고 예방, 복약 관리, 치료지원 연계</p>
-          <p><strong>수집 항목:</strong> 장애 등록 여부·유형·정도, 복약 정보, 알레르기, 발작·경련 이력, 수면 특성, 감각 민감성, 식이 제한</p>
-          <p><strong>보유 기간:</strong> 재학 중 보유, 전출·졸업 후 10년 보존 후 파기</p>
-          <p className="text-red-600"><strong>거부 시:</strong> 건강·안전 관련 맞춤 지원 불가, 복약 관리 제한</p>
+          <h3 className="font-bold text-gray-900">동의 2 — 건강·장애 정보 수집·이용 (민감정보)</h3>
         </div>
         <ConsentToggle
-          label="건강·장애 정보 수집·이용에 동의합니다"
+          label="건강 및 장애 관련 정보 수집·이용에 동의합니다."
           value={data.consent2}
           onChange={(v) => update("consent2", v)}
         />
+        <Accordion id="consent2" title="자세한 내용 보기 (민감정보 취급)">
+          <p className="text-xs text-blue-600 mb-1">※ 「개인정보 보호법」 제23조에 따라 건강 등 민감정보는 별도로 동의를 받습니다.</p>
+          <p><strong>수집 목적:</strong> 장애 유형별 맞춤 지원(행동, 학습, 생활), 학교 내 건강 및 응급 상황 대비, 복약 관리, 치료지원 연계</p>
+          <p><strong>수집 항목:</strong> 장애 등록 여부·유형·정도, 복약 정보, 알레르기, 발작/경련 이력, 수면/식이 특성, 감각 민감성 등 건강 관련 모든 정보</p>
+          <p><strong>보유 기간:</strong> 재학 중 보유, 전출/졸업 후 10년 보존 후 파기</p>
+          <p className="text-red-600 mt-1"><strong>※ 미동의 시:</strong> 응급 상황 대처 및 아이의 건강/행동 특성에 맞는 안전한 맞춤 지원이 불가능합니다.</p>
+        </Accordion>
       </div>
 
       {/* 동의 3 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-2 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge variant="destructive">필수</Badge>
-          <h3 className="font-bold">동의 3 — 개인정보 제3자 제공</h3>
-        </div>
-        <div className="text-sm bg-blue-50 p-3 rounded-lg">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-1">제공받는 자</th>
-                <th className="text-left py-1">목적</th>
-                <th className="text-left py-1">항목</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              <tr><td className="py-1">특수교육지원센터</td><td>행정·통계</td><td>기본 정보, 선정 현황</td></tr>
-              <tr><td className="py-1">통합학급 담임</td><td>통합교육 협력</td><td>학습·행동·건강 최소 정보</td></tr>
-              <tr><td className="py-1">보건교사</td><td>건강·응급 관리</td><td>복약·알레르기·발작 정보</td></tr>
-              <tr><td className="py-1">영양교사</td><td>급식 안전</td><td>식품 알레르기·식이 제한</td></tr>
-              <tr><td className="py-1">치료지원 기관</td><td>치료서비스 연계</td><td>장애 유형·교육 현황</td></tr>
-            </tbody>
-          </table>
+          <h3 className="font-bold text-gray-900">동의 3 — 개인정보 제3자 제공</h3>
         </div>
         <ConsentToggle
-          label="개인정보 제3자 제공에 동의합니다"
+          label="필요 기관(보건교사, 교육청 등)으로의 정보 제공에 동의합니다."
           value={data.consent3}
           onChange={(v) => update("consent3", v)}
         />
+        <Accordion id="consent3" title="자세한 내용 보기 (제공받는 기관 및 항목)">
+          <table className="w-full text-xs text-left border-collapse mt-1">
+            <thead>
+              <tr className="border-b bg-gray-50">
+                <th className="py-2 px-1">제공받는 자</th>
+                <th className="py-2 px-1">목적</th>
+                <th className="py-2 px-1">제공 항목</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              <tr><td className="py-2 px-1">특수교육지원센터</td><td className="py-2 px-1">행정·통계·지원</td><td className="py-2 px-1">기본 정보, 선정 현황</td></tr>
+              <tr><td className="py-2 px-1">통합학급 담임</td><td className="py-2 px-1">통합교육 협력</td><td className="py-2 px-1">학습·행동 특성 정보</td></tr>
+              <tr><td className="py-2 px-1">보건교사</td><td className="py-2 px-1">응급 및 건강 관리</td><td className="py-2 px-1">복약·알레르기·질환 정보</td></tr>
+              <tr><td className="py-2 px-1">영양교사</td><td className="py-2 px-1">급식 안전 관리</td><td className="py-2 px-1">식품 알레르기·식이 제한</td></tr>
+              <tr><td className="py-2 px-1">치료지원 제공기관</td><td className="py-2 px-1">서비스 연계 및 실행</td><td className="py-2 px-1">장애 유형, 발달 수준</td></tr>
+            </tbody>
+          </table>
+          <p className="mt-2"><strong>보유 기간:</strong> 제공 목적 달성 시 즉시 파기 (단, 법령에 정한 경우 해당 기간 보존)</p>
+        </Accordion>
       </div>
 
       {/* 동의 4 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge variant="destructive">필수</Badge>
-          <h3 className="font-bold">동의 4 — 특수교육 운영 포괄 동의</h3>
+          <h3 className="font-bold text-gray-900">동의 4 — 특수교육 운영 포괄 동의</h3>
         </div>
-        <div className="space-y-1">
-          <ConsentToggle label="IEP 수립 및 실행 (법 제22조)" value={data.consent4_iep} onChange={(v) => update("consent4_iep", v)} />
+        <p className="text-sm text-gray-600 mb-3">1년 동안 진행되는 필수 교육활동들에 대한 포괄적 동의입니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="개별화교육계획(IEP) 수립 및 실행" value={data.consent4_iep} onChange={(v) => update("consent4_iep", v)} />
           <ConsentToggle label="특수학급 및 통합학급 교육과정 참여" value={data.consent4_curriculum} onChange={(v) => update("consent4_curriculum", v)} />
           <ConsentToggle label="특수교육 관련 서비스 제공 (치료·보조인력·통학 등)" value={data.consent4_services} onChange={(v) => update("consent4_services", v)} />
-          <ConsentToggle label="학교생활기록 특수교육 항목 작성·보관" value={data.consent4_records} onChange={(v) => update("consent4_records", v)} />
-          <ConsentToggle label="IEP 결과의 차년도 담임교사 인계" value={data.consent4_handover} onChange={(v) => update("consent4_handover", v)} />
+          <ConsentToggle label="학교생활기록부 특수교육 항목 작성·보관" value={data.consent4_records} onChange={(v) => update("consent4_records", v)} />
+          <ConsentToggle label="IEP 결과의 차년도 담임교사 인계 (교육적 연속성 확보)" value={data.consent4_handover} onChange={(v) => update("consent4_handover", v)} />
         </div>
       </div>
 
       {/* 안내 5 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-gray-500">안내</Badge>
-          <h3 className="font-bold">안내 5 — 특수교육실무사 지원 역할 확인</h3>
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge className="bg-gray-500">확인(안내)</Badge>
+          <h3 className="font-bold text-gray-900">안내 5 — 특수교육실무사 지원 역할 확인</h3>
         </div>
-        <p className="text-sm text-gray-600">실무사가 어떤 일을 하는지 미리 확인해 주세요.</p>
-        <div className="space-y-2">
+        <p className="text-sm text-gray-600 mb-3">실무사 선생님이 우리 아이를 어떻게 돕는지 미리 확인해 주세요.</p>
+        <div className="space-y-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
           {[
-            { key: "notice5_teaching" as const, label: "교수·학습 활동 보조" },
-            { key: "notice5_meal" as const, label: "식사 지원 (급식 섭취 보조 포함)" },
-            { key: "notice5_restroom" as const, label: "용변 지원 (화장실 신변처리 보조)" },
-            { key: "notice5_mobility" as const, label: "교내외 이동 동선 보조" },
-            { key: "notice5_commute" as const, label: "등하교 지원" },
+            { key: "notice5_teaching" as const, label: "교수·학습 활동 보조 (수업 중 자료 준비, 착석 유도 등)" },
+            { key: "notice5_meal" as const, label: "식사 지원 (급식실 이동, 식판 배식, 섭취 보조)" },
+            { key: "notice5_restroom" as const, label: "용변 지원 (화장실 이동, 신변처리 보조)" },
+            { key: "notice5_mobility" as const, label: "교내외 이동 동선 보조 (휠체어 밀기, 보행 보조)" },
+            { key: "notice5_commute" as const, label: "등하교 지원 (통학 차량 승하차 보조 등)" },
           ].map(({ key, label }) => (
-            <div key={key} className="flex items-center gap-2">
+            <div key={key} className="flex items-start gap-3">
               <Checkbox
                 id={key}
                 checked={data[key] as boolean}
                 onCheckedChange={(checked) => update(key, !!checked)}
+                className="mt-1 w-5 h-5"
               />
-              <Label htmlFor={key} className="text-sm cursor-pointer">{label} — 확인했습니다</Label>
+              <Label htmlFor={key} className="text-sm cursor-pointer leading-tight text-gray-700 font-normal">
+                {label} <span className="font-bold text-blue-600 block sm:inline mt-1 sm:mt-0 sm:ml-2">확인했습니다.</span>
+              </Label>
             </div>
           ))}
         </div>
-        <div>
-          <Label>학교에 미리 알려주실 사항</Label>
+        <div className="mt-4">
+          <Label className="font-medium text-gray-800">실무사 선생님께 특별히 당부하거나 알려주실 사항 (선택)</Label>
           <Textarea
             value={data.notice5_note}
             onChange={(e) => update("notice5_note", e.target.value)}
+            placeholder="예: 특정 음식을 씹기 어려워하니 잘게 잘라주세요. / 계단을 오를 때 오른손을 잡아주세요."
+            className="mt-2"
             rows={2}
           />
         </div>
       </div>
 
       {/* 동의 6 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-orange-500">강력 권장</Badge>
-          <h3 className="font-bold">동의 6 — 영상·사진 촬영 및 초상권</h3>
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge className="bg-orange-500">적극 권장</Badge>
+          <h3 className="font-bold text-gray-900">동의 6 — 영상·사진 촬영 및 초상권</h3>
         </div>
-        <p className="text-xs text-gray-500">촬영 동의와 게시 동의는 별도의 권리입니다.</p>
-        <p className="text-xs font-medium text-gray-700">[교육활동 기록 목적 촬영]</p>
-        <ConsentToggle label="교육활동 기록용 사진·영상 촬영" value={data.consent6_photoRecord} onChange={(v) => update("consent6_photoRecord", v)} />
-        <ConsentToggle label="촬영 자료의 학교 내부 문서 활용 (IEP, 관찰기록 등)" value={data.consent6_internalUse} onChange={(v) => update("consent6_internalUse", v)} />
-        <ConsentToggle label="촬영 자료의 보호자 개인 전달 (알림장, 메시지)" value={data.consent6_parentShare} onChange={(v) => update("consent6_parentShare", v)} />
-        <p className="text-xs font-medium text-gray-700 pt-2">[학교·기관 게시 및 배포]</p>
-        <ConsentToggle label="학교 홈페이지·공식 게시판" value={data.consent6_homepage} onChange={(v) => update("consent6_homepage", v)} />
-        <ConsentToggle label="학교 공식 SNS (교육청 포함)" value={data.consent6_sns} onChange={(v) => update("consent6_sns", v)} />
-        <ConsentToggle label="학급 알림 채널 (하이클래스·e학습터 등)" value={data.consent6_classChannel} onChange={(v) => update("consent6_classChannel", v)} />
+        <p className="text-sm text-gray-600 mb-2">교육활동 기록을 위한 촬영과, 그 사진을 어디까지 공유할지 결정합니다.</p>
+        
+        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2 mb-3">
+          <p className="text-sm font-bold text-gray-800">[내부 기록용]</p>
+          <ConsentToggle label="교육활동 기록용 사진·영상 촬영" value={data.consent6_photoRecord} onChange={(v) => update("consent6_photoRecord", v)} />
+          <ConsentToggle label="촬영 자료의 학교 내부 문서 활용 (IEP 파일, 관찰기록지 등)" value={data.consent6_internalUse} onChange={(v) => update("consent6_internalUse", v)} />
+          <ConsentToggle label="촬영 자료의 보호자 개인 전달 (개인 알림장, 카카오톡 등)" value={data.consent6_parentShare} onChange={(v) => update("consent6_parentShare", v)} />
+        </div>
+
+        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-2">
+          <p className="text-sm font-bold text-gray-800">[학급/학교 공유용]</p>
+          <ConsentToggle label="학급 알림 채널 (하이클래스, e학습터 등 학급 내 공유)" value={data.consent6_classChannel} onChange={(v) => update("consent6_classChannel", v)} />
+          <ConsentToggle label="학교 홈페이지 및 교내 게시판 게시" value={data.consent6_homepage} onChange={(v) => update("consent6_homepage", v)} />
+          <ConsentToggle label="학교 공식 외부 SNS 및 교육청 홍보물 활용" value={data.consent6_sns} onChange={(v) => update("consent6_sns", v)} />
+        </div>
       </div>
 
       {/* 동의 7 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-orange-500">강력 권장</Badge>
-          <h3 className="font-bold">동의 7 — 공개수업·외부 참관·수업연구대회</h3>
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge className="bg-orange-500">적극 권장</Badge>
+          <h3 className="font-bold text-gray-900">동의 7 — 공개수업·외부 참관·수업연구대회</h3>
         </div>
-        <p className="text-xs text-orange-600">수업연구대회 출품은 외부인에게 제출되므로 별도 확인 필요</p>
-        <ConsentToggle label="장학공개수업 (교육청 장학사·관리자 참관)" value={data.consent7_supervision} onChange={(v) => update("consent7_supervision", v)} />
-        <ConsentToggle label="학부모 공개수업 참관" value={data.consent7_parentOpen} onChange={(v) => update("consent7_parentOpen", v)} />
-        <ConsentToggle label="교내 동료 교사 수업 상호 참관" value={data.consent7_peerObservation} onChange={(v) => update("consent7_peerObservation", v)} />
-        <ConsentToggle label="수업연구대회 출품 (영상·사진·기록물 대회 제출)" value={data.consent7_competition} onChange={(v) => update("consent7_competition", v)} />
-        <ConsentToggle label="대외 연수·발표 자료 활용 (익명화 처리 원칙)" value={data.consent7_externalMaterial} onChange={(v) => update("consent7_externalMaterial", v)} />
-        <p className="text-xs text-gray-500">미동의 시에도 교육활동에 어떠한 불이익도 없습니다.</p>
+        <p className="text-sm text-gray-600 mb-3">미동의 시에도 교육활동에는 어떠한 불이익도 없습니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="학부모 공개수업 참관" value={data.consent7_parentOpen} onChange={(v) => update("consent7_parentOpen", v)} />
+          <ConsentToggle label="교내 동료 교사 수업 상호 참관" value={data.consent7_peerObservation} onChange={(v) => update("consent7_peerObservation", v)} />
+          <ConsentToggle label="장학공개수업 (교육청 장학사·관리자 참관)" value={data.consent7_supervision} onChange={(v) => update("consent7_supervision", v)} />
+          <ConsentToggle label="수업연구대회 출품 (영상·사진·기록물 대외 제출)" value={data.consent7_competition} onChange={(v) => update("consent7_competition", v)} />
+          <ConsentToggle label="대외 연수·발표 자료 활용 (반드시 익명화 처리함)" value={data.consent7_externalMaterial} onChange={(v) => update("consent7_externalMaterial", v)} />
+        </div>
       </div>
 
       {/* 동의 8 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-orange-500">강력 권장</Badge>
-          <h3 className="font-bold">동의 8 — 현장체험학습 및 교외 교육활동</h3>
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
+          <Badge className="bg-orange-500">적극 권장</Badge>
+          <h3 className="font-bold text-gray-900">동의 8 — 현장체험학습 및 교외 교육활동</h3>
         </div>
-        <p className="text-xs text-gray-500">이 동의는 &quot;원칙적으로 참여 의향이 있다&quot;는 사전 확인이며, 매 행사마다 다시 확인합니다.</p>
-        <ConsentToggle label="특수학급 현장체험학습 참여 (연 1~2회)" value={data.consent8_specialFieldTrip} onChange={(v) => update("consent8_specialFieldTrip", v)} />
-        <ConsentToggle label="통합학급 현장체험학습 참여" value={data.consent8_regularFieldTrip} onChange={(v) => update("consent8_regularFieldTrip", v)} />
-        <ConsentToggle label="교내·교외 체험·행사 참여" value={data.consent8_events} onChange={(v) => update("consent8_events", v)} />
-        <ConsentToggle label="대중교통 이용 포함 이동" value={data.consent8_publicTransport} onChange={(v) => update("consent8_publicTransport", v)} />
-        <ConsentToggle label="활동 중 학교안전공제 처리 (사고 발생 시)" value={data.consent8_insurance} onChange={(v) => update("consent8_insurance", v)} />
+        <p className="text-sm text-gray-600 mb-3">이는 '원칙적으로 참여 의향이 있다'는 포괄 확인이며, 구체적인 행사는 매번 별도 안내를 드립니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="특수학급 단독 현장체험학습 참여" value={data.consent8_specialFieldTrip} onChange={(v) => update("consent8_specialFieldTrip", v)} />
+          <ConsentToggle label="통합학급 주관 현장체험학습 참여" value={data.consent8_regularFieldTrip} onChange={(v) => update("consent8_regularFieldTrip", v)} />
+          <ConsentToggle label="기타 교내·교외 체험 활동 참여" value={data.consent8_events} onChange={(v) => update("consent8_events", v)} />
+          <ConsentToggle label="교외 활동 시 대중교통(지하철, 버스 등) 이용" value={data.consent8_publicTransport} onChange={(v) => update("consent8_publicTransport", v)} />
+          <ConsentToggle label="활동 중 사고 발생 시 학교안전공제회 보상 처리" value={data.consent8_insurance} onChange={(v) => update("consent8_insurance", v)} />
+        </div>
       </div>
 
       {/* 동의 9 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-3 bg-red-50/50 p-4 rounded-xl shadow-sm border border-red-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge variant="destructive">필수</Badge>
-          <h3 className="font-bold">동의 9 — 응급처치 및 의료 대리</h3>
+          <h3 className="font-bold text-red-900">동의 9 — 응급처치 및 의료 대리</h3>
         </div>
-        <ConsentToggle label="학교 내 응급처치 시행 (심폐소생술 포함)" value={data.consent9_firstAid} onChange={(v) => update("consent9_firstAid", v)} />
-        <ConsentToggle label="응급 상황 시 119 신고 및 병원 이송" value={data.consent9_119} onChange={(v) => update("consent9_119", v)} />
-        <ConsentToggle label="응급 이송 시 보호자 연락 전 의료진 처치 개시" value={data.consent9_priorTreatment} onChange={(v) => update("consent9_priorTreatment", v)} />
-        <ConsentToggle label="응급·이상 증상 발생 시 보건실 연결 및 보건교사 판단에 따른 처치" value={data.consent9_healthRoom} onChange={(v) => update("consent9_healthRoom", v)} />
+        <p className="text-sm text-red-800 mb-3 font-medium">우리 아이의 생명과 안전을 위해 매우 중요한 항목입니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="응급 상황 발생 시 교직원에 의한 1차 응급처치(심폐소생술 등) 시행" value={data.consent9_firstAid} onChange={(v) => update("consent9_firstAid", v)} />
+          <ConsentToggle label="위급 판단 시 119 즉시 신고 및 병원 구급차 이송" value={data.consent9_119} onChange={(v) => update("consent9_119", v)} />
+          <ConsentToggle label="보호자 연락이 닿지 않을 경우 생명을 위한 의료진의 즉각 처치 동의" value={data.consent9_priorTreatment} onChange={(v) => update("consent9_priorTreatment", v)} />
+          <ConsentToggle label="일반적 이상 증상 발생 시 보건실 안내 및 보건교사 처치" value={data.consent9_healthRoom} onChange={(v) => update("consent9_healthRoom", v)} />
+        </div>
 
-        <div className="mt-4">
-          <Label className="font-bold text-red-600">응급 연락처 — 반드시 기재해 주세요</Label>
+        <div className="mt-6 bg-white p-4 rounded-lg border border-red-200">
+          <Label className="font-bold text-red-700 text-base">응급 연락망 (최소 1명 이상 필수)</Label>
+          <p className="text-xs text-gray-500 mb-4">가장 빨리 연락이 닿을 수 있는 순서대로 적어주세요.</p>
           {data.emergencyContacts.map((contact, i) => (
-            <div key={i} className="grid grid-cols-3 gap-2 mt-2">
-              <Input
-                placeholder="성명"
-                value={contact.name}
-                onChange={(e) => {
-                  const updated = [...data.emergencyContacts];
-                  updated[i] = { ...updated[i], name: e.target.value };
-                  update("emergencyContacts", updated);
-                }}
-              />
-              <Input
-                placeholder="관계"
-                value={contact.relation}
-                onChange={(e) => {
-                  const updated = [...data.emergencyContacts];
-                  updated[i] = { ...updated[i], relation: e.target.value };
-                  update("emergencyContacts", updated);
-                }}
-              />
-              <Input
-                placeholder="연락처"
-                value={contact.phone}
-                onChange={(e) => {
-                  const updated = [...data.emergencyContacts];
-                  updated[i] = { ...updated[i], phone: e.target.value };
-                  update("emergencyContacts", updated);
-                }}
-              />
+            <div key={i} className="mb-4 last:mb-0">
+              <p className="text-sm font-bold text-gray-700 mb-1">{i + 1}순위 연락처</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <Input
+                  placeholder="성명 (예: 김아빠)"
+                  value={contact.name}
+                  onChange={(e) => {
+                    const updated = [...data.emergencyContacts];
+                    updated[i] = { ...updated[i], name: e.target.value };
+                    update("emergencyContacts", updated);
+                  }}
+                  className="bg-gray-50 focus:bg-white"
+                />
+                <Input
+                  placeholder="관계 (예: 부)"
+                  value={contact.relation}
+                  onChange={(e) => {
+                    const updated = [...data.emergencyContacts];
+                    updated[i] = { ...updated[i], relation: e.target.value };
+                    update("emergencyContacts", updated);
+                  }}
+                  className="bg-gray-50 focus:bg-white"
+                />
+                <Input
+                  placeholder="연락처 (예: 010-0000-0000)"
+                  type="tel"
+                  value={contact.phone}
+                  onChange={(e) => {
+                    const updated = [...data.emergencyContacts];
+                    updated[i] = { ...updated[i], phone: e.target.value };
+                    update("emergencyContacts", updated);
+                  }}
+                  className="bg-gray-50 focus:bg-white"
+                />
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* 동의 10 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge className="bg-yellow-500 text-black">선택</Badge>
-          <h3 className="font-bold">동의 10 — 심리·정서 상담 및 외부 연계</h3>
+          <h3 className="font-bold text-gray-900">동의 10 — 심리·정서 상담 및 외부 연계</h3>
         </div>
-        <ConsentToggle label="학교 내 담임·상담교사 상담 진행" value={data.consent10_counseling} onChange={(v) => update("consent10_counseling", v)} />
-        <ConsentToggle label="Wee 클래스·Wee 센터 연계 상담" value={data.consent10_wee} onChange={(v) => update("consent10_wee", v)} />
-        <ConsentToggle label="학생 정서·행동특성 검사 실시 및 결과 공유" value={data.consent10_assessment} onChange={(v) => update("consent10_assessment", v)} />
-        <ConsentToggle label="상담 결과의 IEP 자료 활용" value={data.consent10_iepUse} onChange={(v) => update("consent10_iepUse", v)} />
+        <div className="space-y-2">
+          <ConsentToggle label="학교 내 담임교사 또는 전문상담교사와의 상담" value={data.consent10_counseling} onChange={(v) => update("consent10_counseling", v)} />
+          <ConsentToggle label="전문적인 도움이 필요할 경우 Wee 클래스·Wee 센터 연계" value={data.consent10_wee} onChange={(v) => update("consent10_wee", v)} />
+          <ConsentToggle label="학생 정서·행동특성 검사 실시 및 담임교사와 결과 공유" value={data.consent10_assessment} onChange={(v) => update("consent10_assessment", v)} />
+          <ConsentToggle label="상담 결과를 개별화교육계획(IEP) 지원 자료로 활용" value={data.consent10_iepUse} onChange={(v) => update("consent10_iepUse", v)} />
+        </div>
       </div>
 
       {/* 동의 11 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge className="bg-yellow-500 text-black">선택</Badge>
-          <h3 className="font-bold">동의 11 — 장애인식개선교육</h3>
+          <h3 className="font-bold text-gray-900">동의 11 — 장애인식개선교육</h3>
         </div>
-        <ConsentToggle label="우리 아이의 긍정적 사례를 익명으로 수업 자료에 활용" value={data.consent11_anonymousCase} onChange={(v) => update("consent11_anonymousCase", v)} />
-        <ConsentToggle label="아이가 직접 참여하는 장애인식개선 활동 참가" value={data.consent11_participation} onChange={(v) => update("consent11_participation", v)} />
-        <p className="text-xs text-gray-500">동의하지 않으셔도 전혀 괜찮습니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="비장애학생 교육을 위해 우리 아이의 긍정적 사례를 익명으로 활용" value={data.consent11_anonymousCase} onChange={(v) => update("consent11_anonymousCase", v)} />
+          <ConsentToggle label="장애인식개선 관련 활동에 우리 아이가 직접 참여" value={data.consent11_participation} onChange={(v) => update("consent11_participation", v)} />
+        </div>
       </div>
 
       {/* 동의 12 */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
+      <div className="space-y-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex items-center gap-2 mb-2">
           <Badge className="bg-yellow-500 text-black">선택</Badge>
-          <h3 className="font-bold">동의 12 — 교육청·교육부 통계·연구 활용</h3>
+          <h3 className="font-bold text-gray-900">동의 12 — 교육청·교육부 정책·통계 활용</h3>
         </div>
-        <ConsentToggle label="특수교육 통계 연보를 위한 익명·통계 자료 제공" value={data.consent12_statistics} onChange={(v) => update("consent12_statistics", v)} />
-        <ConsentToggle label="특수교육 정책 연구를 위한 익명화 가명정보 활용" value={data.consent12_research} onChange={(v) => update("consent12_research", v)} />
-        <p className="text-xs text-gray-500">개인을 식별할 수 없는 통계·가명정보만 활용됩니다.</p>
-      </div>
-
-      {/* 권리 안내 */}
-      <div className="bg-gray-50 p-4 rounded-lg text-sm space-y-2">
-        <h3 className="font-bold">정보주체(보호자)의 권리 안내</h3>
-        <p>보호자님은 언제든지 아래 권리를 행사하실 수 있습니다.</p>
-        <p className="font-medium">① 개인정보 열람 요청 ② 정정·삭제 요청 ③ 처리 정지 요청 ④ 동의 철회</p>
-        <p className="text-xs text-gray-500">
-          요청 방법: 특수학급 담임교사에게 서면 또는 방문 요청<br />
-          개인정보보호위원회 ☎ 182 | 한국인터넷진흥원 개인정보침해신고센터 ☎ 118
-        </p>
+        <p className="text-sm text-gray-600 mb-3">개인을 절대 식별할 수 없도록 가명 처리된 통계 수치만 활용됩니다.</p>
+        <div className="space-y-2">
+          <ConsentToggle label="특수교육 통계 연보 제작을 위한 기본 자료 제공" value={data.consent12_statistics} onChange={(v) => update("consent12_statistics", v)} />
+          <ConsentToggle label="특수교육 정책 발전 연구를 위한 가명정보 활용" value={data.consent12_research} onChange={(v) => update("consent12_research", v)} />
+        </div>
       </div>
 
       {/* 서명 */}
-      <div className="bg-blue-50 p-4 rounded-lg space-y-3">
-        <p className="text-sm font-medium">
-          &quot;저는 위의 모든 내용을 충분히 읽고 이해하였으며, 각 항목에 대해 자유로운 의사에 따라 동의 여부를 표시하였음을 확인합니다.&quot;
-        </p>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <Label>보호자 성명</Label>
+      <div className="bg-blue-50/80 p-6 rounded-xl border border-blue-100 shadow-inner mt-8">
+        <div className="text-center mb-6">
+          <p className="text-base font-bold text-blue-900 italic">
+            "본인은 위의 모든 내용을 충분히 읽고 이해하였으며,<br className="hidden sm:block" />
+            각 항목에 대해 본인의 자유로운 의사에 따라 동의 여부를 명확히 표시하였음을 확인합니다."
+          </p>
+        </div>
+        
+        <div className="grid gap-6 sm:grid-cols-3">
+          <div className="space-y-1.5">
+            <Label className="font-bold">보호자 성명 (서명)</Label>
             <Input
               value={data.consentGuardianName}
               onChange={(e) => update("consentGuardianName", e.target.value)}
+              placeholder="예: 홍길동"
+              className="bg-white border-blue-200 h-12 text-lg"
             />
           </div>
-          <div>
-            <Label>관계</Label>
+          <div className="space-y-1.5">
+            <Label className="font-bold">학생과의 관계</Label>
             <Input
               value={data.consentGuardianRelation}
               onChange={(e) => update("consentGuardianRelation", e.target.value)}
+              placeholder="예: 모"
+              className="bg-white border-blue-200 h-12 text-lg"
             />
           </div>
-          <div>
-            <Label>작성일</Label>
+          <div className="space-y-1.5">
+            <Label className="font-bold">작성일</Label>
             <Input
               type="date"
               value={data.consentDate}
               onChange={(e) => update("consentDate", e.target.value)}
+              className="bg-white border-blue-200 h-12"
             />
           </div>
         </div>
+        <p className="text-xs text-center text-blue-600 mt-6 pt-4 border-t border-blue-200">
+          「전자서명법」 제3조에 따라, 본 폼을 통한 제출은 종이 문서의 서명과 동일한 법적 효력을 가집니다.
+        </p>
       </div>
     </div>
   );

@@ -23,90 +23,53 @@ export function ResultDoc1({ teacher }: Props) {
     <div className="mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-0 print:shadow-none text-[12pt] leading-relaxed">
       <div className="text-center mb-10 border-b-2 border-black pb-4">
         <h1 className="text-2xl font-bold tracking-tight">
-          {teacher.year}학년도 {teacher.semester}학기 개별화교육지원팀 협의회 개최 안내
+          {teacher.year}학년도 {teacher.semester}학기 개별화교육지원팀 협의회 안내
         </h1>
       </div>
 
       <div className="flex justify-between items-end mb-8 text-[11pt]">
         <div>
-          <p className="mb-1"><span className="font-bold mr-2">수신:</span>{teacher.studentName} 학생 보호자님</p>
-          <p><span className="font-bold mr-2">발신:</span>{teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}</p>
+          <p className="mb-1"><span className="font-bold mr-2">받는 분:</span>{teacher.studentName} 학생 보호자님</p>
+          <p><span className="font-bold mr-2">보내는 분:</span>{teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}</p>
         </div>
         <div className="text-right text-gray-600">
           <p>{teacher.year}년 {new Date().getMonth() + 1}월 {new Date().getDate()}일</p>
         </div>
       </div>
 
-      <div className="mb-8">
-        <p className="indent-4 text-justify">
-          안녕하세요. {teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}입니다. 새 학기가 시작되었습니다. 아이와 함께하는 하루하루가 성장으로 가득 차길 바라는 마음으로 이 안내장을 드립니다.
+      <div className="mb-8 bg-blue-50/50 print:bg-transparent p-6 rounded-xl">
+        <p className="text-justify leading-loose">
+          안녕하세요. {teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}입니다.
+          <br /><br />
+          새 학기가 시작되었습니다. 우리 아이의 즐거운 학교생활과 의미 있는 성장을 위해, 
+          가정과 학교가 함께 이번 학기 교육 계획(IEP)을 의논하는 자리를 마련하고자 합니다.
+          <br /><br />
+          보호자님의 소중한 의견이 교육 계획에 잘 반영될 수 있도록 많은 관심과 참여 부탁드립니다.
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         <section>
-          <h2 className="text-[13pt] font-bold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:bg-black"></span>
-            개최 목적 및 법적 근거
+          <h2 className="text-[13pt] font-bold mb-4 flex items-center">
+            <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 print:bg-black"></span>
+            협의회 일정 안내
           </h2>
-          <p className="pl-4 text-justify">
-            이 협의회는 「장애인 등에 대한 특수교육법」 제22조제1항 및 동법 시행규칙 제4조에 따라, 매 학기 시작일로부터 30일 이내에 개별화교육계획(IEP)을 수립하기 위해 개최합니다. <strong>{teacher.studentName} 학생의 교육 주체인 보호자님의 의견이 교육계획에 실질적으로 반영</strong>되도록 하기 위함입니다.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-[13pt] font-bold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:bg-black"></span>
-            협의회 구성원
-          </h2>
-          <div className="pl-4">
-            <p className="mb-2">보호자님은 팀의 <strong>정식 구성원</strong>입니다.</p>
-            <table className="w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-100 print:bg-gray-50">
-                <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left w-[30%]">구성원</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">역할</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2 font-medium">보호자</td>
-                  <td className="border border-gray-300 px-4 py-2">가정에서 바라본 아이의 현재 수준·요구사항 공유</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2 font-medium">특수학급 담임교사</td>
-                  <td className="border border-gray-300 px-4 py-2">IEP 수립·실행 총괄</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2 font-medium">통합학급 담임교사</td>
-                  <td className="border border-gray-300 px-4 py-2">통합교육 현황 및 협력 방안 공유</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-[13pt] font-bold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:bg-black"></span>
-            협의회 개최 일정
-          </h2>
-          <div className="pl-4">
+          <div className="pl-5">
             <table className="w-full border-collapse border border-gray-300">
               <tbody>
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left bg-gray-50 w-[20%]">일시</th>
-                  <td className="border border-gray-300 px-4 py-2 font-bold text-blue-900 print:text-black">
+                  <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50 w-[25%]">일시</th>
+                  <td className="border border-gray-300 px-4 py-3 font-bold text-blue-900 print:text-black">
                     {formatDate(teacher.meetingDate)} ({teacher.meetingDay}요일) {teacher.meetingAmPm} {teacher.meetingHour}시 {teacher.meetingMinute || "00"}분
                   </td>
                 </tr>
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left bg-gray-50">장소</th>
-                  <td className="border border-gray-300 px-4 py-2">{teacher.schoolName} {teacher.meetingPlace}</td>
+                  <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50">장소</th>
+                  <td className="border border-gray-300 px-4 py-3">{teacher.schoolName} {teacher.meetingPlace}</td>
                 </tr>
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left bg-gray-50">소요시간</th>
-                  <td className="border border-gray-300 px-4 py-2">약 30~40분 예정</td>
+                  <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50">예상 소요시간</th>
+                  <td className="border border-gray-300 px-4 py-3">약 30~40분</td>
                 </tr>
               </tbody>
             </table>
@@ -114,47 +77,64 @@ export function ResultDoc1({ teacher }: Props) {
         </section>
 
         <section>
-          <h2 className="text-[13pt] font-bold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:bg-black"></span>
-            보호자님의 권리 및 참석 방법
+          <h2 className="text-[13pt] font-bold mb-4 flex items-center">
+            <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 print:bg-black"></span>
+            참석 방법 (택 1)
           </h2>
-          <div className="pl-4 space-y-2">
-            <p>「특수교육법」 제16조제4항에 따라 보호자님께는 <strong>의견을 충분히 진술할 권리</strong>가 있습니다.</p>
-            <ul className="list-none space-y-1 ml-2 bg-blue-50/50 print:bg-transparent p-3 rounded-lg border border-blue-100 print:border-none">
-              <li><strong>① 대면 참석</strong> — 지정 일시에 학교로 직접 오십니다.</li>
-              <li><strong>② 유선 참석</strong> — 지정 시간에 담임교사가 전화로 협의합니다.</li>
-              <li><strong>③ 의견서 제출로 갈음</strong> — 동봉된 의견서(문서2)를 작성하여 제출해 주세요.</li>
-            </ul>
-            <p className="text-[11pt] font-bold text-red-600 print:text-black mt-2">※ 참석이 어려우시더라도 의견서만큼은 꼭 작성해 주세요.</p>
+          <div className="pl-5">
+            <p className="mb-3 text-gray-700">편하신 방법으로 협의회에 참여하실 수 있습니다.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11pt]">
+              <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
+                <p className="font-bold text-blue-800 print:text-black mb-2">① 학교 방문 (대면)</p>
+                <p className="text-gray-600">안내된 일시에 학교로 방문해 주시면 됩니다.</p>
+              </div>
+              <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
+                <p className="font-bold text-blue-800 print:text-black mb-2">② 전화 상담 (유선)</p>
+                <p className="text-gray-600">약속된 시간에 담임교사가 전화를 드립니다.</p>
+              </div>
+              <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
+                <p className="font-bold text-blue-800 print:text-black mb-2">③ 서면 참여</p>
+                <p className="text-gray-600">스마트폰으로 의견서만 작성하여 제출해 주셔도 됩니다.</p>
+              </div>
+            </div>
+            <p className="text-[11pt] font-medium text-red-600 print:text-black mt-3 flex items-center gap-2">
+              <span className="text-lg">💡</span> 참석이 어려우시더라도 스마트폰으로 의견서는 꼭 작성해 주세요.
+            </p>
           </div>
         </section>
 
         <section>
-          <h2 className="text-[13pt] font-bold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 print:bg-black"></span>
-            제출 안내
+          <h2 className="text-[13pt] font-bold mb-4 flex items-center">
+            <span className="w-2 h-2 bg-blue-600 rounded-full mr-3 print:bg-black"></span>
+            의견서 및 동의서 제출 방법
           </h2>
-          <div className="pl-4">
-            <p className="mb-2">아래 서류를 <strong className="text-red-600 print:text-black">{formatDeadline(teacher.submissionDeadline, teacher.submissionDay)}까지</strong> 제출해 주세요.</p>
-            <div className="flex gap-4 items-center p-4 border-2 border-gray-800 rounded-xl">
-              <div className="flex-1 space-y-2">
-                <p><strong>[제출 방법]</strong> QR코드를 스캔하여 스마트폰으로 바로 제출</p>
-                <p className="text-[11pt] text-gray-600">온라인 제출 시 동의 버튼 클릭은 전자서명과 동일한 효력을 가집니다. (「전자서명법」 제3조)</p>
+          <div className="pl-5">
+            <p className="mb-3">
+              아래의 QR코드를 스마트폰 카메라로 스캔하여 <strong className="text-red-600 print:text-black underline underline-offset-4">{formatDeadline(teacher.submissionDeadline, teacher.submissionDay)}까지</strong> 작성해 주세요.
+            </p>
+            <div className="flex gap-6 items-center p-6 border-2 border-gray-300 rounded-xl bg-gray-50 print:bg-transparent">
+              <div className="w-28 h-28 bg-white rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 shrink-0">
+                <span className="text-sm text-gray-500 font-medium">QR코드 영역</span>
               </div>
-              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center border border-gray-400">
-                <span className="text-sm text-gray-500">QR코드 영역</span>
+              <div className="space-y-2">
+                <p className="font-bold text-[13pt]">스마트폰 간편 제출 안내</p>
+                <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                  <li>스마트폰 기본 카메라 앱을 켜고 왼쪽 QR코드를 비춰주세요.</li>
+                  <li>화면에 나타나는 링크를 누르시면 작성 화면으로 이동합니다.</li>
+                  <li className="text-[10pt] text-gray-500 mt-2 list-none -ml-5">※ 제출하신 내용은 안전하게 암호화되어 담임교사에게만 전달됩니다.</li>
+                </ul>
               </div>
             </div>
           </div>
         </section>
       </div>
 
-      <div className="mt-12 pt-6 border-t border-gray-300 text-[11pt] text-gray-600 flex justify-between">
+      <div className="mt-16 pt-6 border-t border-gray-300 text-[11pt] text-gray-600 flex justify-between items-center">
         <div>
-          <p><strong>[학기 말 결과 통보]</strong> 학기 말에 IEP 학업성취도 평가 결과를 서면으로 안내드립니다.</p>
+          <p>이 문서는 「장애인 등에 대한 특수교육법」 제22조에 근거하여 발송됩니다.</p>
         </div>
-        <div className="text-right">
-          <p><strong>문의:</strong> 특수학급 담임 {teacher.teacherName} (☎ {teacher.teacherPhone})</p>
+        <div className="text-right bg-gray-50 print:bg-transparent px-4 py-2 rounded-lg">
+          <p><strong>문의:</strong> 담임교사 {teacher.teacherName} (☎ {teacher.teacherPhone})</p>
         </div>
       </div>
     </div>
