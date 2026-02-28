@@ -1,4 +1,4 @@
-import type { TeacherInput, ParentOpinion, ConsentForm } from './types';
+import { FullFormData, TeacherInput, ParentOpinion, ConsentForm } from "./types";
 
 export const defaultTeacherInput: TeacherInput = {
   schoolName: "",
@@ -13,11 +13,9 @@ export const defaultTeacherInput: TeacherInput = {
   teacherName: "",
   teacherPhone: "",
   consultTime: "",
-
   meetingStartDate: "",
   meetingEndDate: "",
   meetingPlace: "",
-
   submissionDeadline: "",
   submissionDay: "",
 };
@@ -32,7 +30,7 @@ export const defaultParentOpinion: ParentOpinion = {
 
   disabilityRegistration: "",
   primaryDisability: "",
-  secondaryDisability: "",
+  secondaryDisability: "없음",
   secondaryDisabilityType: "",
   disabilitySeverity: "",
   firstRegistrationDate: "",
@@ -42,18 +40,18 @@ export const defaultParentOpinion: ParentOpinion = {
   firstSelectionDate: "",
   currentPlacement: "",
 
-  primaryCaregiver: "",
+  primaryCaregiver: "부모 공동 양육",
   primaryCaregiverOther: "",
-  siblings: "",
+  siblings: "없음(외동)",
   siblingTotal: "",
   siblingOrder: "",
-  siblingDisability: "",
-  multicultural: "",
+  siblingDisability: "없음",
+  multicultural: "해당 없음",
   multiculturalLanguage: "",
   afterSchoolCare: "",
   afterSchoolCareOther: "",
 
-  attendanceMethod: "",
+  attendanceMethod: "대면 참석",
   availableTime: "",
   hopeDate1: "",
   hopeTime1: "",
@@ -61,21 +59,20 @@ export const defaultParentOpinion: ParentOpinion = {
   hopeTime2: "",
   hopeDate3: "",
   hopeTime3: "",
-
   preferredContact: [],
   availableTimeSlot: [],
   emergencyContact2Name: "",
   emergencyContact2Relation: "",
   emergencyContact2Phone: "",
 
-  hasMedication: "",
+  hasMedication: "없음",
   medications: [],
-  schoolMedicationSupport: "",
+  schoolMedicationSupport: "필요 없음",
   allergies: [],
   allergyFoodDetail: "",
   allergyDrugDetail: "",
   allergyEnvDetail: "",
-  hasSeizure: "",
+  hasSeizure: "없음",
   seizureRecent: "",
   seizureInstruction: "",
   dietaryRestriction: [],
@@ -110,12 +107,16 @@ export const defaultParentOpinion: ParentOpinion = {
   afterSchoolActivity: "",
   therapyServices: [],
 
-  afterSchoolSpecialEd: "",
-  transportSupport: "",
-  assistantSupport: "",
+  afterSchoolSpecialEd: "이용하지 않음",
+  afterSchoolSpecialEdInSchool: "",
+  afterSchoolSpecialEdOutSchool: "",
+  transportSupport: "해당 없음",
+  assistantSupport: "필요 없음",
   therapySupportInstitution: "",
+  therapySupportDays: "",
   therapySupportArea: "",
   rehabServiceInstitution: "",
+  rehabServiceDays: "",
   rehabServiceArea: "",
 
   survivalSwimming: "",
@@ -179,10 +180,7 @@ export const defaultConsentForm: ConsentForm = {
   consent9_119: null,
   consent9_priorTreatment: null,
   consent9_healthRoom: null,
-  emergencyContacts: [
-    { name: "", relation: "", phone: "" },
-    { name: "", relation: "", phone: "" }
-  ],
+  emergencyContacts: [],
 
   consent10_counseling: null,
   consent10_wee: null,
@@ -194,4 +192,10 @@ export const defaultConsentForm: ConsentForm = {
 
   consent12_statistics: null,
   consent12_research: null,
+};
+
+export const initialFullData: FullFormData = {
+  teacher: defaultTeacherInput,
+  opinion: defaultParentOpinion,
+  consent: defaultConsentForm,
 };

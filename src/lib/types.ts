@@ -123,11 +123,18 @@ export interface ParentOpinion {
 
   // 9. 학교 서비스 신청
   afterSchoolSpecialEd: string; // 방과후학교 특수교육 신청 여부
+  afterSchoolSpecialEdInSchool: string; // 교내 이용 내용
+  afterSchoolSpecialEdOutSchool: string; // 교외 이용 내용
+  
   transportSupport: string; // 통학지원 신청 여부/방법
   assistantSupport: string; // 특수교육보조인력 지원 필요 여부
+  
   therapySupportInstitution: string; // 교육청 치료지원(기관명)
+  therapySupportDays: string; // 치료지원 이용 요일
   therapySupportArea: string; // 치료영역
+  
   rehabServiceInstitution: string; // 복지부 발달재활(기관명)
+  rehabServiceDays: string; // 발달재활 이용 요일
   rehabServiceArea: string; // 치료영역
 
   // 10. 행사/체험
