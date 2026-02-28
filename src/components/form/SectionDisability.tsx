@@ -112,67 +112,49 @@ export function SectionDisability({ data, update }: Props) {
 
       <div className="space-y-6 pt-6">
         <h2 className="text-lg font-bold border-b pb-2">B. 특수교육대상자 선정 현황 (교육청)</h2>
-        <div>
-          <Label className="font-medium text-gray-700 block mb-2">특수교육대상자 선정 여부</Label>
-          <RadioOption
-            options={["선정", "미선정", "진행 중"]}
-            value={data.specialEdSelection}
-            onChange={(v) => {
-              update("specialEdSelection", v);
-              if (v !== "선정") {
-                update("specialEdArea", "");
-                update("firstSelectionDate", "");
-                update("currentPlacement", "");
-              }
-            }}
-          />
-        </div>
-
-        {data.specialEdSelection === "선정" && (
-          <div className="space-y-6 pt-4 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
-            <div className="space-y-3">
-              <Label className="font-medium text-gray-700 block">특수교육 대상자 선정 장애 영역</Label>
-              <RadioOption
-                options={disabilityTypes}
-                value={disabilityTypes.includes(data.specialEdArea) ? data.specialEdArea : (data.specialEdArea ? "직접 입력" : "")}
-                onChange={(v) => {
-                  if (v === "직접 입력") {
-                    update("specialEdArea", " ");
-                  } else {
-                    update("specialEdArea", v);
-                  }
-                }}
-              />
-              {(!disabilityTypes.slice(0, -1).includes(data.specialEdArea) && data.specialEdArea !== "") && (
-                <Input
-                  className="mt-2 bg-white"
-                  placeholder="선정 장애 영역 직접 입력"
-                  value={data.specialEdArea.trim()}
-                  onChange={(e) => update("specialEdArea", e.target.value)}
-                />
-              )}
-            </div>
-
-            <div className="space-y-3">
-              <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
+        <div className="space-y-6 pt-2 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
+          <div className="space-y-3 pt-2">
+            <Label className="font-medium text-gray-700 block">특수교육 대상자 선정 장애 영역</Label>
+            <RadioOption
+              options={disabilityTypes}
+              value={disabilityTypes.includes(data.specialEdArea) ? data.specialEdArea : (data.specialEdArea ? "직접 입력" : "")}
+              onChange={(v) => {
+                if (v === "직접 입력") {
+                  update("specialEdArea", " ");
+                } else {
+                  update("specialEdArea", v);
+                }
+              }}
+            />
+            {(!disabilityTypes.slice(0, -1).includes(data.specialEdArea) && data.specialEdArea !== "") && (
               <Input
-                type="month"
-                className="bg-white max-w-[200px]"
-                value={data.firstSelectionDate}
-                onChange={(e) => update("firstSelectionDate", e.target.value)}
+                className="mt-2 bg-white"
+                placeholder="선정 장애 영역 직접 입력"
+                value={data.specialEdArea.trim()}
+                onChange={(e) => update("specialEdArea", e.target.value)}
               />
-            </div>
-
-            <div className="space-y-3">
-              <Label className="font-medium text-gray-700 block">현재 교육 배치 형태</Label>
-              <RadioOption
-                options={["일반학급 (전일제)", "특수학급 (시간제)", "특수학교", "기타"]}
-                value={data.currentPlacement}
-                onChange={(v) => update("currentPlacement", v)}
-              />
-            </div>
+            )}
           </div>
-        )}
+
+          <div className="space-y-3">
+            <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
+            <Input
+              type="month"
+              className="bg-white max-w-[200px]"
+              value={data.firstSelectionDate}
+              onChange={(e) => update("firstSelectionDate", e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label className="font-medium text-gray-700 block">현재 교육 배치 형태</Label>
+            <RadioOption
+              options={["일반학급 (전일제)", "특수학급 (시간제)", "특수학교", "기타"]}
+              value={data.currentPlacement}
+              onChange={(v) => update("currentPlacement", v)}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioOption } from "./RadioOption";
-import { CheckboxGroup } from "./CheckboxGroup";
 import type { ParentOpinion, TeacherInput } from "@/lib/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CalendarDays, Info } from "lucide-react";
@@ -19,6 +18,25 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
     if (!d) return "";
     const dt = new Date(d);
     return `${dt.getFullYear()}년 ${dt.getMonth() + 1}월 ${dt.getDate()}일`;
+  };
+
+  // 휴대폰 번호 자동 하이픈 포맷팅 함수
+  const handlePhoneChange = (key: keyof ParentOpinion, value: string) => {
+    const onlyNums = value.replace(/[^0-9]/g, "");
+    let formatted = onlyNums;
+    
+    if (onlyNums.length <= 3) {
+      formatted = onlyNums;
+    } else if (onlyNums.length <= 7) {
+      formatted = `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`;
+    } else if (onlyNums.length <= 11) {
+      formatted = `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7)}`;
+    } else {
+      // 11자리 초과시 잘라내기
+      formatted = `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`;
+    }
+    
+    update(key, formatted);
   };
 
   const hasHopeDates = data.attendanceMethod === "대면 참석" || data.attendanceMethod === "유선 참석";
@@ -74,9 +92,10 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
             <div className="space-y-2">
               <Label className="text-base font-bold">학생과의 관계</Label>
               <RadioOption
-                options={["부", "모", "조부", "조모", "기타"]}
+                options={["부", "모", "조부모", "기타"]}
                 value={data.guardianRelation}
                 onChange={(v) => update("guardianRelation", v)}
+                columns={2}
               />
               {data.guardianRelation === "기타" && (
                 <Input
@@ -94,8 +113,9 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                 type="tel"
                 placeholder="010-0000-0000"
                 value={data.guardianPhone}
-                onChange={(e) => update("guardianPhone", e.target.value)}
+                onChange={(e) => handlePhoneChange("guardianPhone", e.target.value)}
                 className="bg-white h-12"
+                maxLength={13}
               />
             </div>
           </div>
@@ -135,6 +155,7 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                 update("hopeDate3", ""); update("hopeTime3", "");
               }
             }}
+            columns={3}
           />
         </div>
 
@@ -182,54 +203,32 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
         )}
       </div>
 
+      {/* 긴급 연락처 */}
       <div className="space-y-6 pt-6 border-t border-gray-200">
-        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">연락처 및 소통 방식</h2>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-base font-bold">담임교사와 주로 소통하길 원하시는 방식 (다중 선택 가능)</Label>
-            <CheckboxGroup
-              options={["전화", "문자메시지", "알림장(수첩)", "학교 앱(하이클래스 등)"]}
-              selected={Array.isArray(data.preferredContact) ? data.preferredContact : data.preferredContact ? [data.preferredContact] : []}
-              onChange={(v) => update("preferredContact", v)}
-              columns={2}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-base font-bold">평소 연락받기 편하신 시간대</Label>
+        <div className="space-y-2 p-4 bg-red-50/50 border border-red-100 rounded-xl">
+          <Label className="text-base font-bold text-red-800">긴급 연락처 (보호자와 연락이 안 될 경우)</Label>
+          <p className="text-sm text-red-600/80 mb-3">응급 상황 시 연락할 다른 분의 정보를 남겨주세요.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input
-              placeholder="예: 오후 4시 ~ 6시 사이"
-              value={data.availableTimeSlot}
-              onChange={(e) => update("availableTimeSlot", e.target.value)}
-              className="bg-gray-50 h-12"
+              placeholder="성명 (예: 김할머니)"
+              value={data.emergencyContact2Name}
+              onChange={(e) => update("emergencyContact2Name", e.target.value)}
+              className="bg-white h-10"
             />
-          </div>
-
-          <div className="space-y-2 p-4 bg-red-50/50 border border-red-100 rounded-xl">
-            <Label className="text-base font-bold text-red-800">긴급 연락처 (보호자와 연락이 안 될 경우)</Label>
-            <p className="text-sm text-red-600/80 mb-3">응급 상황 시 연락할 다른 분의 정보를 남겨주세요.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <Input
-                placeholder="성명 (예: 김할머니)"
-                value={data.emergencyContact2Name}
-                onChange={(e) => update("emergencyContact2Name", e.target.value)}
-                className="bg-white h-10"
-              />
-              <Input
-                placeholder="관계 (예: 조모)"
-                value={data.emergencyContact2Relation}
-                onChange={(e) => update("emergencyContact2Relation", e.target.value)}
-                className="bg-white h-10"
-              />
-              <Input
-                type="tel"
-                placeholder="연락처 (010-0000-0000)"
-                value={data.emergencyContact2Phone}
-                onChange={(e) => update("emergencyContact2Phone", e.target.value)}
-                className="bg-white h-10"
-              />
-            </div>
+            <Input
+              placeholder="관계 (예: 조모)"
+              value={data.emergencyContact2Relation}
+              onChange={(e) => update("emergencyContact2Relation", e.target.value)}
+              className="bg-white h-10"
+            />
+            <Input
+              type="tel"
+              placeholder="연락처 (010-0000-0000)"
+              value={data.emergencyContact2Phone}
+              onChange={(e) => handlePhoneChange("emergencyContact2Phone", e.target.value)}
+              className="bg-white h-10"
+              maxLength={13}
+            />
           </div>
         </div>
       </div>

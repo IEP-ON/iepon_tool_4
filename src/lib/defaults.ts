@@ -37,7 +37,7 @@ export const defaultParentOpinion: ParentOpinion = {
   disabilitySeverity: "",
   firstRegistrationDate: "",
 
-  specialEdSelection: "",
+  specialEdSelection: "선정",
   specialEdArea: "",
   firstSelectionDate: "",
   currentPlacement: "",
