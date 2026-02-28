@@ -114,6 +114,16 @@ export function SectionDisability({ data, update }: Props) {
                 onChange={(v) => update("disabilitySeverity", v)}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label className="font-medium text-gray-700 block">복지카드 등록일 <span className="text-xs text-gray-400 font-normal ml-1">(복지카드 압면 확인)</span></Label>
+              <Input
+                type="date"
+                className="bg-white max-w-[220px]"
+                value={data.firstRegistrationDate}
+                onChange={(e) => update("firstRegistrationDate", e.target.value)}
+              />
+            </div>
           </div>
         )}
       </div>

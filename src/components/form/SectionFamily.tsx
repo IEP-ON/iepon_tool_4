@@ -71,7 +71,7 @@ export function SectionFamily({ data, update }: Props) {
           </AlertDescription>
         </Alert>
         <RadioOption
-          options={["해당 없음", "다문화 가정", "한부모 가정", "조손 가정", "기타"]}
+          options={["해당 없음", "다문화 가정", "한부모 가정", "조손 가정", "기초생활수급/차상위", "기타"]}
           value={data.multicultural} // 기존 필드 재사용하되 의미 확장
           onChange={(v) => update("multicultural", v)}
           columns={2}

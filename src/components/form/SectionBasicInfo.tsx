@@ -203,35 +203,6 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
         )}
       </div>
 
-      {/* 긴급 연락처 */}
-      <div className="space-y-6 pt-6 border-t border-gray-200">
-        <div className="space-y-2 p-4 bg-red-50/50 border border-red-100 rounded-xl">
-          <Label className="text-base font-bold text-red-800">긴급 연락처 (보호자와 연락이 안 될 경우)</Label>
-          <p className="text-sm text-red-600/80 mb-3">응급 상황 시 연락할 다른 분의 정보를 남겨주세요.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Input
-              placeholder="성명 (예: 김할머니)"
-              value={data.emergencyContact2Name}
-              onChange={(e) => update("emergencyContact2Name", e.target.value)}
-              className="bg-white h-10"
-            />
-            <Input
-              placeholder="관계 (예: 조모)"
-              value={data.emergencyContact2Relation}
-              onChange={(e) => update("emergencyContact2Relation", e.target.value)}
-              className="bg-white h-10"
-            />
-            <Input
-              type="tel"
-              placeholder="연락처 (010-0000-0000)"
-              value={data.emergencyContact2Phone}
-              onChange={(e) => handlePhoneChange("emergencyContact2Phone", e.target.value)}
-              className="bg-white h-10"
-              maxLength={13}
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

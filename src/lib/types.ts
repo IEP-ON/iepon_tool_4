@@ -128,6 +128,7 @@ export interface ParentOpinion {
   
   transportSupport: string; // 통학지원 신청 여부/방법
   assistantSupport: string; // 특수교육보조인력 지원 필요 여부
+  assistantSupportDetail: string; // 보조인력 지원 상세 의견
   
   // 변경됨: 다중 추가를 위한 배열 형태로 변경
   therapySupportInstitution: string; // (기존 단일) 유지 (하위 호환성)

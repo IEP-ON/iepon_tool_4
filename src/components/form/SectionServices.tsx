@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioOption } from "./RadioOption";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, AlertTriangle } from "lucide-react";
@@ -314,9 +315,24 @@ export function SectionServices({ data, update }: Props) {
           <RadioOption
             options={["필요 없음", "학교 내 생활 전반 지원", "특정 시간/활동 지원"]}
             value={data.assistantSupport}
-            onChange={(v) => update("assistantSupport", v)}
+            onChange={(v) => {
+              update("assistantSupport", v);
+              if (v === "필요 없음") update("assistantSupportDetail", "");
+            }}
             columns={1}
           />
+          {data.assistantSupport && data.assistantSupport !== "필요 없음" && (
+            <div className="mt-3 space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">지원 내용 상세 의견 (선택)</Label>
+              <Textarea
+                placeholder="예: 급식 시간 식판 들기 보조, 체육 시간 이동 동선 지원 등 구체적으로 적어주세요."
+                value={data.assistantSupportDetail || ""}
+                onChange={(e) => update("assistantSupportDetail", e.target.value)}
+                rows={3}
+                className="bg-white"
+              />
+            </div>
+          )}
         </div>
       </div>
 

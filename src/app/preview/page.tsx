@@ -6,11 +6,13 @@ import { decompress } from "@/lib/codec";
 import type { TeacherInput } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
+import { Copy, Check } from "lucide-react";
 
 function PreviewContent() {
   const searchParams = useSearchParams();
   const ctx = searchParams.get("ctx");
   const [mounted, setMounted] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -173,13 +175,28 @@ function PreviewContent() {
                       includeMargin={false}
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 flex-1">
                     <p className="font-bold text-[11.5pt]">스마트폰 간편 제출 안내</p>
                     <ul className="list-disc pl-4 text-gray-700 space-y-1 text-[10.5pt]">
                       <li>스마트폰 기본 카메라 앱을 켜고 왼쪽 QR코드를 비춰주세요.</li>
                       <li>화면에 나타나는 링크를 누르시면 작성 화면으로 이동합니다.</li>
                       <li className="text-[9.5pt] text-gray-500 mt-1.5 list-none -ml-4">※ 제출하신 내용은 안전하게 암호화되어 담당 교사에게만 전달됩니다.</li>
                     </ul>
+                    <div className="mt-2 pt-2 border-t border-gray-200 print:hidden">
+                      <p className="text-[9.5pt] text-gray-600 mb-1">📱 <b>PC로 접근하시는 경우:</b> 아래 버튼으로 링크를 복사하여 주소창에 붙여넣으세요.</p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(formUrl).then(() => {
+                            setUrlCopied(true);
+                            setTimeout(() => setUrlCopied(false), 2000);
+                          });
+                        }}
+                        className="inline-flex items-center gap-1.5 text-[9pt] px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors"
+                      >
+                        {urlCopied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        {urlCopied ? "복사됨!" : "링크 복사"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
