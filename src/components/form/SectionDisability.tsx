@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioOption } from "./RadioOption";
 import type { ParentOpinion } from "@/lib/types";
+import { useEffect } from "react";
 
 interface Props {
   data: ParentOpinion;
@@ -24,6 +25,13 @@ export function SectionDisability({ data, update }: Props) {
     "발달지체",
     "직접 입력",
   ];
+
+  // 컴포넌트 마운트 시 기본적으로 미소지 상태와 유사하게 빈 값 유지 (이미 선택된 값이 없을 경우)
+  useEffect(() => {
+    if (!data.disabilityRegistration) {
+      update("disabilityRegistration", "");
+    }
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -145,15 +153,7 @@ export function SectionDisability({ data, update }: Props) {
               onChange={(e) => update("firstSelectionDate", e.target.value)}
             />
           </div>
-
-          <div className="space-y-3">
-            <Label className="font-medium text-gray-700 block">현재 교육 배치 형태</Label>
-            <RadioOption
-              options={["일반학급 (전일제)", "특수학급 (시간제)", "특수학교", "기타"]}
-              value={data.currentPlacement}
-              onChange={(v) => update("currentPlacement", v)}
-            />
-          </div>
+          {/* '현재 교육 배치 형태' 문항 삭제됨 */}
         </div>
       </div>
     </div>
