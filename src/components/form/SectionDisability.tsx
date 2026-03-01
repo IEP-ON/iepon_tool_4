@@ -165,7 +165,7 @@ export function SectionDisability({ data, update }: Props) {
           </div>
 
           <div className="space-y-3">
-            <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
+            <Label className="font-medium text-gray-700 block">최초 선정 연도/시기 <span className="text-xs text-gray-400 font-normal ml-1">(특수교육대상자 선정결과 통지 서류 참고)</span></Label>
             <Input
               type="date"
               className={`max-w-[200px] transition-colors ${data.firstSelectionDate ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
