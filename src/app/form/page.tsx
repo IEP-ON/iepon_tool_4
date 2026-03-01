@@ -217,7 +217,7 @@ function FormContent() {
               <button
                 key={i}
                 onClick={() => setStep(i)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-colors ${
+                className={`shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-colors ${
                   step === i 
                     ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-600/20" 
                     : step > i 

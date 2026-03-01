@@ -45,14 +45,8 @@ export interface ParentOpinion {
   // 1. 가정 환경
   primaryCaregiver: string;
   primaryCaregiverOther: string;
-  siblings: string; // 있음/없음
-  siblingTotal: string;
-  siblingOrder: string;
-  siblingDisability: string; // 형제자매 중 장애 유무
   multicultural: string; // 예/아니오
   multiculturalLanguage: string;
-  afterSchoolCare: string; // 방과 후 주 양육/돌봄 형태
-  afterSchoolCareOther: string;
 
   // 2. 협의회 참석 및 연락
   attendanceMethod: string;

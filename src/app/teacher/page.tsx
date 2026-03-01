@@ -140,7 +140,7 @@ export default function TeacherPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="teacherPhone" className="font-semibold text-gray-700">연락처 <span className="text-red-500">*</span></Label>
-                  <Input id="teacherPhone" placeholder="예: 053-000-0000" value={data.teacherPhone} onChange={(e) => update("teacherPhone", e.target.value)} className="bg-white" />
+                  <Input id="teacherPhone" placeholder="예: 010-0000-0000" value={data.teacherPhone} onChange={(e) => update("teacherPhone", e.target.value)} className="bg-white" />
                 </div>
               </div>
               <div className="space-y-1.5">

@@ -40,14 +40,8 @@ export const defaultParentOpinion: ParentOpinion = {
 
   primaryCaregiver: "부모 공동 양육",
   primaryCaregiverOther: "",
-  siblings: "없음(외동)",
-  siblingTotal: "",
-  siblingOrder: "",
-  siblingDisability: "없음",
   multicultural: "해당 없음",
   multiculturalLanguage: "",
-  afterSchoolCare: "",
-  afterSchoolCareOther: "",
 
   attendanceMethod: "대면 참석",
   hopeDate1: "",

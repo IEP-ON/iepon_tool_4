@@ -167,7 +167,7 @@ export function SectionDisability({ data, update }: Props) {
           <div className="space-y-3">
             <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
             <Input
-              type="month"
+              type="date"
               className={`max-w-[200px] transition-colors ${data.firstSelectionDate ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
               value={data.firstSelectionDate}
               onChange={(e) => update("firstSelectionDate", e.target.value)}
