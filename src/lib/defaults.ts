@@ -35,10 +35,8 @@ export const defaultParentOpinion: ParentOpinion = {
   disabilitySeverity: "",
   firstRegistrationDate: "",
 
-  specialEdSelection: "선정",
   specialEdArea: "",
   firstSelectionDate: "",
-  currentPlacement: "",
 
   primaryCaregiver: "부모 공동 양육",
   primaryCaregiverOther: "",
@@ -52,18 +50,12 @@ export const defaultParentOpinion: ParentOpinion = {
   afterSchoolCareOther: "",
 
   attendanceMethod: "대면 참석",
-  availableTime: "",
   hopeDate1: "",
   hopeTime1: "",
   hopeDate2: "",
   hopeTime2: "",
   hopeDate3: "",
   hopeTime3: "",
-  preferredContact: [],
-  availableTimeSlot: [],
-  emergencyContact2Name: "",
-  emergencyContact2Relation: "",
-  emergencyContact2Phone: "",
 
   hasMedication: "없음",
   medications: [],
@@ -105,7 +97,6 @@ export const defaultParentOpinion: ParentOpinion = {
   homeConnection: "",
 
   afterSchoolActivity: "",
-  therapyServices: [],
 
   afterSchoolSpecialEd: "이용하지 않음",
   afterSchoolSpecialEdInSchool: "",
@@ -155,13 +146,6 @@ export const defaultConsentForm: ConsentForm = {
   consent4_records: null,
   consent4_handover: null,
 
-  notice5_teaching: false,
-  notice5_meal: false,
-  notice5_restroom: false,
-  notice5_mobility: false,
-  notice5_commute: false,
-  notice5_note: "",
-
   consent6_photoRecord: null,
   consent6_internalUse: null,
   consent6_parentShare: null,
@@ -185,18 +169,9 @@ export const defaultConsentForm: ConsentForm = {
   consent9_119: null,
   consent9_priorTreatment: null,
   consent9_healthRoom: null,
-  emergencyContacts: [],
+  emergencyContacts: [{ name: "", relation: "", phone: "" }],
 
-  consent10_counseling: null,
-  consent10_wee: null,
-  consent10_assessment: null,
-  consent10_iepUse: null,
-
-  consent11_anonymousCase: null,
   consent11_participation: null,
-
-  consent12_statistics: null,
-  consent12_research: null,
 };
 
 export const initialFullData: FullFormData = {

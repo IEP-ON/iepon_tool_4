@@ -96,15 +96,49 @@ export function SectionServices({ data, update }: Props) {
 
   return (
     <div className="space-y-8">
-      {/* 8. 외부 지원/치료 - '현재 받고 있는 치료/재활 서비스' 입력란은 삭제됨 */}
+      {/* ⑧ 행사/체험 참여 의향 */}
       <div className="space-y-6">
-        <div>
-          <Label className="text-base font-bold text-gray-900 mb-2 block">방과 후 주요 활동 (학원 등)</Label>
-          <Input
-            placeholder="예: 피아노 학원(주3회), 태권도(매일)"
-            value={data.afterSchoolActivity}
-            onChange={(e) => update("afterSchoolActivity", e.target.value)}
-            className="bg-gray-50 h-12"
+        <h2 className="text-lg font-bold border-b pb-2">⑧ 행사·체험 참여 의향</h2>
+        <p className="text-sm text-gray-500 -mt-3">구체적 일정은 매번 별도로 안내드립니다. 아래는 원칙적인 참여 의향을 여쭤보는 항목입니다.</p>
+
+        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+          <Label className="font-bold text-gray-800 text-base">생존수영 (안전체험 교육)</Label>
+          <RadioOption
+            options={["참여 가능", "참여 어려움", "미정"]}
+            value={data.survivalSwimming}
+            onChange={(v) => {
+              update("survivalSwimming", v);
+              if (v === "참여 가능") update("survivalSwimmingReason", "");
+            }}
+            columns={3}
+          />
+          {(data.survivalSwimming === "참여 어려움" || data.survivalSwimming === "미정") && (
+            <Input
+              className="mt-2 bg-white"
+              placeholder="이유 또는 참고사항 (예: 감각 민감, 건강 이유 등)"
+              value={data.survivalSwimmingReason}
+              onChange={(e) => update("survivalSwimmingReason", e.target.value)}
+            />
+          )}
+        </div>
+
+        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+          <Label className="font-bold text-gray-800 text-base">학부모 참관수업</Label>
+          <RadioOption
+            options={["참여 가능", "참여 어려움", "미정"]}
+            value={data.openClassObservation}
+            onChange={(v) => update("openClassObservation", v)}
+            columns={3}
+          />
+        </div>
+
+        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+          <Label className="font-bold text-gray-800 text-base">현장체험학습</Label>
+          <RadioOption
+            options={["참여 가능", "참여 어려움", "미정"]}
+            value={data.fieldTrip}
+            onChange={(v) => update("fieldTrip", v)}
+            columns={3}
           />
         </div>
       </div>
@@ -339,13 +373,14 @@ export function SectionServices({ data, update }: Props) {
       <div className="space-y-6 pt-6 border-t border-gray-200">
         <h2 className="text-lg font-bold border-b pb-2">⑩ 기타 참고사항</h2>
 
-        <div>
-          <Label className="text-base font-bold text-gray-900 mb-2 block">최근 가정 내 주요 변화</Label>
-          <Input
-            placeholder="예: 이사, 동생 출생 등"
-            value={data.familyChanges}
-            onChange={(e) => update("familyChanges", e.target.value)}
-            className="bg-gray-50 h-12"
+        <div className="space-y-2">
+          <Label className="text-base font-bold text-gray-900">담임 선생님께 전하고 싶은 말</Label>
+          <Textarea
+            placeholder="아이에 대해 선생님이 꼭 알아야 할 것, 학교에 바라는 점, 기타 전하고 싶은 내용을 자유롭게 적어주세요."
+            value={data.messageToTeacher}
+            onChange={(e) => update("messageToTeacher", e.target.value)}
+            rows={4}
+            className="bg-gray-50"
           />
         </div>
       </div>

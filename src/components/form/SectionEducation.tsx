@@ -1,19 +1,21 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioOption } from "./RadioOption";
 import type { ParentOpinion } from "@/lib/types";
 
 interface Props {
   data: ParentOpinion;
-  update: (key: keyof ParentOpinion, value: ParentOpinion[keyof ParentOpinion]) => void;
+  update: (key: keyof ParentOpinion, value: any) => void;
 }
 
 export function SectionEducation({ data, update }: Props) {
   return (
     <div className="space-y-6">
-      {/* ⑤ 강점과 특성 */}
-      <h2 className="text-lg font-bold border-b pb-2">⑤ 우리 아이의 강점과 특성</h2>
+      {/* ④ 강점과 특성 */}
+      <h2 className="text-lg font-bold border-b pb-2">④ 우리 아이의 강점과 특성</h2>
 
       <div>
         <Label>잘하는 것, 좋아하는 것</Label>
@@ -33,8 +35,8 @@ export function SectionEducation({ data, update }: Props) {
         />
       </div>
 
-      {/* ⑥ 현재 수준 */}
-      <h2 className="text-lg font-bold border-b pb-2 pt-4">⑥ 가정에서 바라본 현재 수준</h2>
+      {/* ⑤ 현재 수준 */}
+      <h2 className="text-lg font-bold border-b pb-2 pt-4">⑤ 가정에서 바라본 현재 수준</h2>
       <p className="text-sm text-gray-500">해당 영역만 편하게 적어주세요.</p>
 
       {[
@@ -58,8 +60,8 @@ export function SectionEducation({ data, update }: Props) {
         </div>
       ))}
 
-      {/* ⑦ 교육 목표 */}
-      <h2 className="text-lg font-bold border-b pb-2 pt-4">⑦ 이번 학기 교육 목표 요구사항</h2>
+      {/* ⑥ 교육 목표 */}
+      <h2 className="text-lg font-bold border-b pb-2 pt-4">⑥ 이번 학기 교육 목표 요구사항</h2>
 
       <div>
         <Label>가장 우선적으로 지도받고 싶은 목표나 영역</Label>
@@ -94,6 +96,51 @@ export function SectionEducation({ data, update }: Props) {
         <Textarea
           value={data.homeConnection}
           onChange={(e) => update("homeConnection", e.target.value)}
+          rows={2}
+        />
+      </div>
+
+      {/* ⑦ 진로/미래 비전 */}
+      <h2 className="text-lg font-bold border-b pb-2 pt-4">⑦ 진로 및 장기적 비전 (선택)</h2>
+      <p className="text-sm text-gray-500">지금 당장의 목표가 아닌, 아이의 미래에 대한 보호자의 기대와 방향을 공유해 주세요.</p>
+
+      <div>
+        <Label>졸업 후 진로 방향 (희망)</Label>
+        <RadioOption
+          options={["일반 직업", "복지관 연계 취업", "주간보호 이용", "자립생활", "기타"]}
+          value={data.careerDirection}
+          onChange={(v) => {
+            update("careerDirection", v);
+            if (v !== "기타") update("careerDirectionOther", "");
+          }}
+          columns={2}
+        />
+        {data.careerDirection === "기타" && (
+          <Input
+            className="mt-2"
+            placeholder="기타 진로 방향을 적어주세요"
+            value={data.careerDirectionOther}
+            onChange={(e) => update("careerDirectionOther", e.target.value)}
+          />
+        )}
+      </div>
+
+      <div>
+        <Label>5년 후 아이의 모습에 대한 기대</Label>
+        <Textarea
+          placeholder="예: 혼자 대중교통을 이용할 수 있으면 좋겠어요. 좋아하는 일을 하며 살았으면 해요."
+          value={data.fiveYearVision}
+          onChange={(e) => update("fiveYearVision", e.target.value)}
+          rows={3}
+        />
+      </div>
+
+      <div>
+        <Label>교육에서 가장 중요하게 생각하는 가치</Label>
+        <Textarea
+          placeholder="예: 자립심, 사회성, 행복감, 안전, 의사소통 능력 등"
+          value={data.educationValue}
+          onChange={(e) => update("educationValue", e.target.value)}
           rows={2}
         />
       </div>

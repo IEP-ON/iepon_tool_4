@@ -138,10 +138,14 @@
 }
 
 @media print {
-  /* 인쇄 시 기본 설정 */
+  /* 인쇄 시 기본 설정 — margin: 0으로 브라우저 머리글/바닥글 제거 */
   @page {
-    margin: 10mm; /* A4 용지 여백을 10mm로 줄여 공간 확보 */
+    margin: 0;
     size: A4 portrait;
+  }
+  /* @page margin: 0 이면 컨텐츠가 용지 가장자리까지 붙으므로 body에 여백 추가 */
+  body {
+    margin: 10mm;
   }
 
   /* 인쇄 모드 전용 클래스 */

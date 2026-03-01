@@ -76,12 +76,9 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 <td className="border border-black px-2 py-1.5">{getValue(opinion.guardianPhone)}</td>
               </tr>
               <tr>
-                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">긴급 연락처</th>
-                <td className="border border-black px-2 py-1.5" colSpan={3}>
-                  {!isEmptyForm && opinion.emergencyContact2Name ? 
-                    `${opinion.emergencyContact2Name} (관계: ${opinion.emergencyContact2Relation}, 연락처: ${opinion.emergencyContact2Phone})` : 
-                    getValue("")
-                  }
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">긴급 연락망</th>
+                <td className="border border-black px-2 py-1.5 text-gray-500 text-[9pt]" colSpan={3}>
+                  {isEmptyForm ? "" : "→ 동의서(문서 3) 응급처치 동의 항목 참조"}
                 </td>
               </tr>
             </tbody>
@@ -279,8 +276,9 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">기타 참고사항</th>
                 <td className="border border-black px-2 py-2" colSpan={3}>
-                  <div className="min-h-[1.5em] whitespace-pre-wrap">
+                  <div className="min-h-[1.5em] whitespace-pre-wrap space-y-0.5">
                     {!isEmptyForm && opinion.familyChanges && <p>가정 내 변화: {opinion.familyChanges}</p>}
+                    {!isEmptyForm && opinion.messageToTeacher && <p>담임 선생님께: {opinion.messageToTeacher}</p>}
                     {isEmptyForm && <div className="h-6"></div>}
                   </div>
                 </td>

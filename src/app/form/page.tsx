@@ -52,6 +52,20 @@ function FormContent() {
     setConsent((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Step 6(동의서) 진입 시 보호자명/관계 자동 채움
+  useEffect(() => {
+    if (step === 6) {
+      setConsent((prev) => ({
+        ...prev,
+        consentGuardianName: prev.consentGuardianName || opinion.guardianName || "",
+        consentGuardianRelation: prev.consentGuardianRelation || (
+          opinion.guardianRelation === "기타" ? opinion.guardianRelationOther : opinion.guardianRelation
+        ) || "",
+        consentDate: prev.consentDate || new Date().toISOString().split("T")[0],
+      }));
+    }
+  }, [step]);
+
   const steps = [
     { title: "기본 정보", desc: "학생과 보호자의 기본 정보를 입력합니다." },
     { title: "장애 현황", desc: "복지부 및 교육청 등록 현황을 확인합니다." },

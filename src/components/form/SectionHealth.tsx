@@ -46,7 +46,7 @@ export function SectionHealth({ data, update }: Props) {
   return (
     <div className="space-y-8">
       <div className="space-y-6">
-        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">③ 건강·의료 정보</h2>
+        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">② 건강·의료 정보</h2>
 
         {/* 복약 */}
         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
@@ -242,10 +242,22 @@ export function SectionHealth({ data, update }: Props) {
             )}
           </div>
         </div>
+
+        {/* 최근 건강/복약 변동 */}
+        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <Label className="text-base font-bold text-gray-900 mb-3 block">최근 건강·복약 변동사항 (선택)</Label>
+          <textarea
+            className="w-full min-h-[80px] rounded-lg border border-input bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="예: 최근 약 변경, 수술 예정, 새로운 진단 등 학교에서 알아야 할 변화가 있다면 적어주세요."
+            value={data.healthChanges}
+            onChange={(e) => update("healthChanges", e.target.value)}
+            rows={3}
+          />
+        </div>
       </div>
 
       <div className="space-y-6 pt-6">
-        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">④ 보조기기 및 환경 수정</h2>
+        <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">③ 보조기기 및 환경 수정</h2>
 
         <div className="grid md:grid-cols-2 gap-4">
           {/* 보조공학기기 */}

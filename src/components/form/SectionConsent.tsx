@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ConsentToggle } from "./ConsentToggle";
 import type { ConsentForm } from "@/lib/types";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 
 interface Props {
   data: ConsentForm;
@@ -230,7 +231,7 @@ export function SectionConsent({
           <Label className="font-bold text-red-700 text-base">응급 연락망 (최소 1명 이상 필수)</Label>
           <p className="text-xs text-gray-500 mb-4">가장 빨리 연락이 닿을 수 있는 순서대로 적어주세요.</p>
           {data.emergencyContacts.map((contact, i) => (
-            <div key={i} className="mb-4 last:mb-0">
+            <div key={i} className="mb-4 last:mb-0 relative pr-10">
               <p className="text-sm font-bold text-gray-700 mb-1">{i + 1}순위 연락처</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <Input
@@ -265,8 +266,31 @@ export function SectionConsent({
                   className="bg-gray-50 focus:bg-white"
                 />
               </div>
+              {data.emergencyContacts.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    const updated = data.emergencyContacts.filter((_, idx) => idx !== i);
+                    update("emergencyContacts", updated);
+                  }}
+                  className="absolute top-0 right-0 text-red-400 hover:text-red-600 hover:bg-red-50 h-8 w-8"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => update("emergencyContacts", [...data.emergencyContacts, { name: "", relation: "", phone: "" }])}
+            className="w-full border-dashed border-2 text-red-600 border-red-200 hover:bg-red-50 mt-2"
+          >
+            <Plus className="h-4 w-4 mr-1" /> 연락처 추가
+          </Button>
         </div>
       </div>
 
@@ -320,7 +344,8 @@ export function SectionConsent({
           </div>
         </div>
         <p className="text-xs text-center text-blue-600 mt-6 pt-4 border-t border-blue-200">
-          「전자서명법」 제3조에 따라, 본 폼을 통한 제출은 종이 문서의 서명과 동일한 법적 효력을 가집니다.
+          「전자문서 및 전자거래 기본법」 제4조 및 「전자정부법」 제30조에 따라, 본 온라인 서식을 통한 제출은 전자 문서로서 유효합니다.
+          정식 법적 효력을 위한 원본 서류가 필요한 경우, 담당 교사에게 별도 요청하시기 바랍니다.
         </p>
       </div>
     </div>

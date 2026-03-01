@@ -39,10 +39,8 @@ export interface ParentOpinion {
   firstRegistrationDate: string;
 
   // B. 특수교육대상자 선정 현황
-  specialEdSelection: string;
   specialEdArea: string;
   firstSelectionDate: string;
-  currentPlacement: string; // 특수학급, 일반학급 등
 
   // 1. 가정 환경
   primaryCaregiver: string;
@@ -58,8 +56,7 @@ export interface ParentOpinion {
 
   // 2. 협의회 참석 및 연락
   attendanceMethod: string;
-  availableTime: string;
-  // 새로 추가된 희망 일시
+  // 희망 일시
   hopeDate1: string;
   hopeTime1: string;
   hopeDate2: string;
@@ -67,11 +64,6 @@ export interface ParentOpinion {
   hopeDate3: string;
   hopeTime3: string;
 
-  preferredContact: string[]; // 선호 연락 방식 (전화, 문자, 알림장 등) - 다중 선택
-  availableTimeSlot: string[]; // 연락 가능 시간대 - 다중 선택으로 변경
-  emergencyContact2Name: string;
-  emergencyContact2Relation: string;
-  emergencyContact2Phone: string;
 
   // 3. 건강/의료
   hasMedication: string;
@@ -119,7 +111,6 @@ export interface ParentOpinion {
 
   // 8. 외부 지원/치료
   afterSchoolActivity: string; // 학교 밖 활동 (학원, 복지관 등)
-  therapyServices: Array<{ institution: string; area: string; type: string }>; // 기존 치료/재활 리스트 (사용 안 할 수도 있지만 유지)
 
   // 9. 학교 서비스 신청
   afterSchoolSpecialEd: string; // 방과후학교 특수교육 신청 여부
@@ -177,14 +168,6 @@ export interface ConsentForm {
   consent4_records: boolean | null;
   consent4_handover: boolean | null;
 
-  // 안내 및 확인
-  notice5_teaching: boolean;
-  notice5_meal: boolean;
-  notice5_restroom: boolean;
-  notice5_mobility: boolean;
-  notice5_commute: boolean;
-  notice5_note: string;
-
   // 권장 동의 (거부 가능, 교육활동 기록 및 홍보)
   consent6_photoRecord: boolean | null; // 초상권/촬영 (기록)
   consent6_internalUse: boolean | null; // 내부 활용
@@ -213,16 +196,7 @@ export interface ConsentForm {
   emergencyContacts: Array<{ name: string; relation: string; phone: string }>;
 
   // 선택 동의
-  consent10_counseling: boolean | null; // 심리/정서
-  consent10_wee: boolean | null;
-  consent10_assessment: boolean | null;
-  consent10_iepUse: boolean | null;
-
-  consent11_anonymousCase: boolean | null; // 장애인식개선
-  consent11_participation: boolean | null;
-
-  consent12_statistics: boolean | null; // 통계/연구
-  consent12_research: boolean | null;
+  consent11_participation: boolean | null; // 장애인식개선 참여
 }
 
 export interface FullFormData {
