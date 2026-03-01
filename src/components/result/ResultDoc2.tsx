@@ -76,6 +76,37 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 <td className="border border-black px-2 py-1.5">{getValue(opinion.guardianPhone)}</td>
               </tr>
               <tr>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">장애인 등록</th>
+                <td className="border border-black px-2 py-1.5">
+                  {isEmptyForm ? "" : (
+                    opinion.disabilityRegistration ? `${opinion.disabilityRegistration}${opinion.disabilitySeverity ? ` (${opinion.disabilitySeverity})` : ""}` : "-"
+                  )}
+                </td>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">최초 등록일</th>
+                <td className="border border-black px-2 py-1.5">{getValue(opinion.firstRegistrationDate) || "-"}</td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">특수교육 영역</th>
+                <td className="border border-black px-2 py-1.5">{getValue(opinion.specialEdArea) || "-"}</td>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">최초 선정일</th>
+                <td className="border border-black px-2 py-1.5">{getValue(opinion.firstSelectionDate) || "-"}</td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">주 양육자</th>
+                <td className="border border-black px-2 py-1.5">
+                  {isEmptyForm ? "" : (
+                    opinion.primaryCaregiver === "기타" ? opinion.primaryCaregiverOther : opinion.primaryCaregiver
+                  )}
+                </td>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">다문화 가정</th>
+                <td className="border border-black px-2 py-1.5">
+                  {isEmptyForm ? "" : (
+                    opinion.multicultural === "해당 없음" || !opinion.multicultural ? "해당 없음" :
+                    `해당 (${opinion.multiculturalLanguage || ""})`
+                  )}
+                </td>
+              </tr>
+              <tr>
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">긴급 연락망</th>
                 <td className="border border-black px-2 py-1.5 text-gray-500 text-[9pt]" colSpan={3}>
                   {isEmptyForm ? "" : "→ 동의서(문서 3) 응급처치 동의 항목 참조"}
@@ -149,6 +180,15 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                     {!isEmptyForm && opinion.assistiveDevice.length > 0 && !opinion.assistiveDevice.includes("사용 안 함") && (
                       <p><span className="font-bold">[보조기기]</span> {opinion.assistiveDevice.join(", ")}</p>
                     )}
+                    {!isEmptyForm && opinion.assistiveTech.length > 0 && !opinion.assistiveTech.includes("사용 안 함") && (
+                      <p><span className="font-bold">[보조공학]</span> {opinion.assistiveTech.join(", ")} {opinion.assistiveTechOther}</p>
+                    )}
+                    {!isEmptyForm && opinion.envModification.length > 0 && !opinion.envModification.includes("필요 없음") && (
+                      <p><span className="font-bold">[환경수정]</span> {opinion.envModification.join(", ")} {opinion.envModificationOther}</p>
+                    )}
+                    {!isEmptyForm && opinion.sleepCharacteristics.length > 0 && !opinion.sleepCharacteristics.includes("특이사항 없음") && (
+                      <p><span className="font-bold">[수면특성]</span> {opinion.sleepCharacteristics.join(", ")}</p>
+                    )}
                     {isEmptyForm && <div className="h-12 border-b border-dotted border-gray-400 mb-2"></div>}
                   </div>
                 </td>
@@ -160,15 +200,27 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 </td>
               </tr>
               <tr>
-                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">기본생활습관 및 행동 특성</th>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">고유한 특성/독특한 점</th>
                 <td className="border border-black px-2 py-2" colSpan={3}>
-                  <div className="min-h-[2em] whitespace-pre-wrap">{getValue(opinion.levelBehavior)}<br/>{getValue(opinion.levelSelfCare)}</div>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.uniqueTraits)}</div>
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">기본생활·자조 수준</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.levelBehavior)}{opinion.levelSelfCare && !isEmptyForm ? ` / ${opinion.levelSelfCare}` : ""}</div>
                 </td>
               </tr>
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">학습 및 의사소통 수준</th>
                 <td className="border border-black px-2 py-2" colSpan={3}>
-                  <div className="min-h-[2em] whitespace-pre-wrap">{getValue(opinion.levelLearning)}<br/>{getValue(opinion.levelCommunication)}</div>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.levelLearning)}{opinion.levelCommunication && !isEmptyForm ? ` / ${opinion.levelCommunication}` : ""}</div>
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">사회성 및 운동 수준</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.levelSocial)}{opinion.levelMotor && !isEmptyForm ? ` / ${opinion.levelMotor}` : ""}</div>
                 </td>
               </tr>
             </tbody>
@@ -187,9 +239,21 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 </td>
               </tr>
               <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">선호 지도 방법/접근법</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.preferredMethod)}</div>
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">평가 방식에 대한 의견</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.evaluationOpinion)}</div>
+                </td>
+              </tr>
+              <tr>
                 <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">가정과 연계하여 지도할 부분</th>
                 <td className="border border-black px-2 py-2" colSpan={3}>
-                  <div className="min-h-[2em] whitespace-pre-wrap">{getValue(opinion.homeConnection)}</div>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.homeConnection)}</div>
                 </td>
               </tr>
               <tr>
@@ -249,6 +313,12 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">특수교육 보조인력</th>
                 <td className="border border-black px-2 py-1.5" colSpan={3}>{getValue(opinion.assistantSupport)}</td>
               </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">학교 밖 활동</th>
+                <td className="border border-black px-2 py-1.5" colSpan={3}>
+                  <div className="min-h-[1em] whitespace-pre-wrap">{getValue(opinion.afterSchoolActivity)}</div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -272,6 +342,18 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                       (opinion.careerDirection === "기타" ? opinion.careerDirectionOther : opinion.careerDirection) : 
                       ""}
                   </div>
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">교육에서 가장 중요하게 여기는 가치</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.educationValue)}</div>
+                </td>
+              </tr>
+              <tr>
+                <th className="border border-black bg-gray-50 px-2 py-2 text-left align-top">최근 건강·복약 변화</th>
+                <td className="border border-black px-2 py-2" colSpan={3}>
+                  <div className="min-h-[1.5em] whitespace-pre-wrap">{getValue(opinion.healthChanges)}</div>
                 </td>
               </tr>
               <tr>
