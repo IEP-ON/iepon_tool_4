@@ -13,11 +13,8 @@ import { SectionEducation } from "@/components/form/SectionEducation";
 import { SectionServices } from "@/components/form/SectionServices";
 import { SectionConsent } from "@/components/form/SectionConsent";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check, Copy } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { sha256, formatConsentCode } from "@/lib/hash";
-import { collectMeta } from "@/lib/meta";
-import type { ConsentMeta } from "@/lib/types";
 
 function FormContent() {
   const searchParams = useSearchParams();
@@ -28,8 +25,6 @@ function FormContent() {
   const [consent, setConsent] = useState<ConsentForm>(defaultConsentForm);
   const [copied, setCopied] = useState(false);
   const [resultUrl, setResultUrl] = useState("");
-  const [consentCode, setConsentCode] = useState("");
-  const [codeCopied, setCodeCopied] = useState(false);
 
   useEffect(() => {
     const ctx = searchParams.get("ctx");
@@ -119,35 +114,37 @@ function FormContent() {
     }
   };
 
-  const handleComplete = async () => {
+  const handleComplete = () => {
+    // 서명 의사 확인 및 필수 입력 검사
+    if (step === 6) {
+      if (consent.consentTypingConfirm !== "위 내용을 모두 읽었으며, 자유의사로 동의합니다.") {
+        alert("서명 의사 확인을 위해 지정된 문장을 똑같이 입력해 주세요.");
+        return;
+      }
+      if (!consent.consentSignatureBase64) {
+        alert("손글씨 서명을 입력해 주세요.");
+        return;
+      }
+      if (!consent.consentGuardianName) {
+        alert("보호자 성명을 입력해 주세요.");
+        return;
+      }
+    }
+
     const finalOpinion = { ...opinion, writeDate: new Date().toISOString() };
     const finalConsent = { ...consent };
     
+    // Check if consent forms were signed
     if (!consent.consentDate && !consent.consentGuardianName) {
       finalConsent.consentDate = new Date().toISOString().split('T')[0];
       finalConsent.consentGuardianName = opinion.guardianName;
       finalConsent.consentGuardianRelation = opinion.guardianRelation === "기타" ? opinion.guardianRelationOther : opinion.guardianRelation;
     }
 
-    // SHA-256 문서 해시 생성 (동의 데이터 전체 기준)
-    const consentJson = JSON.stringify(finalConsent);
-    const docHash = await sha256(consentJson);
-    const code = formatConsentCode(docHash);
-    setConsentCode(code);
-
-    // IP + 디바이스 지문 수집
-    let meta: ConsentMeta | undefined;
-    try {
-      meta = await collectMeta(docHash);
-    } catch {
-      meta = undefined;
-    }
-
     const payload = {
       teacher,
       opinion: finalOpinion,
-      consent: finalConsent,
-      meta,
+      consent: finalConsent
     };
     
     const encoded = compress(payload);
@@ -168,59 +165,28 @@ function FormContent() {
     }
   };
 
-  const copyCodeToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(consentCode);
-      setCodeCopied(true);
-      setTimeout(() => setCodeCopied(false), 3000);
-    } catch {
-      prompt("아래 코드를 복사하세요", consentCode);
-    }
-  };
-
   if (step === 7) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 space-y-6">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-10 h-10" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">작성이 완료되었습니다!</h1>
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center space-y-6">
+          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Check className="w-10 h-10" />
           </div>
-
-          {/* 동의 확인 코드 표시 */}
-          {consentCode && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center space-y-2">
-              <p className="text-sm font-bold text-blue-900">동의 확인 코드</p>
-              <p className="text-3xl font-mono font-bold tracking-widest text-blue-700">{consentCode}</p>
-              <p className="text-xs text-blue-600 break-keep">이 코드를 담임 선생님 카카오톡으로 보내주세요. 접수 확인용 코드입니다.</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyCodeToClipboard}
-                className={`w-full h-9 text-sm ${codeCopied ? "border-green-400 text-green-700" : "border-blue-300 text-blue-700"}`}
-              >
-                <Copy className="w-3.5 h-3.5 mr-1.5" />
-                {codeCopied ? "코드 복사됨 ✓" : "코드 복사하기"}
-              </Button>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <p className="text-gray-600 text-sm text-center break-keep">
-              아래 버튼으로 완료 링크를 복사한 뒤,<br/>
-              담임 선생님께 카카오톡으로 전달해 주세요.
-            </p>
+          <h1 className="text-2xl font-bold text-gray-900">작성이 완료되었습니다!</h1>
+          <p className="text-gray-600 text-[11pt] break-keep">
+            아래 버튼을 눌러 생성된 링크를 복사한 뒤,<br/>
+            담임 선생님께 카카오톡이나 문자로 전달해 주세요.
+          </p>
+          <div className="pt-4 space-y-3">
             <Button 
               size="lg" 
               onClick={copyToClipboard}
               className={`w-full text-lg h-14 ${copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
-              {copied ? "복사 완료! 한 번 더 복사" : "완료 링크 복사하기"}
+              {copied ? "복사 완료! 한 번 더 복사하기" : "완료 링크 복사하기"}
             </Button>
-            <p className="text-xs text-red-500 text-center">
-              ※ 링크에는 아이의 개인정보가 포함되어 있습니다.<br/>
+            <p className="text-xs text-red-500">
+              ※ 주의: 링크에는 아이의 개인정보가 포함되어 있습니다.<br/>
               반드시 담임 선생님에게만 전달해 주세요.
             </p>
           </div>
@@ -230,41 +196,41 @@ function FormContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-24 sm:pb-20">
       {/* Header Sticky */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-4 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 sm:py-4 shadow-sm">
         <div className="max-w-2xl mx-auto space-y-3">
           <div className="flex justify-between items-end">
-            <h1 className="text-lg font-bold text-gray-900 truncate pr-4">
+            <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate pr-4">
               {teacher.schoolName} 특수학급
             </h1>
-            <span className="text-xs font-medium text-gray-500 whitespace-nowrap bg-gray-100 px-2 py-1 rounded-md">
+            <span className="text-[10px] sm:text-xs font-medium text-gray-600 whitespace-nowrap bg-gray-100 px-2 py-1 rounded-md">
               {teacher.year}학년도 {teacher.semester}학기
             </span>
           </div>
           
           <div className="space-y-1.5">
-            <div className="flex justify-between text-xs font-medium">
-              <span className="text-blue-600">진행률</span>
+            <div className="flex justify-between text-[11px] sm:text-xs font-bold">
+              <span className="text-blue-600">진행률 {Math.round(((step + 1) / 7) * 100)}%</span>
               <span className="text-gray-500">{step + 1} / 7 단계</span>
             </div>
-            <Progress value={((step + 1) / 7) * 100} className="h-2" />
+            <Progress value={((step + 1) / 7) * 100} className="h-2 bg-gray-100" />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+          <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
             {steps.map((s, i) => (
               <button
                 key={i}
                 onClick={() => setStep(i)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-colors ${
                   step === i 
-                    ? "bg-blue-600 text-white shadow-sm" 
+                    ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-600/20" 
                     : step > i 
                       ? "bg-blue-50 text-blue-700 border border-blue-200"
                       : "bg-gray-100 text-gray-500 border border-transparent"
                 }`}
               >
-                {step > i && <Check className="w-3 h-3 inline-block mr-1" />}
+                {step > i && <Check strokeWidth={3} className="w-3 h-3 inline-block mr-1" />}
                 {s.title}
               </button>
             ))}
@@ -273,46 +239,54 @@ function FormContent() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto p-4 pt-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-1">{steps[step].title}</h2>
-          <p className="text-sm text-gray-500">{steps[step].desc}</p>
+      <div className="max-w-2xl mx-auto p-4 sm:pt-6">
+        <div className="mb-4 sm:mb-6 px-1">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+            <span className="bg-blue-100 text-blue-700 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-sm sm:text-base">
+              {step + 1}
+            </span>
+            {steps[step].title}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 leading-snug">{steps[step].desc}</p>
         </div>
         
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-8">
           {renderStep()}
         </div>
       </div>
 
       {/* Bottom Floating Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:p-4 pb-safe shadow-[0_-8px_16px_-8px_rgba(0,0,0,0.05)] z-50">
         <div className="max-w-2xl mx-auto flex gap-3">
           <Button
             variant="outline"
             size="lg"
             onClick={() => setStep(s => Math.max(0, s - 1))}
             disabled={step === 0}
-            className="w-1/3 h-14 rounded-xl font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 border-transparent shadow-sm"
+            className="w-1/3 h-12 sm:h-14 rounded-xl font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 border-gray-200"
           >
-            <ChevronLeft className="w-5 h-5 mr-1" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1" />
             이전
           </Button>
           
           {step < 6 ? (
             <Button
               size="lg"
-              onClick={() => setStep(s => Math.min(6, s + 1))}
-              className="w-2/3 h-14 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setStep(s => Math.min(6, s + 1));
+              }}
+              className="w-2/3 h-12 sm:h-14 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/20 text-base"
             >
-              다음 <ChevronRight className="w-5 h-5 ml-1" />
+              다음 단계 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1" />
             </Button>
           ) : (
             <Button
               size="lg"
               onClick={handleComplete}
-              className="w-2/3 h-14 rounded-xl font-bold bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-200"
+              className="w-2/3 h-12 sm:h-14 rounded-xl font-bold bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-600/20 text-base"
             >
-              완료 및 링크 생성
+              제출 및 링크 복사
             </Button>
           )}
         </div>

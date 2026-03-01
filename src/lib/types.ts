@@ -154,9 +154,11 @@ export interface ParentOpinion {
 
 export interface ConsentForm {
   // 기본정보 (보호자 작성)
-  consentGuardianName: string;
-  consentGuardianRelation: string;
-  consentDate: string;
+  consentGuardianName: string; // 서명자 이름
+  consentGuardianRelation: string; // 서명자 관계
+  consentSignatureBase64: string; // 캔버스 손글씨 서명 데이터 (base64)
+  consentTypingConfirm: string; // 직접 타이핑 확인 문구
+  consentDate: string; // 서명일
 
   // 필수 동의 (거부 시 서비스 제한)
   consent1: boolean | null; // 기본 개인정보 수집
@@ -197,25 +199,10 @@ export interface ConsentForm {
 
   // 선택 동의
   consent11_participation: boolean | null; // 장애인식개선 참여
-
-  // 전자서명 강화 필드
-  confirmStatement: string; // 직접 확인 문구 타이핑
-  signatureImage: string;   // 손글씨 서명 base64
-}
-
-export interface ConsentMeta {
-  ip: string;
-  userAgent: string;
-  timezone: string;
-  screen: string;
-  deviceFingerprint: string;
-  clientTimestamp: string;
-  docHash: string;
 }
 
 export interface FullFormData {
   teacher: TeacherInput;
   opinion: ParentOpinion;
   consent: ConsentForm;
-  meta?: ConsentMeta;
 }

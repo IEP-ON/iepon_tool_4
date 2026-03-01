@@ -1,15 +1,14 @@
 "use client";
 
-import type { TeacherInput, ConsentForm, ConsentMeta } from "@/lib/types";
+import type { TeacherInput, ConsentForm } from "@/lib/types";
 
 interface Props {
   teacher: TeacherInput;
   consent: ConsentForm;
   isEmptyForm?: boolean;
-  meta?: ConsentMeta;
 }
 
-export function ResultDoc3({ teacher, consent, isEmptyForm = false, meta }: Props) {
+export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
   const isChecked = (val: boolean | null, expected: boolean) => {
     if (isEmptyForm) return false;
     return val === expected;
@@ -152,52 +151,28 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false, meta }: Prop
           <p className="text-[10pt] text-center font-bold mb-4">
             본인은 「개인정보보호법」 및 관련 법령에 의거하여, 위 사항들을 충분히 숙지하였으며 <br/>학생의 원활한 교육 지원을 위해 동의합니다.
           </p>
-          <div className="flex justify-between items-end">
-            <div className="text-[10pt] space-y-1">
-              <p>작성일: {isEmptyForm ? "202  년   월   일" : consent.consentDate || `${new Date().getFullYear()}년 ${new Date().getMonth() + 1}월 ${new Date().getDate()}일`}</p>
-              <p>보호자 성명: {!isEmptyForm ? consent.consentGuardianName : <span className="inline-block w-24 border-b border-black" />} ({consent.consentGuardianRelation || "서명 또는 인"})</p>
-              {!isEmptyForm && consent.confirmStatement && (
-                <p className="text-[8.5pt] text-gray-500">확인문구: {consent.confirmStatement}</p>
-              )}
-            </div>
-            {/* 서명 이미지 */}
-            <div className="text-right">
-              {!isEmptyForm && consent.signatureImage ? (
-                <div>
-                  <p className="text-[8pt] text-gray-500 mb-1">전자서명</p>
-                  <img
-                    src={consent.signatureImage}
-                    alt="보호자 서명"
-                    className="h-16 border border-gray-300 rounded bg-white"
-                  />
+          <div className="flex justify-end gap-6 text-[11pt] items-end h-16">
+            <p className="mb-2">작성일: {isEmptyForm ? "202  년   월   일" : consent.consentDate || `${new Date().getFullYear()}년 ${new Date().getMonth() + 1}월 ${new Date().getDate()}일`}</p>
+            <div className="flex items-end gap-2">
+              <span className="mb-2">보호자 성명:</span> 
+              <span className={isEmptyForm ? "inline-block w-24 border-b border-black mb-2" : "mb-2 font-bold"}>
+                {!isEmptyForm ? consent.consentGuardianName : ""}
+              </span> 
+              <span className="mb-2">(서명)</span>
+              {!isEmptyForm && consent.consentSignatureBase64 ? (
+                <div className="w-24 h-12 border-b border-black relative inline-block">
+                  <img src={consent.consentSignatureBase64} alt="보호자 서명" className="absolute bottom-0 w-full max-h-[150%] object-contain" />
                 </div>
               ) : (
-                <div className="w-32 h-16 border border-black bg-white flex items-end justify-center pb-1">
-                  <span className="text-[8pt] text-gray-400">(서명란)</span>
-                </div>
+                <span className="inline-block w-24 h-6 border-b border-black"></span>
               )}
             </div>
           </div>
         </section>
 
-        <div className="mt-6 text-center text-gray-500 text-sm">
-          <p>※ 수집된 정보는 특수교육 지원 목적으로만 사용되며, 보관기간(해당 학년도 종료 후 3년) 후 안전하게 파기됩니다.</p>
+        <div className="mt-8 text-center text-gray-500 text-sm">
+          <p>※ 수집된 정보는 특수교육 지원 목적으로만 사용되며, 목적 달성 시 안전하게 파기됩니다.</p>
         </div>
-
-        {/* 전자 제출 메타 정보 (위변조 확인용) */}
-        {!isEmptyForm && meta && (
-          <div className="mt-4 border border-gray-300 rounded p-3 text-[7.5pt] text-gray-500 bg-gray-50">
-            <p className="font-bold text-gray-700 mb-1">[전자 제출 정보 — 위변조 확인용 (인쇄 보관)]</p>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
-              <p><span className="font-semibold">제출 일시:</span> {new Date(meta.clientTimestamp).toLocaleString("ko-KR", { timeZone: meta.timezone })}</p>
-              <p><span className="font-semibold">제출 IP:</span> {meta.ip}</p>
-              <p className="col-span-2"><span className="font-semibold">브라우저:</span> {meta.userAgent.slice(0, 80)}</p>
-              <p><span className="font-semibold">화면 해상도:</span> {meta.screen}</p>
-              <p><span className="font-semibold">시간대:</span> {meta.timezone}</p>
-              <p className="col-span-2 break-all"><span className="font-semibold">문서 해시 (SHA-256):</span> {meta.docHash}</p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

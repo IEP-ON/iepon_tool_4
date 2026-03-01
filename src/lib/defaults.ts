@@ -135,6 +135,8 @@ export const defaultParentOpinion: ParentOpinion = {
 export const defaultConsentForm: ConsentForm = {
   consentGuardianName: "",
   consentGuardianRelation: "",
+  consentSignatureBase64: "",
+  consentTypingConfirm: "",
   consentDate: "",
 
   consent1: null,
@@ -172,9 +174,6 @@ export const defaultConsentForm: ConsentForm = {
   emergencyContacts: [{ name: "", relation: "", phone: "" }],
 
   consent11_participation: null,
-
-  confirmStatement: "",
-  signatureImage: "",
 };
 
 export const initialFullData: FullFormData = {

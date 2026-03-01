@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { SignaturePad, type SignaturePadHandle } from "./SignaturePad";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConsentToggle } from "./ConsentToggle";
 import type { ConsentForm } from "@/lib/types";
-import { ChevronDown, ChevronUp, Plus, Trash2, RotateCcw } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash2, Eraser } from "lucide-react";
+import SignatureCanvas from "react-signature-canvas";
 
 interface Props {
   data: ConsentForm;
@@ -32,15 +32,41 @@ export function SectionConsent({
   schoolAddress = "대구광역시 ○○구 ○○로 ○○",
 }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const sigPadRef = useRef<SignaturePadHandle>(null);
+  const sigCanvas = useRef<SignatureCanvas>(null);
 
-  const handleSignatureEnd = (dataUrl: string) => {
-    update("signatureImage", dataUrl);
+  // Resize canvas on window resize to prevent distortion
+  useEffect(() => {
+    const handleResize = () => {
+      if (sigCanvas.current) {
+        const canvas = sigCanvas.current.getCanvas();
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d")?.scale(ratio, ratio);
+        sigCanvas.current.clear(); // Clear on resize to avoid corrupted rendering
+        // If we already had a signature, we would ideally redraw it, but for simplicity we just clear it.
+        // It's best to only resize on load or orientation change.
+      }
+    };
+    
+    // Initial resize
+    setTimeout(handleResize, 100);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleSignatureEnd = () => {
+    if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+      update("consentSignatureBase64", sigCanvas.current.toDataURL("image/png"));
+    }
   };
 
-  const handleClearSignature = () => {
-    sigPadRef.current?.clear();
-    update("signatureImage", "");
+  const clearSignature = () => {
+    if (sigCanvas.current) {
+      sigCanvas.current.clear();
+      update("consentSignatureBase64", "");
+    }
   };
 
   const toggleExpand = (key: string) => {
@@ -48,15 +74,15 @@ export function SectionConsent({
   };
 
   const Accordion = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
-    <div className="mt-2 text-sm bg-white border rounded-lg overflow-hidden">
+    <div className="mt-3 text-sm bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
       <button
         onClick={() => toggleExpand(id)}
-        className="w-full flex items-center justify-between p-3 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors text-left"
+        className="w-full flex items-center justify-between p-3.5 bg-gray-50 text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors text-left"
       >
-        <span className="font-medium">{title}</span>
-        {expanded[id] ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+        <span className="font-semibold text-[13px] sm:text-sm">{title}</span>
+        {expanded[id] ? <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" /> : <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />}
       </button>
-      {expanded[id] && <div className="p-3 border-t text-gray-600 space-y-1">{children}</div>}
+      {expanded[id] && <div className="p-4 border-t border-gray-100 text-gray-600 space-y-2 leading-relaxed text-[13px] sm:text-sm">{children}</div>}
     </div>
   );
 
@@ -72,6 +98,10 @@ export function SectionConsent({
             <Badge className="bg-yellow-500 text-black font-normal text-xs">선택 항목</Badge>
           </div>
           <p className="text-xs text-gray-500 mt-2">※ 모든 내용은 철저히 암호화되어 보호되며, 교육 목적으로만 안전하게 사용됩니다.</p>
+          <div className="mt-3 pt-3 border-t border-gray-200 space-y-1 text-xs text-gray-600">
+            <p><strong>[보관 기간]</strong> 수집된 정보는 해당 학년도 종료 후 3년간 보관 후 파기됩니다.</p>
+            <p><strong>[동의 철회]</strong> 동의 철회는 담임교사에게 서면으로 요청할 수 있습니다.</p>
+          </div>
         </div>
       </div>
 
@@ -316,77 +346,33 @@ export function SectionConsent({
         </div>
       </div>
 
-      {/* 보관기간 및 철회 안내 (개인정보보호법 제22조 필수 고지) */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-900 space-y-1">
-        <p className="font-bold">📋 개인정보 보관 및 동의 철회 안내</p>
-        <p>• <span className="font-semibold">보관 기간:</span> 수집된 정보는 해당 학년도 종료 후 3년간 보관하며, 이후 안전하게 파기됩니다.</p>
-        <p>• <span className="font-semibold">동의 철회:</span> 언제든지 담임교사에게 서면으로 동의를 철회할 수 있습니다. 철회 시 해당 항목 서비스 제공이 제한될 수 있습니다.</p>
-        <p>• <span className="font-semibold">열람·수정 요청:</span> 수집된 개인정보에 대한 열람·수정·삭제는 담임교사에게 요청하실 수 있습니다.</p>
-      </div>
-
       {/* 서명 */}
-      <div className="bg-blue-50/80 p-6 rounded-xl border border-blue-100 shadow-inner mt-4">
-        <div className="text-center mb-5">
-          <p className="text-base font-bold text-blue-900 italic">
-            "본인은 위의 모든 내용을 충분히 읽고 이해하였으며,<br className="hidden sm:block" />
-            각 항목에 대해 본인의 자유로운 의사에 따라 동의 여부를 명확히 표시하였음을 확인합니다."
-          </p>
-        </div>
-
-        {/* 직접 확인 문구 타이핑 (전자서명법 ④ 서명 의사 확인) */}
-        <div className="space-y-1.5 mb-5">
-          <Label className="font-bold text-blue-900">
-            아래 문구를 그대로 입력해 주세요 <span className="text-red-500">*</span>
-          </Label>
-          <p className="text-xs text-gray-500 mb-1">직접 입력은 자유의사에 의한 동의임을 나타냅니다.</p>
-          <Input
-            value={data.confirmStatement}
-            onChange={(e) => update("confirmStatement", e.target.value)}
-            placeholder="위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다"
-            className={`bg-white border-blue-200 h-12 ${
-              data.confirmStatement === "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다"
-                ? "border-green-400 ring-1 ring-green-400"
-                : ""
-            }`}
-          />
-          {data.confirmStatement.length > 0 &&
-            data.confirmStatement !== "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다" && (
-            <p className="text-xs text-orange-500">위 문구와 정확히 일치하도록 입력해 주세요.</p>
-          )}
-          {data.confirmStatement === "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다" && (
-            <p className="text-xs text-green-600">✓ 확인되었습니다.</p>
-          )}
-        </div>
-
-        {/* 손글씨 서명 캔버스 (전자서명법 ② 서명 행위 지배) */}
-        <div className="space-y-1.5 mb-5">
-          <div className="flex items-center justify-between">
-            <Label className="font-bold text-blue-900">손글씨 서명 <span className="text-red-500">*</span></Label>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleClearSignature}
-              className="h-7 text-xs text-gray-500 border-gray-300"
-            >
-              <RotateCcw className="w-3 h-3 mr-1" /> 다시 서명
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500">손가락 또는 마우스로 서명해 주세요.</p>
-          <div className="border-2 border-blue-200 rounded-lg bg-white overflow-hidden">
-            <SignaturePad
-              ref={sigPadRef}
-              onEnd={handleSignatureEnd}
+      <div className="bg-blue-50/60 p-4 sm:p-6 rounded-2xl border border-blue-100 shadow-sm mt-8">
+        <div className="mb-6 space-y-4">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border-2 border-blue-200 shadow-sm">
+            <p className="text-sm sm:text-base font-bold text-blue-900 mb-3 flex items-center gap-2">
+              <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md text-xs">필수 확인</span>
+              아래 문장을 텍스트 칸에 똑같이 입력해 주세요.
+            </p>
+            <p className="text-sm sm:text-base text-gray-800 bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200 font-bold select-all text-center">
+              위 내용을 모두 읽었으며, 자유의사로 동의합니다.
+            </p>
+            <Input
+              value={data.consentTypingConfirm}
+              onChange={(e) => update("consentTypingConfirm", e.target.value)}
+              placeholder="위 문장을 띄어쓰기 포함하여 똑같이 입력해 주세요"
+              className={`mt-4 h-12 sm:h-14 text-sm sm:text-base font-medium placeholder:text-gray-400 border-2 transition-colors ${
+                data.consentTypingConfirm === "위 내용을 모두 읽었으며, 자유의사로 동의합니다."
+                  ? "border-green-500 bg-green-50/30 text-green-700"
+                  : "border-blue-200 focus:border-blue-400"
+              }`}
             />
           </div>
-          {data.signatureImage && (
-            <p className="text-xs text-green-600">✓ 서명이 완료되었습니다.</p>
-          )}
         </div>
         
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="space-y-1.5">
-            <Label className="font-bold">보호자 성명</Label>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-1.5 lg:col-span-1">
+            <Label className="font-bold">보호자 성명 (서명)</Label>
             <Input
               value={data.consentGuardianName}
               onChange={(e) => update("consentGuardianName", e.target.value)}
@@ -394,7 +380,7 @@ export function SectionConsent({
               className="bg-white border-blue-200 h-12 text-lg"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 lg:col-span-1">
             <Label className="font-bold">학생과의 관계</Label>
             <Input
               value={data.consentGuardianRelation}
@@ -403,7 +389,7 @@ export function SectionConsent({
               className="bg-white border-blue-200 h-12 text-lg"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
             <Label className="font-bold">작성일</Label>
             <Input
               type="date"
@@ -413,8 +399,35 @@ export function SectionConsent({
             />
           </div>
         </div>
-        <p className="text-xs text-center text-blue-600 mt-5 pt-4 border-t border-blue-200">
-          「전자문서 및 전자거래 기본법」 제4조 및 「전자서명법」 제3조에 따라, 본 서명 및 직접 입력은 전자서명으로서 유효합니다.
+
+        <div className="mt-6 space-y-2">
+          <div className="flex justify-between items-end">
+            <Label className="font-bold text-blue-900">손글씨 서명</Label>
+            <Button type="button" variant="ghost" size="sm" onClick={clearSignature} className="h-8 px-2 text-gray-500 hover:text-red-600">
+              <Eraser className="w-4 h-4 mr-1" /> 다시 쓰기
+            </Button>
+          </div>
+          <div className="bg-white border-2 border-blue-200 rounded-xl overflow-hidden relative touch-none">
+            <SignatureCanvas
+              ref={sigCanvas}
+              onEnd={handleSignatureEnd}
+              canvasProps={{
+                className: "w-full h-40 cursor-crosshair",
+                style: { width: '100%', height: '160px' }
+              }}
+              backgroundColor="white"
+            />
+            {(!data.consentSignatureBase64 || data.consentSignatureBase64 === "") && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-gray-300">
+                <span>여기에 서명해 주세요</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <p className="text-xs text-center text-blue-600 mt-6 pt-4 border-t border-blue-200">
+          「전자문서 및 전자거래 기본법」 제4조 및 「전자정부법」 제30조에 따라, 본 온라인 서식을 통한 제출은 전자 문서로서 유효합니다.
+          정식 법적 효력을 위한 원본 서류가 필요한 경우, 담당 교사에게 별도 요청하시기 바랍니다.
         </p>
       </div>
     </div>
