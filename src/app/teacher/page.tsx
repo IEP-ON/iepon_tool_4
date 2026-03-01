@@ -196,7 +196,7 @@ export default function TeacherPage() {
             <Button
               size="lg"
               onClick={handleNext}
-              className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-8 py-6 text-lg rounded-xl shadow-lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto h-14 px-8 text-lg rounded-xl shadow-lg"
               disabled={!data.schoolName || !data.studentName || !data.grade || !data.classNum || !data.teacherName || !data.teacherPhone || !data.meetingStartDate || !data.meetingEndDate || !data.meetingPlace || !data.submissionDeadline}
             >
               안내장 미리보기 <ArrowRight className="ml-2 w-5 h-5" />

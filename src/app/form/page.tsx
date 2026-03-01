@@ -212,12 +212,19 @@ function FormContent() {
             <Progress value={((step + 1) / 7) * 100} className="h-2 bg-gray-100" />
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" id="step-nav-container">
             {steps.map((s, i) => (
               <button
                 key={i}
-                onClick={() => setStep(i)}
-                className={`inline-flex items-center justify-center shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-colors h-8 ${
+                id={`step-btn-${i}`}
+                onClick={() => {
+                  setStep(i);
+                  const btn = document.getElementById(`step-btn-${i}`);
+                  if (btn) {
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                  }
+                }}
+                className={`inline-flex items-center justify-center shrink-0 whitespace-nowrap px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors h-10 ${
                   step === i 
                     ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-600/20" 
                     : step > i 
@@ -225,7 +232,7 @@ function FormContent() {
                       : "bg-gray-100 text-gray-500 border border-transparent"
                 }`}
               >
-                {step > i && <Check strokeWidth={3} className="w-3 h-3 mr-1 shrink-0" />}
+                {step > i && <Check strokeWidth={3} className="w-4 h-4 mr-1 shrink-0" />}
                 {s.title}
               </button>
             ))}

@@ -26,20 +26,40 @@ export function CheckboxGroup({
 
   return (
     <div
-      className={`grid gap-2 ${columns === 3 ? "grid-cols-2 sm:grid-cols-3" : columns === 4 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2"}`}
+      className={`grid gap-3 ${
+        columns === 3
+          ? "grid-cols-1 sm:grid-cols-3"
+          : columns === 4
+            ? "grid-cols-2 sm:grid-cols-4"
+            : "grid-cols-1 sm:grid-cols-2"
+      }`}
     >
-      {options.map((option) => (
-        <div key={option} className="flex items-center gap-2">
-          <Checkbox
-            id={`cb-${option}`}
-            checked={selected.includes(option)}
-            onCheckedChange={() => toggle(option)}
-          />
-          <Label htmlFor={`cb-${option}`} className="text-sm cursor-pointer">
-            {option}
-          </Label>
-        </div>
-      ))}
+      {options.map((option) => {
+        const isSelected = selected.includes(option);
+        return (
+          <label
+            key={option}
+            htmlFor={`cb-${option}`}
+            className={`
+              relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+              ${isSelected 
+                ? "border-blue-600 bg-blue-50/80 shadow-sm ring-1 ring-blue-600/30" 
+                : "border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50"
+              }
+            `}
+          >
+            <Checkbox
+              id={`cb-${option}`}
+              checked={isSelected}
+              onCheckedChange={() => toggle(option)}
+              className={isSelected ? "border-blue-600 data-[state=checked]:bg-blue-600" : "border-gray-300"}
+            />
+            <span className={`text-base font-medium flex-1 ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
+              {option}
+            </span>
+          </label>
+        );
+      })}
     </div>
   );
 }
