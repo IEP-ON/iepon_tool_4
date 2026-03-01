@@ -172,6 +172,9 @@ export const defaultConsentForm: ConsentForm = {
   emergencyContacts: [{ name: "", relation: "", phone: "" }],
 
   consent11_participation: null,
+
+  confirmStatement: "",
+  signatureImage: "",
 };
 
 export const initialFullData: FullFormData = {

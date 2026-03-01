@@ -13,8 +13,11 @@ import { SectionEducation } from "@/components/form/SectionEducation";
 import { SectionServices } from "@/components/form/SectionServices";
 import { SectionConsent } from "@/components/form/SectionConsent";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Copy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { sha256, formatConsentCode } from "@/lib/hash";
+import { collectMeta } from "@/lib/meta";
+import type { ConsentMeta } from "@/lib/types";
 
 function FormContent() {
   const searchParams = useSearchParams();
@@ -25,6 +28,8 @@ function FormContent() {
   const [consent, setConsent] = useState<ConsentForm>(defaultConsentForm);
   const [copied, setCopied] = useState(false);
   const [resultUrl, setResultUrl] = useState("");
+  const [consentCode, setConsentCode] = useState("");
+  const [codeCopied, setCodeCopied] = useState(false);
 
   useEffect(() => {
     const ctx = searchParams.get("ctx");
@@ -114,21 +119,35 @@ function FormContent() {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     const finalOpinion = { ...opinion, writeDate: new Date().toISOString() };
     const finalConsent = { ...consent };
     
-    // Check if consent forms were signed
     if (!consent.consentDate && !consent.consentGuardianName) {
       finalConsent.consentDate = new Date().toISOString().split('T')[0];
       finalConsent.consentGuardianName = opinion.guardianName;
       finalConsent.consentGuardianRelation = opinion.guardianRelation === "기타" ? opinion.guardianRelationOther : opinion.guardianRelation;
     }
 
+    // SHA-256 문서 해시 생성 (동의 데이터 전체 기준)
+    const consentJson = JSON.stringify(finalConsent);
+    const docHash = await sha256(consentJson);
+    const code = formatConsentCode(docHash);
+    setConsentCode(code);
+
+    // IP + 디바이스 지문 수집
+    let meta: ConsentMeta | undefined;
+    try {
+      meta = await collectMeta(docHash);
+    } catch {
+      meta = undefined;
+    }
+
     const payload = {
       teacher,
       opinion: finalOpinion,
-      consent: finalConsent
+      consent: finalConsent,
+      meta,
     };
     
     const encoded = compress(payload);
@@ -149,28 +168,59 @@ function FormContent() {
     }
   };
 
+  const copyCodeToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(consentCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 3000);
+    } catch {
+      prompt("아래 코드를 복사하세요", consentCode);
+    }
+  };
+
   if (step === 7) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center space-y-6">
-          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-10 h-10" />
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 space-y-6">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-10 h-10" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">작성이 완료되었습니다!</h1>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">작성이 완료되었습니다!</h1>
-          <p className="text-gray-600 text-[11pt] break-keep">
-            아래 버튼을 눌러 생성된 링크를 복사한 뒤,<br/>
-            담임 선생님께 카카오톡이나 문자로 전달해 주세요.
-          </p>
-          <div className="pt-4 space-y-3">
+
+          {/* 동의 확인 코드 표시 */}
+          {consentCode && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center space-y-2">
+              <p className="text-sm font-bold text-blue-900">동의 확인 코드</p>
+              <p className="text-3xl font-mono font-bold tracking-widest text-blue-700">{consentCode}</p>
+              <p className="text-xs text-blue-600 break-keep">이 코드를 담임 선생님 카카오톡으로 보내주세요. 접수 확인용 코드입니다.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={copyCodeToClipboard}
+                className={`w-full h-9 text-sm ${codeCopied ? "border-green-400 text-green-700" : "border-blue-300 text-blue-700"}`}
+              >
+                <Copy className="w-3.5 h-3.5 mr-1.5" />
+                {codeCopied ? "코드 복사됨 ✓" : "코드 복사하기"}
+              </Button>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <p className="text-gray-600 text-sm text-center break-keep">
+              아래 버튼으로 완료 링크를 복사한 뒤,<br/>
+              담임 선생님께 카카오톡으로 전달해 주세요.
+            </p>
             <Button 
               size="lg" 
               onClick={copyToClipboard}
               className={`w-full text-lg h-14 ${copied ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
-              {copied ? "복사 완료! 한 번 더 복사하기" : "완료 링크 복사하기"}
+              {copied ? "복사 완료! 한 번 더 복사" : "완료 링크 복사하기"}
             </Button>
-            <p className="text-xs text-red-500">
-              ※ 주의: 링크에는 아이의 개인정보가 포함되어 있습니다.<br/>
+            <p className="text-xs text-red-500 text-center">
+              ※ 링크에는 아이의 개인정보가 포함되어 있습니다.<br/>
               반드시 담임 선생님에게만 전달해 주세요.
             </p>
           </div>

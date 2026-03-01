@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import SignatureCanvas from "react-signature-canvas";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConsentToggle } from "./ConsentToggle";
 import type { ConsentForm } from "@/lib/types";
-import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash2, RotateCcw } from "lucide-react";
 
 interface Props {
   data: ConsentForm;
@@ -31,6 +32,19 @@ export function SectionConsent({
   schoolAddress = "대구광역시 ○○구 ○○로 ○○",
 }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const sigCanvasRef = useRef<SignatureCanvas>(null);
+
+  const handleSignatureEnd = () => {
+    if (sigCanvasRef.current) {
+      const dataUrl = sigCanvasRef.current.getTrimmedCanvas().toDataURL("image/png");
+      update("signatureImage", dataUrl);
+    }
+  };
+
+  const handleClearSignature = () => {
+    sigCanvasRef.current?.clear();
+    update("signatureImage", "");
+  };
 
   const toggleExpand = (key: string) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -305,18 +319,82 @@ export function SectionConsent({
         </div>
       </div>
 
+      {/* 보관기간 및 철회 안내 (개인정보보호법 제22조 필수 고지) */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-900 space-y-1">
+        <p className="font-bold">📋 개인정보 보관 및 동의 철회 안내</p>
+        <p>• <span className="font-semibold">보관 기간:</span> 수집된 정보는 해당 학년도 종료 후 3년간 보관하며, 이후 안전하게 파기됩니다.</p>
+        <p>• <span className="font-semibold">동의 철회:</span> 언제든지 담임교사에게 서면으로 동의를 철회할 수 있습니다. 철회 시 해당 항목 서비스 제공이 제한될 수 있습니다.</p>
+        <p>• <span className="font-semibold">열람·수정 요청:</span> 수집된 개인정보에 대한 열람·수정·삭제는 담임교사에게 요청하실 수 있습니다.</p>
+      </div>
+
       {/* 서명 */}
-      <div className="bg-blue-50/80 p-6 rounded-xl border border-blue-100 shadow-inner mt-8">
-        <div className="text-center mb-6">
+      <div className="bg-blue-50/80 p-6 rounded-xl border border-blue-100 shadow-inner mt-4">
+        <div className="text-center mb-5">
           <p className="text-base font-bold text-blue-900 italic">
             "본인은 위의 모든 내용을 충분히 읽고 이해하였으며,<br className="hidden sm:block" />
             각 항목에 대해 본인의 자유로운 의사에 따라 동의 여부를 명확히 표시하였음을 확인합니다."
           </p>
         </div>
+
+        {/* 직접 확인 문구 타이핑 (전자서명법 ④ 서명 의사 확인) */}
+        <div className="space-y-1.5 mb-5">
+          <Label className="font-bold text-blue-900">
+            아래 문구를 그대로 입력해 주세요 <span className="text-red-500">*</span>
+          </Label>
+          <p className="text-xs text-gray-500 mb-1">직접 입력은 자유의사에 의한 동의임을 나타냅니다.</p>
+          <Input
+            value={data.confirmStatement}
+            onChange={(e) => update("confirmStatement", e.target.value)}
+            placeholder="위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다"
+            className={`bg-white border-blue-200 h-12 ${
+              data.confirmStatement === "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다"
+                ? "border-green-400 ring-1 ring-green-400"
+                : ""
+            }`}
+          />
+          {data.confirmStatement.length > 0 &&
+            data.confirmStatement !== "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다" && (
+            <p className="text-xs text-orange-500">위 문구와 정확히 일치하도록 입력해 주세요.</p>
+          )}
+          {data.confirmStatement === "위 내용을 직접 읽고 이해하였으며 자유의사로 동의합니다" && (
+            <p className="text-xs text-green-600">✓ 확인되었습니다.</p>
+          )}
+        </div>
+
+        {/* 손글씨 서명 캔버스 (전자서명법 ② 서명 행위 지배) */}
+        <div className="space-y-1.5 mb-5">
+          <div className="flex items-center justify-between">
+            <Label className="font-bold text-blue-900">손글씨 서명 <span className="text-red-500">*</span></Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleClearSignature}
+              className="h-7 text-xs text-gray-500 border-gray-300"
+            >
+              <RotateCcw className="w-3 h-3 mr-1" /> 다시 서명
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500">손가락 또는 마우스로 서명해 주세요.</p>
+          <div className="border-2 border-blue-200 rounded-lg bg-white overflow-hidden">
+            <SignatureCanvas
+              ref={sigCanvasRef}
+              penColor="#1e40af"
+              canvasProps={{
+                className: "w-full",
+                style: { height: 120, touchAction: "none" },
+              }}
+              onEnd={handleSignatureEnd}
+            />
+          </div>
+          {data.signatureImage && (
+            <p className="text-xs text-green-600">✓ 서명이 완료되었습니다.</p>
+          )}
+        </div>
         
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-1.5">
-            <Label className="font-bold">보호자 성명 (서명)</Label>
+            <Label className="font-bold">보호자 성명</Label>
             <Input
               value={data.consentGuardianName}
               onChange={(e) => update("consentGuardianName", e.target.value)}
@@ -343,9 +421,8 @@ export function SectionConsent({
             />
           </div>
         </div>
-        <p className="text-xs text-center text-blue-600 mt-6 pt-4 border-t border-blue-200">
-          「전자문서 및 전자거래 기본법」 제4조 및 「전자정부법」 제30조에 따라, 본 온라인 서식을 통한 제출은 전자 문서로서 유효합니다.
-          정식 법적 효력을 위한 원본 서류가 필요한 경우, 담당 교사에게 별도 요청하시기 바랍니다.
+        <p className="text-xs text-center text-blue-600 mt-5 pt-4 border-t border-blue-200">
+          「전자문서 및 전자거래 기본법」 제4조 및 「전자서명법」 제3조에 따라, 본 서명 및 직접 입력은 전자서명으로서 유효합니다.
         </p>
       </div>
     </div>

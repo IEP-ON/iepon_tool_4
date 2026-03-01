@@ -93,7 +93,7 @@ function ResultContent() {
     );
   }
 
-  const { teacher, opinion, consent } = formData;
+  const { teacher, opinion, consent, meta } = formData;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -128,7 +128,7 @@ function ResultContent() {
 
         {/* 문서 3 — 동의서 */}
         <div className="bg-white shadow-lg print:shadow-none page-break">
-          <ResultDoc3 teacher={teacher} consent={consent} />
+          <ResultDoc3 teacher={teacher} consent={consent} meta={meta} />
         </div>
       </div>
     </div>

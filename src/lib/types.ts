@@ -197,10 +197,25 @@ export interface ConsentForm {
 
   // 선택 동의
   consent11_participation: boolean | null; // 장애인식개선 참여
+
+  // 전자서명 강화 필드
+  confirmStatement: string; // 직접 확인 문구 타이핑
+  signatureImage: string;   // 손글씨 서명 base64
+}
+
+export interface ConsentMeta {
+  ip: string;
+  userAgent: string;
+  timezone: string;
+  screen: string;
+  deviceFingerprint: string;
+  clientTimestamp: string;
+  docHash: string;
 }
 
 export interface FullFormData {
   teacher: TeacherInput;
   opinion: ParentOpinion;
   consent: ConsentForm;
+  meta?: ConsentMeta;
 }
