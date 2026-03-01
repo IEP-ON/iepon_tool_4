@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState, useEffect } from "react";
-import { decompress } from "@/lib/codec";
+import { decompress, compress } from "@/lib/codec";
 import { decrypt } from "@/lib/crypto";
 import type { FullFormData } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -95,6 +95,10 @@ function ResultContent() {
 
   const { teacher, opinion, consent } = formData;
 
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const teacherCtx = compress(teacher);
+  const formUrl = `${baseUrl}/form?ctx=${teacherCtx}`;
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* 상단 바 (인쇄 시 숨김) */}
@@ -118,7 +122,7 @@ function ResultContent() {
       <div className="mx-auto max-w-4xl py-6 px-4 space-y-6 print:space-y-0 print:p-0">
         {/* 문서 1 — 안내장 */}
         <div className="bg-white shadow-lg print:shadow-none">
-          <ResultDoc1 teacher={teacher} />
+          <ResultDoc1 teacher={teacher} formUrl={formUrl} />
         </div>
 
         {/* 문서 2 — 보호자 의견서 */}

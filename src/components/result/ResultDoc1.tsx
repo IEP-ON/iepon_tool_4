@@ -1,12 +1,14 @@
 "use client";
 
 import type { TeacherInput } from "@/lib/types";
+import { QRCodeSVG } from "qrcode.react";
 
 interface Props {
   teacher: TeacherInput;
+  formUrl?: string;
 }
 
-export function ResultDoc1({ teacher }: Props) {
+export function ResultDoc1({ teacher, formUrl }: Props) {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "____년 __월 __일";
     const d = new Date(dateStr);
@@ -113,8 +115,12 @@ export function ResultDoc1({ teacher }: Props) {
               아래의 QR코드를 스마트폰 카메라로 스캔하여 <strong className="text-red-600 print:text-black underline underline-offset-4">{formatDeadline(teacher.submissionDeadline, teacher.submissionDay)}까지</strong> 작성해 주세요.
             </p>
             <div className="flex gap-6 items-center p-6 border-2 border-gray-300 rounded-xl bg-gray-50 print:bg-transparent">
-              <div className="w-28 h-28 bg-white rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 shrink-0">
-                <span className="text-sm text-gray-500 font-medium">QR코드 영역</span>
+              <div className="w-28 h-28 bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1.5">
+                {formUrl ? (
+                  <QRCodeSVG value={formUrl} size={100} level="H" includeMargin={false} />
+                ) : (
+                  <span className="text-xs text-gray-400 text-center">QR코드<br/>영역</span>
+                )}
               </div>
               <div className="space-y-2">
                 <p className="font-bold text-[13pt]">스마트폰 간편 제출 안내</p>
