@@ -38,7 +38,7 @@ export function RadioOption({ options, value, onChange, columns = 1 }: Props) {
             className={`
               relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
               ${isSelected 
-                ? "border-blue-600 bg-blue-50/50 shadow-sm ring-1 ring-blue-600/20" 
+                ? "border-blue-600 bg-blue-50/80 shadow-sm ring-1 ring-blue-600/30" 
                 : "border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50"
               }
             `}
@@ -46,7 +46,7 @@ export function RadioOption({ options, value, onChange, columns = 1 }: Props) {
             <RadioGroupItem 
               value={optValue} 
               id={`radio-${optValue}`} 
-              className={isSelected ? "border-blue-600 text-blue-600" : ""}
+              className={isSelected ? "border-blue-600 text-blue-600" : "border-gray-300"}
             />
             <span className={`text-base font-medium flex-1 ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
               {optLabel}

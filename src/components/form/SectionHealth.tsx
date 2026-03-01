@@ -51,19 +51,21 @@ export function SectionHealth({ data, update }: Props) {
         {/* 복약 */}
         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
           <Label className="text-base font-bold text-gray-900 mb-3 block">정기적인 복약 여부</Label>
-          <RadioOption
-            options={["없음", "있음"]}
-            value={data.hasMedication}
-            onChange={(v) => {
-              update("hasMedication", v);
-              if (v === "없음") {
-                update("medications", []);
-                update("schoolMedicationSupport", "없음");
-              } else if (data.medications.length === 0) {
-                update("medications", [{ name: "", dosage: "", time: "" }]);
-              }
-            }}
-          />
+          <div className={`p-1 rounded-xl transition-all duration-200 ${data.hasMedication ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+            <RadioOption
+              options={["없음", "있음"]}
+              value={data.hasMedication}
+              onChange={(v) => {
+                update("hasMedication", v);
+                if (v === "없음") {
+                  update("medications", []);
+                  update("schoolMedicationSupport", "없음");
+                } else if (data.medications.length === 0) {
+                  update("medications", [{ name: "", dosage: "", time: "" }]);
+                }
+              }}
+            />
+          </div>
           {data.hasMedication === "있음" && (
             <div className="mt-4 p-4 bg-white rounded-lg border border-blue-100 shadow-sm space-y-4">
               {data.medications.map((med, i) => (
@@ -126,18 +128,20 @@ export function SectionHealth({ data, update }: Props) {
         {/* 발작·경련 */}
         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
           <Label className="text-base font-bold text-gray-900 mb-3 block">발작·경련 이력</Label>
-          <RadioOption
-            options={["해당 없음", "있음"]}
-            value={data.hasSeizure === "없음" ? "해당 없음" : data.hasSeizure}
-            onChange={(v) => {
-              const val = v === "해당 없음" ? "없음" : v;
-              update("hasSeizure", val);
-              if (val === "없음") {
-                update("seizureRecent", "");
-                update("seizureInstruction", "");
-              }
-            }}
-          />
+          <div className={`p-1 rounded-xl transition-all duration-200 ${data.hasSeizure ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+            <RadioOption
+              options={["해당 없음", "있음"]}
+              value={data.hasSeizure === "없음" ? "해당 없음" : data.hasSeizure}
+              onChange={(v) => {
+                const val = v === "해당 없음" ? "없음" : v;
+                update("hasSeizure", val);
+                if (val === "없음") {
+                  update("seizureRecent", "");
+                  update("seizureInstruction", "");
+                }
+              }}
+            />
+          </div>
           {data.hasSeizure === "있음" && (
             <div className="mt-4 p-4 bg-white rounded-lg border border-orange-100 shadow-sm space-y-4">
               <div>
@@ -165,12 +169,14 @@ export function SectionHealth({ data, update }: Props) {
           {/* 알레르기 */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
             <Label className="text-base font-bold text-gray-900 mb-3 block">알레르기 (복수 선택)</Label>
-            <CheckboxGroup
-              options={["없음", "식품", "약물", "환경"]}
-              selected={data.allergies}
-              onChange={(v) => handleExclusiveCheckbox("allergies", v, "없음")}
-              columns={2}
-            />
+            <div className={`p-1 rounded-xl transition-all duration-200 ${data.allergies.length > 0 ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+              <CheckboxGroup
+                options={["없음", "식품", "약물", "환경"]}
+                selected={data.allergies}
+                onChange={(v) => handleExclusiveCheckbox("allergies", v, "없음")}
+                columns={2}
+              />
+            </div>
             {!data.allergies.includes("없음") && data.allergies.length > 0 && (
               <div className="mt-3 space-y-2">
                 {data.allergies.includes("식품") && (
@@ -189,15 +195,17 @@ export function SectionHealth({ data, update }: Props) {
           {/* 식이 제한 */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
             <Label className="text-base font-bold text-gray-900 mb-3 block">식이 제한 (복수 선택)</Label>
-            <CheckboxGroup
-              options={["해당 없음", "질환으로 인한 제한", "종교·문화적 이유"]}
-              selected={data.dietaryRestriction.includes("없음") ? ["해당 없음"] : data.dietaryRestriction}
-              onChange={(v) => {
-                const mapped = v.map(item => item === "해당 없음" ? "없음" : item);
-                handleExclusiveCheckbox("dietaryRestriction", mapped, "없음");
-              }}
-              columns={1}
-            />
+            <div className={`p-1 rounded-xl transition-all duration-200 ${data.dietaryRestriction.length > 0 ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+              <CheckboxGroup
+                options={["해당 없음", "질환으로 인한 제한", "종교·문화적 이유"]}
+                selected={data.dietaryRestriction.includes("없음") ? ["해당 없음"] : data.dietaryRestriction}
+                onChange={(v) => {
+                  const mapped = v.map(item => item === "해당 없음" ? "없음" : item);
+                  handleExclusiveCheckbox("dietaryRestriction", mapped, "없음");
+                }}
+                columns={1}
+              />
+            </div>
             {!data.dietaryRestriction.includes("없음") && data.dietaryRestriction.length > 0 && (
               <div className="mt-3 space-y-2">
                 {data.dietaryRestriction.includes("질환으로 인한 제한") && (
@@ -215,23 +223,27 @@ export function SectionHealth({ data, update }: Props) {
           {/* 수면 */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
             <Label className="text-base font-bold text-gray-900 mb-3 block">수면 특성 (복수 선택)</Label>
-            <CheckboxGroup
-              options={["특이사항 없음", "입면 어려움", "수면 중 자주 깸", "수면시간 부족"]}
-              selected={data.sleepCharacteristics}
-              onChange={(v) => handleExclusiveCheckbox("sleepCharacteristics", v, "특이사항 없음")}
-              columns={2}
-            />
+            <div className={`p-1 rounded-xl transition-all duration-200 ${data.sleepCharacteristics.length > 0 ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+              <CheckboxGroup
+                options={["특이사항 없음", "입면 어려움", "수면 중 자주 깸", "수면시간 부족"]}
+                selected={data.sleepCharacteristics}
+                onChange={(v) => handleExclusiveCheckbox("sleepCharacteristics", v, "특이사항 없음")}
+                columns={2}
+              />
+            </div>
           </div>
 
           {/* 감각 민감성 */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
             <Label className="text-base font-bold text-gray-900 mb-3 block">감각 민감성 (복수 선택)</Label>
-            <CheckboxGroup
-              options={["없음", "소리", "빛", "촉각", "후각", "기타"]}
-              selected={data.sensoryIssues}
-              onChange={(v) => handleExclusiveCheckbox("sensoryIssues", v, "없음")}
-              columns={3}
-            />
+            <div className={`p-1 rounded-xl transition-all duration-200 ${data.sensoryIssues.length > 0 ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+              <CheckboxGroup
+                options={["없음", "소리", "빛", "촉각", "후각", "기타"]}
+                selected={data.sensoryIssues}
+                onChange={(v) => handleExclusiveCheckbox("sensoryIssues", v, "없음")}
+                columns={3}
+              />
+            </div>
             {data.sensoryIssues.includes("기타") && !data.sensoryIssues.includes("없음") && (
               <Input
                 className="mt-3 bg-white"

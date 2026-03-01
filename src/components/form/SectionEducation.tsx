@@ -23,6 +23,7 @@ export function SectionEducation({ data, update }: Props) {
           placeholder="자유롭게 적어주세요"
           value={data.strengths}
           onChange={(e) => update("strengths", e.target.value)}
+          className={`transition-colors ${data.strengths ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -32,6 +33,7 @@ export function SectionEducation({ data, update }: Props) {
           placeholder="자유롭게 적어주세요"
           value={data.uniqueTraits}
           onChange={(e) => update("uniqueTraits", e.target.value)}
+          className={`transition-colors ${data.uniqueTraits ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -56,6 +58,7 @@ export function SectionEducation({ data, update }: Props) {
             value={data[key] as string}
             onChange={(e) => update(key, e.target.value)}
             rows={2}
+            className={`transition-colors ${data[key] ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
           />
         </div>
       ))}
@@ -68,6 +71,7 @@ export function SectionEducation({ data, update }: Props) {
         <Textarea
           value={data.priorityGoal}
           onChange={(e) => update("priorityGoal", e.target.value)}
+          className={`transition-colors ${data.priorityGoal ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -78,6 +82,7 @@ export function SectionEducation({ data, update }: Props) {
           value={data.preferredMethod}
           onChange={(e) => update("preferredMethod", e.target.value)}
           rows={2}
+          className={`transition-colors ${data.preferredMethod ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -88,6 +93,7 @@ export function SectionEducation({ data, update }: Props) {
           value={data.evaluationOpinion}
           onChange={(e) => update("evaluationOpinion", e.target.value)}
           rows={2}
+          className={`transition-colors ${data.evaluationOpinion ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -97,6 +103,7 @@ export function SectionEducation({ data, update }: Props) {
           value={data.homeConnection}
           onChange={(e) => update("homeConnection", e.target.value)}
           rows={2}
+          className={`transition-colors ${data.homeConnection ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -106,18 +113,20 @@ export function SectionEducation({ data, update }: Props) {
 
       <div>
         <Label>졸업 후 진로 방향 (희망)</Label>
-        <RadioOption
-          options={["일반 직업", "복지관 연계 취업", "주간보호 이용", "자립생활", "기타"]}
-          value={data.careerDirection}
-          onChange={(v) => {
-            update("careerDirection", v);
-            if (v !== "기타") update("careerDirectionOther", "");
-          }}
-          columns={2}
-        />
+        <div className={`p-1 -ml-1 rounded-xl transition-all duration-200 ${data.careerDirection ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+          <RadioOption
+            options={["일반 직업", "복지관 연계 취업", "주간보호 이용", "자립생활", "기타"]}
+            value={data.careerDirection}
+            onChange={(v) => {
+              update("careerDirection", v);
+              if (v !== "기타") update("careerDirectionOther", "");
+            }}
+            columns={2}
+          />
+        </div>
         {data.careerDirection === "기타" && (
           <Input
-            className="mt-2"
+            className={`mt-2 h-12 transition-colors ${data.careerDirectionOther ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
             placeholder="기타 진로 방향을 적어주세요"
             value={data.careerDirectionOther}
             onChange={(e) => update("careerDirectionOther", e.target.value)}
@@ -132,6 +141,7 @@ export function SectionEducation({ data, update }: Props) {
           value={data.fiveYearVision}
           onChange={(e) => update("fiveYearVision", e.target.value)}
           rows={3}
+          className={`transition-colors ${data.fiveYearVision ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
 
@@ -142,6 +152,7 @@ export function SectionEducation({ data, update }: Props) {
           value={data.educationValue}
           onChange={(e) => update("educationValue", e.target.value)}
           rows={2}
+          className={`transition-colors ${data.educationValue ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
         />
       </div>
     </div>

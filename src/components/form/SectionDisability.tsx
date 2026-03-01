@@ -45,37 +45,41 @@ export function SectionDisability({ data, update }: Props) {
         <h2 className="text-lg font-bold border-b pb-2">A. 복지카드 소지 여부 (복지부 등록)</h2>
         <div>
           <Label className="font-medium text-gray-700 block mb-2">복지카드 소지</Label>
-          <RadioOption
-            options={["소지", "미소지"]}
-            value={data.disabilityRegistration}
-            onChange={(v) => {
-              update("disabilityRegistration", v);
-              if (v === "미소지") {
-                update("primaryDisability", "");
-                update("secondaryDisability", "없음");
-                update("secondaryDisabilityType", "");
-                update("disabilitySeverity", "");
-                update("firstRegistrationDate", "");
-              }
-            }}
-          />
+          <div className={`p-1 rounded-xl transition-all duration-200 ${data.disabilityRegistration ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+            <RadioOption
+              options={["소지", "미소지"]}
+              value={data.disabilityRegistration}
+              onChange={(v) => {
+                update("disabilityRegistration", v);
+                if (v === "미소지") {
+                  update("primaryDisability", "");
+                  update("secondaryDisability", "없음");
+                  update("secondaryDisabilityType", "");
+                  update("disabilitySeverity", "");
+                  update("firstRegistrationDate", "");
+                }
+              }}
+            />
+          </div>
         </div>
 
         {data.disabilityRegistration === "소지" && (
           <div className="space-y-6 pt-4 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
             <div className="space-y-3">
               <Label className="font-medium text-gray-700 block">주장애 유형</Label>
-              <RadioOption
-                options={disabilityTypes}
-                value={disabilityTypes.includes(data.primaryDisability) ? data.primaryDisability : (data.primaryDisability ? "직접 입력" : "")}
-                onChange={(v) => {
-                  if (v === "직접 입력") {
-                    update("primaryDisability", " "); // 임시값으로 '직접 입력' 상태 트리거
-                  } else {
-                    update("primaryDisability", v);
-                  }
-                }}
-              />
+              <div className={`p-1 rounded-xl transition-all duration-200 ${data.primaryDisability ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+                <RadioOption
+                  options={disabilityTypes}
+                  value={disabilityTypes.includes(data.primaryDisability) ? data.primaryDisability : (data.primaryDisability ? "직접 입력" : "")}
+                  onChange={(v) => {
+                    if (v === "직접 입력") {
+                      update("primaryDisability", " "); // 임시값으로 '직접 입력' 상태 트리거
+                    } else {
+                      update("primaryDisability", v);
+                    }
+                  }}
+                />
+              </div>
               {(!disabilityTypes.slice(0, -1).includes(data.primaryDisability) && data.primaryDisability !== "") && (
                 <Input
                   className="mt-2 bg-white"
@@ -88,14 +92,16 @@ export function SectionDisability({ data, update }: Props) {
 
             <div className="space-y-3">
               <Label className="font-medium text-gray-700 block">부장애 (중복장애) 여부</Label>
-              <RadioOption
-                options={["없음", "있음"]}
-                value={data.secondaryDisability}
-                onChange={(v) => {
-                  update("secondaryDisability", v);
-                  if (v === "없음") update("secondaryDisabilityType", "");
-                }}
-              />
+              <div className={`p-1 rounded-xl transition-all duration-200 ${data.secondaryDisability ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+                <RadioOption
+                  options={["없음", "있음"]}
+                  value={data.secondaryDisability}
+                  onChange={(v) => {
+                    update("secondaryDisability", v);
+                    if (v === "없음") update("secondaryDisabilityType", "");
+                  }}
+                />
+              </div>
               {data.secondaryDisability === "있음" && (
                 <Input
                   className="mt-2 bg-white"
@@ -108,18 +114,20 @@ export function SectionDisability({ data, update }: Props) {
 
             <div className="space-y-3">
               <Label className="font-medium text-gray-700 block">장애 정도</Label>
-              <RadioOption
-                options={["심한 장애 (기존 1~3급)", "심하지 않은 장애 (기존 4~6급)"]}
-                value={data.disabilitySeverity}
-                onChange={(v) => update("disabilitySeverity", v)}
-              />
+              <div className={`p-1 rounded-xl transition-all duration-200 ${data.disabilitySeverity ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+                <RadioOption
+                  options={["심한 장애 (기존 1~3급)", "심하지 않은 장애 (기존 4~6급)"]}
+                  value={data.disabilitySeverity}
+                  onChange={(v) => update("disabilitySeverity", v)}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label className="font-medium text-gray-700 block">복지카드 등록일 <span className="text-xs text-gray-400 font-normal ml-1">(복지카드 압면 확인)</span></Label>
               <Input
                 type="date"
-                className="bg-white max-w-[220px]"
+                className={`max-w-[220px] transition-colors ${data.firstRegistrationDate ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
                 value={data.firstRegistrationDate}
                 onChange={(e) => update("firstRegistrationDate", e.target.value)}
               />
@@ -133,17 +141,19 @@ export function SectionDisability({ data, update }: Props) {
         <div className="space-y-6 pt-2 px-4 bg-gray-50/50 rounded-xl border border-gray-100 pb-4">
           <div className="space-y-3 pt-2">
             <Label className="font-medium text-gray-700 block">특수교육 대상자 선정 장애 영역</Label>
-            <RadioOption
-              options={disabilityTypes}
-              value={disabilityTypes.includes(data.specialEdArea) ? data.specialEdArea : (data.specialEdArea ? "직접 입력" : "")}
-              onChange={(v) => {
-                if (v === "직접 입력") {
-                  update("specialEdArea", " ");
-                } else {
-                  update("specialEdArea", v);
-                }
-              }}
-            />
+            <div className={`p-1 rounded-xl transition-all duration-200 ${data.specialEdArea ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
+              <RadioOption
+                options={disabilityTypes}
+                value={disabilityTypes.includes(data.specialEdArea) ? data.specialEdArea : (data.specialEdArea ? "직접 입력" : "")}
+                onChange={(v) => {
+                  if (v === "직접 입력") {
+                    update("specialEdArea", " ");
+                  } else {
+                    update("specialEdArea", v);
+                  }
+                }}
+              />
+            </div>
             {(!disabilityTypes.slice(0, -1).includes(data.specialEdArea) && data.specialEdArea !== "") && (
               <Input
                 className="mt-2 bg-white"
@@ -158,12 +168,11 @@ export function SectionDisability({ data, update }: Props) {
             <Label className="font-medium text-gray-700 block">최초 선정 연도/시기</Label>
             <Input
               type="month"
-              className="bg-white max-w-[200px]"
+              className={`max-w-[200px] transition-colors ${data.firstSelectionDate ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
               value={data.firstSelectionDate}
               onChange={(e) => update("firstSelectionDate", e.target.value)}
             />
           </div>
-          {/* '현재 교육 배치 형태' 문항 삭제됨 */}
         </div>
       </div>
     </div>

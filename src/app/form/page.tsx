@@ -112,7 +112,7 @@ function FormContent() {
   const handleComplete = () => {
     // 서명 의사 확인 및 필수 입력 검사
     if (step === 6) {
-      if (consent.consentTypingConfirm !== "위 내용을 모두 읽었으며, 자유의사로 동의합니다.") {
+      if (consent.consentTypingConfirm !== "동의합니다.") {
         alert("서명 의사 확인을 위해 지정된 문장을 똑같이 입력해 주세요.");
         return;
       }

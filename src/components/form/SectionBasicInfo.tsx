@@ -59,13 +59,14 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
         <h2 className="text-xl font-bold border-b-2 border-gray-800 pb-2">0. 기본 정보</h2>
         
         <div className="grid gap-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-base font-bold">학생 성명</Label>
               <Input
                 value={data.studentName}
                 onChange={(e) => update("studentName", e.target.value)}
-                className="bg-gray-50 h-12"
+                className={`h-12 ${data.studentName ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
+                placeholder="학생 이름을 입력하세요"
               />
             </div>
             <div className="space-y-2">
@@ -74,7 +75,7 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                 type="date"
                 value={data.birthDate}
                 onChange={(e) => update("birthDate", e.target.value)}
-                className="bg-gray-50 h-12"
+                className={`h-12 ${data.birthDate ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
               />
             </div>
           </div>
@@ -85,7 +86,8 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
               <Input
                 value={data.guardianName}
                 onChange={(e) => update("guardianName", e.target.value)}
-                className="bg-white h-12"
+                className={`h-12 ${data.guardianName ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-white border-gray-200"}`}
+                placeholder="보호자 이름을 입력하세요"
               />
             </div>
             
@@ -102,7 +104,7 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                   placeholder="관계 직접 입력 (예: 이모, 삼촌)"
                   value={data.guardianRelationOther}
                   onChange={(e) => update("guardianRelationOther", e.target.value)}
-                  className="mt-2 bg-white h-12"
+                  className={`mt-2 h-12 ${data.guardianRelationOther ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-white border-gray-200"}`}
                 />
               )}
             </div>
@@ -114,7 +116,7 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                 placeholder="010-0000-0000"
                 value={data.guardianPhone}
                 onChange={(e) => handlePhoneChange("guardianPhone", e.target.value)}
-                className="bg-white h-12"
+                className={`h-12 ${data.guardianPhone ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-white border-gray-200"}`}
                 maxLength={13}
               />
             </div>

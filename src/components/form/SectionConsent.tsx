@@ -363,16 +363,16 @@ export function SectionConsent({
               아래 문장을 텍스트 칸에 똑같이 입력해 주세요.
             </p>
             <p className="text-sm sm:text-base text-gray-800 bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200 font-bold select-all text-center">
-              위 내용을 모두 읽었으며, 자유의사로 동의합니다.
+              동의합니다.
             </p>
             <Input
               value={data.consentTypingConfirm}
               onChange={(e) => update("consentTypingConfirm", e.target.value)}
-              placeholder="위 문장을 띄어쓰기 포함하여 똑같이 입력해 주세요"
+              placeholder="'동의합니다.' 라고 입력해 주세요"
               className={`mt-4 h-12 sm:h-14 text-sm sm:text-base font-medium placeholder:text-gray-400 border-2 transition-colors ${
-                data.consentTypingConfirm === "위 내용을 모두 읽었으며, 자유의사로 동의합니다."
-                  ? "border-green-500 bg-green-50/30 text-green-700"
-                  : "border-blue-200 focus:border-blue-400"
+                data.consentTypingConfirm === "동의합니다."
+                  ? "border-green-500 bg-green-50/30 text-green-700 ring-1 ring-green-500"
+                  : "border-blue-200 focus:border-blue-400 bg-white"
               }`}
             />
           </div>
