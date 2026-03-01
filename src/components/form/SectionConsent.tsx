@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import SignatureCanvas from "react-signature-canvas";
+import { SignaturePad, type SignaturePadHandle } from "./SignaturePad";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -32,17 +32,14 @@ export function SectionConsent({
   schoolAddress = "대구광역시 ○○구 ○○로 ○○",
 }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const sigCanvasRef = useRef<SignatureCanvas>(null);
+  const sigPadRef = useRef<SignaturePadHandle>(null);
 
-  const handleSignatureEnd = () => {
-    if (sigCanvasRef.current) {
-      const dataUrl = sigCanvasRef.current.getTrimmedCanvas().toDataURL("image/png");
-      update("signatureImage", dataUrl);
-    }
+  const handleSignatureEnd = (dataUrl: string) => {
+    update("signatureImage", dataUrl);
   };
 
   const handleClearSignature = () => {
-    sigCanvasRef.current?.clear();
+    sigPadRef.current?.clear();
     update("signatureImage", "");
   };
 
@@ -377,13 +374,8 @@ export function SectionConsent({
           </div>
           <p className="text-xs text-gray-500">손가락 또는 마우스로 서명해 주세요.</p>
           <div className="border-2 border-blue-200 rounded-lg bg-white overflow-hidden">
-            <SignatureCanvas
-              ref={sigCanvasRef}
-              penColor="#1e40af"
-              canvasProps={{
-                className: "w-full",
-                style: { height: 120, touchAction: "none" },
-              }}
+            <SignaturePad
+              ref={sigPadRef}
               onEnd={handleSignatureEnd}
             />
           </div>
