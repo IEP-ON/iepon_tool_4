@@ -95,18 +95,13 @@ function FormContent() {
       case 4:
         return <SectionEducation data={opinion} update={updateOpinion} />;
       case 5:
-        return <SectionServices data={opinion} update={updateOpinion} />;
+        return <SectionServices data={opinion} update={updateOpinion} teacherContext={teacher} />;
       case 6:
         return (
           <SectionConsent
             data={consent}
             update={updateConsent}
-            schoolName={teacher.schoolName}
-            teacherName={teacher.teacherName}
-            teacherPhone={teacher.teacherPhone}
-            principalName={teacher.principalName}
-            adminTeacherName={teacher.adminTeacherName}
-            schoolAddress={teacher.schoolAddress}
+            teacherContext={teacher}
           />
         );
       default:

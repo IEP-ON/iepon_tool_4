@@ -133,10 +133,12 @@ export interface ParentOpinion {
   rehabServiceList: Array<{ institution: string; days: string; area: string }>; // 새로운 리스트 형태
 
   // 10. 행사/체험
-  survivalSwimming: string; // 생존수영 (참여/불참/참관)
+  survivalSwimming: string; // 생존수영 참여 여부 (3-4학년)
   survivalSwimmingReason: string;
-  openClassObservation: string; // 공개수업 참관 여부
-  fieldTrip: string; // 현장체험학습 참여 여부/유의사항
+  schoolTrip: string; // 수학여행 참여 여부 (5-6학년)
+  schoolTripReason: string;
+  openClassObservation: string; // 학부모 참관수업
+  fieldTrip: string; // 일반 현장체험학습 참여 여부/유의사항
 
   // 11. 진로/미래
   fiveYearVision: string; // 5년 후 아이의 모습 기대
@@ -184,11 +186,14 @@ export interface ConsentForm {
   consent7_competition: boolean | null; // 연구대회
   consent7_externalMaterial: boolean | null; // 대외 연수
 
-  consent8_specialFieldTrip: boolean | null; // 특수 현체
-  consent8_regularFieldTrip: boolean | null; // 통합 현체
-  consent8_events: boolean | null; // 체험/행사
-  consent8_publicTransport: boolean | null; // 대중교통
-  consent8_insurance: boolean | null; // 안전공제
+  consent8_specialFieldTrip: boolean | null; // 특수학급 현장체험
+  consent8_inclusiveFieldTrip: boolean | null; // 통합학급 현장체험
+  consent8_otherActivities: boolean | null; // 기타 활동
+  consent8_publicTransport: boolean | null; // 대중교통 이용
+  consent8_schoolInsurance: boolean | null; // 학교안전공제회
+  
+  consent8_survivalSwimming: boolean | null; // 생존수영 (3~4학년)
+  consent8_schoolTrip: boolean | null; // 수학여행/수련활동 (5~6학년)
 
   // 필수: 생명/안전
   consent9_firstAid: boolean | null;

@@ -197,6 +197,7 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 <td className="border border-black px-2 py-2" colSpan={3}>
                   <div className="space-y-1">
                     {!isEmptyForm && opinion.survivalSwimming && <p><span className="font-bold">[생존수영]</span> {opinion.survivalSwimming} {opinion.survivalSwimmingReason}</p>}
+                    {!isEmptyForm && opinion.schoolTrip && <p><span className="font-bold">[수학·수련활동]</span> {opinion.schoolTrip} {opinion.schoolTripReason}</p>}
                     {!isEmptyForm && opinion.openClassObservation && <p><span className="font-bold">[공개수업]</span> {opinion.openClassObservation}</p>}
                     {!isEmptyForm && opinion.fieldTrip && <p><span className="font-bold">[현장체험]</span> {opinion.fieldTrip}</p>}
                     {isEmptyForm && <div className="h-6"></div>}

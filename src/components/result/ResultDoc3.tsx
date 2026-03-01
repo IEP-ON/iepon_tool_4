@@ -137,7 +137,8 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
               </tr>
               <tr>
                 <td className="border border-black px-2 py-2">
-                  <p className="font-bold mb-1">3) 교내외 체험학습 및 외부 행사 참여 (특수학급 주관 현장체험, 통합학급 행사 등)</p>
+                  <p className="font-bold mb-1">3) 교내외 체험학습 및 외부 행사 참여</p>
+                  <p className="text-gray-600 text-[8.5pt] ml-3">특수/통합학급 현장체험, 생존수영(3~4학년), 수학여행(5~6학년) 등 포괄적 동의</p>
                 </td>
                 <td className="border border-black px-2 py-2 text-center align-middle">
                   {renderCheck("동의", consent.consent8_specialFieldTrip, true)} {renderCheck("미동의", consent.consent8_specialFieldTrip, false)}

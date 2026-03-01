@@ -170,29 +170,29 @@ export function SectionBasicInfo({ data, update, teacherContext }: Props) {
                 { rank: 2, dateKey: "hopeDate2", timeKey: "hopeTime2" },
                 { rank: 3, dateKey: "hopeDate3", timeKey: "hopeTime3" },
               ].map(({ rank, dateKey, timeKey }) => (
-                <div key={rank} className="flex flex-col sm:flex-row gap-3 p-3 bg-white border border-gray-100 rounded-lg shadow-sm">
-                  <div className="flex items-center w-20 shrink-0">
-                    <span className="font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-md">{rank}순위</span>
+                <div key={rank} className="flex flex-col gap-3 p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                  <div className="flex items-center">
+                    <span className="font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded-md text-sm">{rank}순위</span>
                   </div>
-                  <div className="flex-1 grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <Label className="text-xs text-gray-500">희망일</Label>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="space-y-1.5 flex-1">
+                      <Label className="text-xs text-gray-500 font-medium">희망일</Label>
                       <Input
                         type="date"
                         min={teacherContext?.meetingStartDate || ""}
                         max={teacherContext?.meetingEndDate || ""}
                         value={data[dateKey as keyof ParentOpinion] as string}
                         onChange={(e) => update(dateKey as keyof ParentOpinion, e.target.value)}
-                        className="h-10"
+                        className="h-12 bg-gray-50/50"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-gray-500">희망 시간</Label>
+                    <div className="space-y-1.5 flex-1">
+                      <Label className="text-xs text-gray-500 font-medium">희망 시간</Label>
                       <Input
                         type="time"
                         value={data[timeKey as keyof ParentOpinion] as string}
                         onChange={(e) => update(timeKey as keyof ParentOpinion, e.target.value)}
-                        className="h-10"
+                        className="h-12 bg-gray-50/50"
                       />
                     </div>
                   </div>

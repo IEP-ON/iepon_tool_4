@@ -13,6 +13,7 @@ import SignatureCanvas from "react-signature-canvas";
 interface Props {
   data: ConsentForm;
   update: (key: keyof ConsentForm, value: ConsentForm[keyof ConsentForm]) => void;
+  teacherContext?: any; // 학년 정보 등을 받아오기 위함
   schoolName?: string;
   teacherName?: string;
   teacherPhone?: string;
@@ -24,6 +25,7 @@ interface Props {
 export function SectionConsent({
   data,
   update,
+  teacherContext,
   schoolName = "○○○초등학교",
   teacherName = "○○○",
   teacherPhone = "053-○○○-○○○○",
@@ -247,10 +249,16 @@ export function SectionConsent({
         <p className="text-sm text-gray-600 mb-3">이는 '원칙적으로 참여 의향이 있다'는 포괄 확인이며, 구체적인 행사는 매번 별도 안내를 드립니다.</p>
         <div className="space-y-2">
           <ConsentToggle label="특수학급 단독 현장체험학습 참여" value={data.consent8_specialFieldTrip} onChange={(v) => update("consent8_specialFieldTrip", v)} />
-          <ConsentToggle label="통합학급 주관 현장체험학습 참여" value={data.consent8_regularFieldTrip} onChange={(v) => update("consent8_regularFieldTrip", v)} />
-          <ConsentToggle label="기타 교내·교외 체험 활동 참여" value={data.consent8_events} onChange={(v) => update("consent8_events", v)} />
+          <ConsentToggle label="통합학급 주관 현장체험학습 참여" value={data.consent8_inclusiveFieldTrip} onChange={(v) => update("consent8_inclusiveFieldTrip", v)} />
+          {teacherContext?.grade && (teacherContext.grade === "3" || teacherContext.grade === "4") && (
+            <ConsentToggle label="생존수영(안전체험 교육) 참여" value={data.consent8_survivalSwimming} onChange={(v) => update("consent8_survivalSwimming", v)} />
+          )}
+          {teacherContext?.grade && (teacherContext.grade === "5" || teacherContext.grade === "6") && (
+            <ConsentToggle label="수학여행 및 수련활동 참여" value={data.consent8_schoolTrip} onChange={(v) => update("consent8_schoolTrip", v)} />
+          )}
+          <ConsentToggle label="기타 교내·교외 체험 활동 참여" value={data.consent8_otherActivities} onChange={(v) => update("consent8_otherActivities", v)} />
           <ConsentToggle label="교외 활동 시 대중교통(지하철, 버스 등) 이용" value={data.consent8_publicTransport} onChange={(v) => update("consent8_publicTransport", v)} />
-          <ConsentToggle label="활동 중 사고 발생 시 학교안전공제회 보상 처리" value={data.consent8_insurance} onChange={(v) => update("consent8_insurance", v)} />
+          <ConsentToggle label="활동 중 사고 발생 시 학교안전공제회 보상 처리" value={data.consent8_schoolInsurance} onChange={(v) => update("consent8_schoolInsurance", v)} />
         </div>
       </div>
 

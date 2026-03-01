@@ -117,6 +117,8 @@ export const defaultParentOpinion: ParentOpinion = {
 
   survivalSwimming: "",
   survivalSwimmingReason: "",
+  schoolTrip: "",
+  schoolTripReason: "",
   openClassObservation: "",
   fieldTrip: "",
 
@@ -162,10 +164,12 @@ export const defaultConsentForm: ConsentForm = {
   consent7_externalMaterial: null,
 
   consent8_specialFieldTrip: null,
-  consent8_regularFieldTrip: null,
-  consent8_events: null,
+  consent8_inclusiveFieldTrip: null,
+  consent8_otherActivities: null,
   consent8_publicTransport: null,
-  consent8_insurance: null,
+  consent8_schoolInsurance: null,
+  consent8_survivalSwimming: null,
+  consent8_schoolTrip: null,
 
   consent9_firstAid: null,
   consent9_119: null,

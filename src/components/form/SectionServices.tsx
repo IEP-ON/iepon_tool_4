@@ -6,16 +6,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioOption } from "./RadioOption";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, AlertTriangle } from "lucide-react";
-import type { ParentOpinion } from "@/lib/types";
+import type { ParentOpinion, TeacherInput } from "@/lib/types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 
 interface Props {
   data: ParentOpinion;
   update: (key: keyof ParentOpinion, value: any) => void;
+  teacherContext?: TeacherInput;
 }
 
-export function SectionServices({ data, update }: Props) {
+export function SectionServices({ data, update, teacherContext }: Props) {
   const [duplicateWarning, setDuplicateWarning] = useState(false);
 
   // 리스트 관리 함수 (치료지원)
@@ -94,6 +95,9 @@ export function SectionServices({ data, update }: Props) {
     }
   }, []);
 
+  const isGrade34 = teacherContext?.grade === "3" || teacherContext?.grade === "4";
+  const isGrade56 = teacherContext?.grade === "5" || teacherContext?.grade === "6";
+
   return (
     <div className="space-y-8">
       {/* ⑧ 행사/체험 참여 의향 */}
@@ -101,26 +105,51 @@ export function SectionServices({ data, update }: Props) {
         <h2 className="text-lg font-bold border-b pb-2">⑧ 행사·체험 참여 의향</h2>
         <p className="text-sm text-gray-500 -mt-3">구체적 일정은 매번 별도로 안내드립니다. 아래는 원칙적인 참여 의향을 여쭤보는 항목입니다.</p>
 
-        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-          <Label className="font-bold text-gray-800 text-base">생존수영 (안전체험 교육)</Label>
-          <RadioOption
-            options={["참여 가능", "참여 어려움", "미정"]}
-            value={data.survivalSwimming}
-            onChange={(v) => {
-              update("survivalSwimming", v);
-              if (v === "참여 가능") update("survivalSwimmingReason", "");
-            }}
-            columns={3}
-          />
-          {(data.survivalSwimming === "참여 어려움" || data.survivalSwimming === "미정") && (
-            <Input
-              className="mt-2 bg-white"
-              placeholder="이유 또는 참고사항 (예: 감각 민감, 건강 이유 등)"
-              value={data.survivalSwimmingReason}
-              onChange={(e) => update("survivalSwimmingReason", e.target.value)}
+        {isGrade34 && (
+          <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+            <Label className="font-bold text-gray-800 text-base">생존수영 (안전체험 교육) <span className="text-blue-600 text-sm font-normal ml-1">※ 3~4학년 대상</span></Label>
+            <RadioOption
+              options={["참여 가능", "참여 어려움", "미정", "해당 학년 아님"]}
+              value={data.survivalSwimming}
+              onChange={(v) => {
+                update("survivalSwimming", v);
+                if (v === "참여 가능" || v === "해당 학년 아님") update("survivalSwimmingReason", "");
+              }}
+              columns={2}
             />
-          )}
-        </div>
+            {(data.survivalSwimming === "참여 어려움" || data.survivalSwimming === "미정") && (
+              <Input
+                className="mt-2 bg-white"
+                placeholder="이유 또는 참고사항 (예: 감각 민감, 건강 이유 등)"
+                value={data.survivalSwimmingReason}
+                onChange={(e) => update("survivalSwimmingReason", e.target.value)}
+              />
+            )}
+          </div>
+        )}
+
+        {isGrade56 && (
+          <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+            <Label className="font-bold text-gray-800 text-base">수학여행/수련활동 <span className="text-blue-600 text-sm font-normal ml-1">※ 5~6학년 대상</span></Label>
+            <RadioOption
+              options={["참여 가능", "참여 어려움", "미정", "해당 학년 아님"]}
+              value={data.schoolTrip}
+              onChange={(v) => {
+                update("schoolTrip", v);
+                if (v === "참여 가능" || v === "해당 학년 아님") update("schoolTripReason", "");
+              }}
+              columns={2}
+            />
+            {(data.schoolTrip === "참여 어려움" || data.schoolTrip === "미정") && (
+              <Input
+                className="mt-2 bg-white"
+                placeholder="이유 또는 참고사항 (예: 숙박 어려움 등)"
+                value={data.schoolTripReason}
+                onChange={(e) => update("schoolTripReason", e.target.value)}
+              />
+            )}
+          </div>
+        )}
 
         <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
           <Label className="font-bold text-gray-800 text-base">학부모 참관수업</Label>
@@ -133,7 +162,7 @@ export function SectionServices({ data, update }: Props) {
         </div>
 
         <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-          <Label className="font-bold text-gray-800 text-base">현장체험학습</Label>
+          <Label className="font-bold text-gray-800 text-base">일반 현장체험학습</Label>
           <RadioOption
             options={["참여 가능", "참여 어려움", "미정"]}
             value={data.fieldTrip}
