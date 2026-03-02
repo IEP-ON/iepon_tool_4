@@ -1,12 +1,9 @@
 "use client";
 
 import type { ParentOpinion } from "@/lib/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioOption } from "./RadioOption";
-import { CheckboxGroup } from "./CheckboxGroup";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -15,303 +12,286 @@ interface Props {
   updateOpinion: (key: keyof ParentOpinion, value: any) => void;
 }
 
+const SELECT_CLS = "flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600";
+const TEXTAREA_CLS = "flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 resize-none";
+
 export function Step3Education({ opinion, updateOpinion }: Props) {
-  const addTherapySupport = () => {
-    const current = opinion.therapySupportList || [];
-    updateOpinion("therapySupportList", [...current, { institution: "", days: "", area: "" }]);
+  const addListItem = (key: "therapySupportList" | "rehabServiceList") => {
+    updateOpinion(key, [...(opinion[key] || []), { institution: "", days: "", area: "" }]);
   };
-
-  const updateTherapySupport = (index: number, field: string, value: string) => {
-    const current = [...(opinion.therapySupportList || [])];
-    current[index] = { ...current[index], [field]: value };
-    updateOpinion("therapySupportList", current);
+  const removeListItem = (key: "therapySupportList" | "rehabServiceList", idx: number) => {
+    updateOpinion(key, (opinion[key] as any[]).filter((_: any, i: number) => i !== idx));
   };
-
-  const removeTherapySupport = (index: number) => {
-    const current = [...(opinion.therapySupportList || [])];
-    current.splice(index, 1);
-    updateOpinion("therapySupportList", current);
-  };
-
-  const addRehabService = () => {
-    const current = opinion.rehabServiceList || [];
-    updateOpinion("rehabServiceList", [...current, { institution: "", days: "", area: "" }]);
-  };
-
-  const updateRehabService = (index: number, field: string, value: string) => {
-    const current = [...(opinion.rehabServiceList || [])];
-    current[index] = { ...current[index], [field]: value };
-    updateOpinion("rehabServiceList", current);
-  };
-
-  const removeRehabService = (index: number) => {
-    const current = [...(opinion.rehabServiceList || [])];
-    current.splice(index, 1);
-    updateOpinion("rehabServiceList", current);
-  };
-
-  const handleExclusiveCheckbox = (key: keyof ParentOpinion, values: string[], exclusiveValue: string) => {
-    const current = opinion[key] as string[] || [];
-    let newValues = [...values];
-    if (!current.includes(exclusiveValue) && values.includes(exclusiveValue)) {
-      newValues = [exclusiveValue];
-    } else if (current.includes(exclusiveValue) && values.length > 1) {
-      newValues = values.filter((v) => v !== exclusiveValue);
-    }
-    updateOpinion(key, newValues);
+  const updateListItem = (key: "therapySupportList" | "rehabServiceList", idx: number, field: string, val: string) => {
+    const copy = [...(opinion[key] as any[])];
+    copy[idx] = { ...copy[idx], [field]: val };
+    updateOpinion(key, copy);
   };
 
   return (
     <div className="space-y-6">
-      {/* 1. 현재 수준 */}
+      <div className="mb-2">
+        <h2 className="text-2xl font-bold text-gray-900">교육 및 지원 요구</h2>
+        <p className="text-gray-500 mt-1">이번 학기 목표와 필요한 학교 지원을 선택해주세요.</p>
+      </div>
+
+      {/* ───── 현재 수준 (6영역) ───── */}
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">가정에서 바라본 현재 수준</CardTitle>
-          <CardDescription>가정에서 관찰되는 아이의 현재 모습을 편하게 적어주세요.</CardDescription>
+          <CardTitle className="text-lg">가정에서 관찰되는 현재 수준</CardTitle>
+          <CardDescription>각 영역에서 아이의 현재 모습을 간략히 적어주세요.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {[
-            { key: "levelLearning" as const, label: "학습", hint: "읽기·쓰기·수 개념 등" },
-            { key: "levelCommunication" as const, label: "의사소통", hint: "표현 방법, 지시 이해 수준" },
-            { key: "levelSocial" as const, label: "사회성·정서", hint: "또래·어른과의 관계, 감정 표현·조절" },
-            { key: "levelSelfCare" as const, label: "자조기술", hint: "식사·용변·옷입기·손씻기" },
-            { key: "levelMotor" as const, label: "운동", hint: "걷기·달리기·가위질·쓰기 등" },
-            { key: "levelBehavior" as const, label: "행동 특성", hint: "어려움을 주는 행동이 있다면" },
-          ].map(({ key, label, hint }) => (
-            <div key={key} className="space-y-2">
-              <Label>
-                {label} <span className="text-xs text-gray-400 font-normal">({hint})</span>
-              </Label>
-              <Textarea
-                placeholder="자유롭게 적어주세요"
-                value={opinion[key] as string}
-                onChange={(e) => updateOpinion(key, e.target.value)}
-                rows={2}
-                className={`transition-colors ${opinion[key] ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
-              />
+          {([
+            { key: "levelLearning", label: "학습 (읽기·쓰기·수 개념 등)", ph: "예: 한글 자음 모음을 읽을 수 있으나 받침 단어는 어려워합니다." },
+            { key: "levelCommunication", label: "의사소통 (말하기·듣기·표현)", ph: "예: 2~3어절로 의사표현이 가능합니다." },
+            { key: "levelSocial", label: "사회성 (또래관계·규칙 이해)", ph: "예: 또래에 관심은 있으나 대화 시작이 어렵습니다." },
+            { key: "levelSelfCare", label: "자조·일상생활 (식사·위생·옷입기)", ph: "예: 혼자 밥먹기 가능, 세수/양치 보조 필요" },
+            { key: "levelMotor", label: "운동 (대근육·소근육)", ph: "예: 달리기 가능, 가위질과 글씨쓰기는 어려워합니다." },
+            { key: "levelBehavior", label: "행동 (특이행동·자기조절)", ph: "예: 관심 없는 활동 시 자리 이탈이 잦습니다." },
+          ] as { key: keyof ParentOpinion; label: string; ph: string }[]).map(({ key, label, ph }) => (
+            <div key={key} className="space-y-1">
+              <Label className="text-sm">{label}</Label>
+              <textarea rows={2} className={TEXTAREA_CLS} placeholder={ph} value={(opinion[key] as string) || ""} onChange={(e) => updateOpinion(key, e.target.value)} />
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* 2. 교육 목표 및 지원 */}
+      {/* ───── 교육 목표 ───── */}
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">교육 목표 및 지원 요구사항</CardTitle>
+          <CardTitle className="text-lg">교육 목표 및 지도 방법</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-base font-bold">가장 우선적으로 지도받고 싶은 목표나 영역</Label>
-            <Textarea
-              value={opinion.priorityGoal}
-              onChange={(e) => updateOpinion("priorityGoal", e.target.value)}
-              className={`transition-colors ${opinion.priorityGoal ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
-            />
+            <Label>이번 학기 최우선 교육 목표</Label>
+            <textarea rows={3} className={TEXTAREA_CLS} placeholder="예: 친구들과 인사하기, 스스로 화장실 가기 등" value={opinion.priorityGoal} onChange={(e) => updateOpinion("priorityGoal", e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label className="text-base font-bold">선호하는 교육 방법</Label>
-            <Textarea
-              placeholder="예: 그림 자료, 반복 연습, 놀이 중심, 실물 교구 등"
-              value={opinion.preferredMethod}
-              onChange={(e) => updateOpinion("preferredMethod", e.target.value)}
-              rows={2}
-              className={`transition-colors ${opinion.preferredMethod ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
-            />
+            <Label>효과적인 지도 방법 (보상/벌 등)</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 잘했을 때 좋아하는 스티커를 주면 좋습니다." value={opinion.preferredMethod} onChange={(e) => updateOpinion("preferredMethod", e.target.value)} />
           </div>
-
           <div className="space-y-2">
-            <Label className="text-base font-bold">가정에서 함께 연계하고 싶은 내용</Label>
-            <Textarea
-              value={opinion.homeConnection}
-              onChange={(e) => updateOpinion("homeConnection", e.target.value)}
-              rows={2}
-              className={`transition-colors ${opinion.homeConnection ? "bg-white border-blue-300 ring-1 ring-blue-100" : "bg-gray-50 border-gray-200"}`}
-            />
+            <Label>평가 방식에 대한 의견</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 실기 평가보다 구술이나 관찰로 평가해 주시면 좋겠습니다." value={opinion.evaluationOpinion} onChange={(e) => updateOpinion("evaluationOpinion", e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>가정과 연계하여 지도할 부분</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 가정에서도 매일 10분씩 한글 따라쓰기를 하고 있습니다." value={opinion.homeConnection} onChange={(e) => updateOpinion("homeConnection", e.target.value)} />
           </div>
         </CardContent>
       </Card>
 
-      {/* 3. 방과후/치료지원/통학/보조인력 */}
+      {/* ───── 지원 서비스 ───── */}
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">학교 특수교육 관련 서비스</CardTitle>
+          <CardTitle className="text-lg">지원 서비스 신청 현황</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-8">
-          
+        <CardContent className="space-y-6">
+          {/* 보조인력 */}
           <div className="space-y-4">
-            <Label className="text-base font-bold">1. 방과후학교 (특수교육대상자)</Label>
-            <div className={`p-1 rounded-xl transition-all duration-200 ${opinion.afterSchoolSpecialEd ? "bg-transparent" : "ring-2 ring-blue-100 bg-blue-50/30"}`}>
-              <RadioOption
-                options={["교내 방과후학교 (자유수강권)", "교외 방과후학교 (전자카드)", "미이용"]}
-                value={opinion.afterSchoolSpecialEd}
-                onChange={(v) => {
-                  updateOpinion("afterSchoolSpecialEd", v);
-                  if (v !== "교내 방과후학교 (자유수강권)") updateOpinion("afterSchoolSpecialEdInSchool", "");
-                  if (v !== "교외 방과후학교 (전자카드)") updateOpinion("afterSchoolSpecialEdOutSchool", "");
-                }}
-                columns={1}
-              />
-            </div>
-            {opinion.afterSchoolSpecialEd === "교내 방과후학교 (자유수강권)" && (
-              <Input placeholder="수강 희망 프로그램 (예: 미술, 체육 등)" value={opinion.afterSchoolSpecialEdInSchool} onChange={(e) => updateOpinion("afterSchoolSpecialEdInSchool", e.target.value)} className="mt-2 bg-white" />
-            )}
-            {opinion.afterSchoolSpecialEd === "교외 방과후학교 (전자카드)" && (
-              <Input placeholder="이용 기관 및 프로그램명" value={opinion.afterSchoolSpecialEdOutSchool} onChange={(e) => updateOpinion("afterSchoolSpecialEdOutSchool", e.target.value)} className="mt-2 bg-white" />
+            <h3 className="text-sm font-medium text-gray-900">1. 특수교육 보조인력</h3>
+            <select className={SELECT_CLS} value={opinion.assistantSupport} onChange={(e) => updateOpinion("assistantSupport", e.target.value)}>
+              <option value="">선택</option>
+              <option value="신청">신청함 (지원이 필요함)</option>
+              <option value="미신청">신청 안 함</option>
+            </select>
+            {opinion.assistantSupport === "신청" && (
+              <Input placeholder="필요한 지원 내용 (예: 이동 보조, 식사 보조 등)" value={opinion.assistantSupportDetail} onChange={(e) => updateOpinion("assistantSupportDetail", e.target.value)} />
             )}
           </div>
 
-          <div className="space-y-4 pt-4 border-t">
-            <Label className="text-base font-bold">2. 치료지원 (교육청)</Label>
-            <div className="text-sm text-gray-600 -mt-2 mb-2">※ 교육청에서 발급된 전자카드로 이용하는 치료지원 서비스</div>
-            <div className="space-y-3">
-              {(opinion.therapySupportList || []).map((t, i) => (
-                <div key={i} className="flex flex-col sm:flex-row gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 relative pr-10 sm:pr-3">
-                  <div className="flex-1">
-                    <Input placeholder="기관명" value={t.institution} onChange={(e) => updateTherapySupport(i, "institution", e.target.value)} className="bg-white" />
-                  </div>
-                  <div className="flex-1">
-                    <Input placeholder="요일 (예: 화, 목)" value={t.days} onChange={(e) => updateTherapySupport(i, "days", e.target.value)} className="bg-white" />
-                  </div>
-                  <div className="flex-1">
-                    <Input placeholder="영역 (예: 언어치료)" value={t.area} onChange={(e) => updateTherapySupport(i, "area", e.target.value)} className="bg-white" />
-                  </div>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeTherapySupport(i)} className="absolute top-2 right-2 sm:relative sm:top-0 sm:right-0 text-red-500">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+          {/* 통학비 */}
+          <div className="space-y-4 pt-2 border-t">
+            <h3 className="text-sm font-medium text-gray-900">2. 통학비 지원</h3>
+            <select className={SELECT_CLS} value={opinion.transportSupport} onChange={(e) => updateOpinion("transportSupport", e.target.value)}>
+              <option value="">선택</option>
+              <option value="신청">신청함</option>
+              <option value="미신청">신청 안 함</option>
+            </select>
+          </div>
+
+          {/* 방과후 */}
+          <div className="space-y-4 pt-2 border-t">
+            <h3 className="text-sm font-medium text-gray-900">3. 방과후학교 (특수교육 자유수강권)</h3>
+            <select className={SELECT_CLS} value={opinion.afterSchoolSpecialEd} onChange={(e) => updateOpinion("afterSchoolSpecialEd", e.target.value)}>
+              <option value="">선택</option>
+              <option value="교내이용">교내 방과후 참여</option>
+              <option value="교외이용">교외 (전자카드 이용)</option>
+              <option value="이용하지 않음">이용 안 함</option>
+            </select>
+            {(opinion.afterSchoolSpecialEd === "교내이용" || opinion.afterSchoolSpecialEd === "교외이용") && (
+              <div className="grid sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="space-y-1">
+                  <Label className="text-xs">교내 프로그램</Label>
+                  <Input placeholder="예: 미술, 음악 등" value={opinion.afterSchoolSpecialEdInSchool} onChange={(e) => updateOpinion("afterSchoolSpecialEdInSchool", e.target.value)} />
                 </div>
-              ))}
-              <Button type="button" variant="outline" size="sm" onClick={addTherapySupport} className="w-full text-blue-600 border-dashed">
-                <Plus className="w-4 h-4 mr-1" /> 치료지원 기관 추가
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-4 pt-4 border-t">
-            <Label className="text-base font-bold">3. 발달재활서비스 (보건복지부, 바우처)</Label>
-            <div className="space-y-3">
-              {(opinion.rehabServiceList || []).map((t, i) => (
-                <div key={i} className="flex flex-col sm:flex-row gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 relative pr-10 sm:pr-3">
-                  <div className="flex-1">
-                    <Input placeholder="기관명" value={t.institution} onChange={(e) => updateRehabService(i, "institution", e.target.value)} className="bg-white" />
-                  </div>
-                  <div className="flex-1">
-                    <Input placeholder="요일" value={t.days} onChange={(e) => updateRehabService(i, "days", e.target.value)} className="bg-white" />
-                  </div>
-                  <div className="flex-1">
-                    <Input placeholder="영역" value={t.area} onChange={(e) => updateRehabService(i, "area", e.target.value)} className="bg-white" />
-                  </div>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeRehabService(i)} className="absolute top-2 right-2 sm:relative sm:top-0 sm:right-0 text-red-500">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                <div className="space-y-1">
+                  <Label className="text-xs">교외 프로그램</Label>
+                  <Input placeholder="예: 수영, 피아노 등" value={opinion.afterSchoolSpecialEdOutSchool} onChange={(e) => updateOpinion("afterSchoolSpecialEdOutSchool", e.target.value)} />
                 </div>
-              ))}
-              <Button type="button" variant="outline" size="sm" onClick={addRehabService} className="w-full text-blue-600 border-dashed">
-                <Plus className="w-4 h-4 mr-1" /> 발달재활서비스 기관 추가
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-4 pt-4 border-t">
-            <Label className="text-base font-bold">4. 통학비(교통비) 지원</Label>
-            <RadioOption
-              options={["통학비 지원 신청", "해당 없음"]}
-              value={opinion.transportSupport}
-              onChange={(v) => updateOpinion("transportSupport", v)}
-              columns={2}
-            />
-            {opinion.transportSupport === "통학비 지원 신청" && (
-              <p className="text-sm text-blue-800 bg-blue-50 p-2 rounded">💡 통학비 지원 신청을 선택하셨습니다. 추후 학교에서 관련 신청 서류를 별도로 안내해 드릴 예정입니다.</p>
+              </div>
             )}
           </div>
 
-          <div className="space-y-4 pt-4 border-t">
-            <Label className="text-base font-bold block mb-1">5. 특수교육보조인력 (실무사, 사회복무요원 등) 지원</Label>
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 mb-3">
-              ⚠️ <b>안내:</b> 보조인력 지원을 신청하시더라도 학교의 인력 배치 상황 및 우선순위에 따라 무조건 반영되기는 어려울 수 있음을 양해 부탁드립니다.
-            </div>
-            <RadioOption
-              options={["필요 없음", "학교 내 생활 전반 지원", "특정 시간/활동 지원"]}
-              value={opinion.assistantSupport}
-              onChange={(v) => {
-                updateOpinion("assistantSupport", v);
-                if (v === "필요 없음") updateOpinion("assistantSupportDetail", "");
-              }}
-              columns={1}
-            />
-            {opinion.assistantSupport && opinion.assistantSupport !== "필요 없음" && (
-              <Textarea
-                placeholder="예: 급식 시간 보조, 체육 시간 동선 지원 등"
-                value={opinion.assistantSupportDetail}
-                onChange={(e) => updateOpinion("assistantSupportDetail", e.target.value)}
-                rows={2}
-                className="mt-2 bg-white"
-              />
-            )}
+          {/* 치료지원 */}
+          <div className="space-y-4 pt-2 border-t">
+            <h3 className="text-sm font-medium text-gray-900">4. 치료지원 (교육청 바우처)</h3>
+            {(opinion.therapySupportList || []).map((item, idx) => (
+              <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("therapySupportList", idx, "institution", e.target.value)} /></div>
+                <div className="space-y-1"><Label className="text-xs">영역</Label><Input placeholder="예: 언어, 감각 등" value={item.area} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value)} /></div>
+                <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주2회" value={item.days} onChange={(e) => updateListItem("therapySupportList", idx, "days", e.target.value)} /></div>
+                <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("therapySupportList", idx)}><Trash2 className="w-4 h-4" /></Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={() => addListItem("therapySupportList")} className="w-full"><Plus className="w-4 h-4 mr-1" /> 치료지원 기관 추가</Button>
+          </div>
+
+          {/* 재활서비스 */}
+          <div className="space-y-4 pt-2 border-t">
+            <h3 className="text-sm font-medium text-gray-900">5. 발달재활서비스 (복지부 바우처)</h3>
+            {(opinion.rehabServiceList || []).map((item, idx) => (
+              <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("rehabServiceList", idx, "institution", e.target.value)} /></div>
+                <div className="space-y-1"><Label className="text-xs">영역</Label><Input placeholder="예: 작업, 놀이 등" value={item.area} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value)} /></div>
+                <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주1회" value={item.days} onChange={(e) => updateListItem("rehabServiceList", idx, "days", e.target.value)} /></div>
+                <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("rehabServiceList", idx)}><Trash2 className="w-4 h-4" /></Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={() => addListItem("rehabServiceList")} className="w-full"><Plus className="w-4 h-4 mr-1" /> 재활서비스 기관 추가</Button>
+          </div>
+
+          {/* 학교 밖 활동 */}
+          <div className="space-y-4 pt-2 border-t">
+            <h3 className="text-sm font-medium text-gray-900">6. 학교 밖 활동 (학원, 개인 치료 등)</h3>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 미술학원 주 2회, 개인 언어치료 주 1회" value={opinion.afterSchoolActivity} onChange={(e) => updateOpinion("afterSchoolActivity", e.target.value)} />
           </div>
         </CardContent>
       </Card>
 
-      {/* 4. 진로 및 장기적 비전 */}
+      {/* ───── 학교 행사 및 체험 ───── */}
       <Card>
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg">진로 및 장기적 비전 (선택)</CardTitle>
-          <CardDescription>아이의 미래에 대한 기대를 공유해 주세요.</CardDescription>
+          <CardTitle className="text-lg">학교 행사 및 체험학습</CardTitle>
+          <CardDescription>참여 의사를 미리 알려주시면 계획 수립에 도움이 됩니다.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label className="text-base font-bold">졸업 후 진로 방향 (희망)</Label>
-            <RadioOption
-              options={["일반 직업", "복지관 연계 취업", "주간보호 이용", "자립생활", "기타"]}
-              value={opinion.careerDirection}
-              onChange={(v) => {
-                updateOpinion("careerDirection", v);
-                if (v !== "기타") updateOpinion("careerDirectionOther", "");
-              }}
-              columns={2}
-            />
-            {opinion.careerDirection === "기타" && (
-              <Input
-                placeholder="기타 진로 방향을 적어주세요"
-                value={opinion.careerDirectionOther}
-                onChange={(e) => updateOpinion("careerDirectionOther", e.target.value)}
-                className="mt-2"
-              />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>생존수영 참여</Label>
+              <select className={SELECT_CLS} value={opinion.survivalSwimming} onChange={(e) => updateOpinion("survivalSwimming", e.target.value)}>
+                <option value="">선택</option>
+                <option value="참여">참여 희망</option>
+                <option value="불참">불참</option>
+                <option value="해당없음">해당 학년 아님</option>
+              </select>
+            </div>
+            {opinion.survivalSwimming === "불참" && (
+              <div className="space-y-2">
+                <Label>불참 사유</Label>
+                <Input placeholder="예: 물에 대한 공포가 심합니다" value={opinion.survivalSwimmingReason} onChange={(e) => updateOpinion("survivalSwimmingReason", e.target.value)} />
+              </div>
             )}
           </div>
-
-          <div className="space-y-2">
-            <Label className="text-base font-bold">5년 후 아이의 모습에 대한 기대</Label>
-            <Textarea
-              placeholder="예: 대중교통을 이용할 수 있으면 좋겠어요. 좋아하는 일을 하며 살았으면 해요."
-              value={opinion.fiveYearVision}
-              onChange={(e) => updateOpinion("fiveYearVision", e.target.value)}
-              rows={2}
-            />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>수학여행/수련활동 참여</Label>
+              <select className={SELECT_CLS} value={opinion.schoolTrip} onChange={(e) => updateOpinion("schoolTrip", e.target.value)}>
+                <option value="">선택</option>
+                <option value="참여">참여 희망</option>
+                <option value="불참">불참</option>
+                <option value="해당없음">해당 학년 아님</option>
+              </select>
+            </div>
+            {opinion.schoolTrip === "불참" && (
+              <div className="space-y-2">
+                <Label>불참 사유</Label>
+                <Input placeholder="예: 외박이 어렵습니다" value={opinion.schoolTripReason} onChange={(e) => updateOpinion("schoolTripReason", e.target.value)} />
+              </div>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <Label className="text-base font-bold">교육에서 가장 중요하게 생각하는 가치</Label>
-            <Textarea
-              placeholder="예: 자립심, 사회성, 행복감, 안전, 의사소통 능력 등"
-              value={opinion.educationValue}
-              onChange={(e) => updateOpinion("educationValue", e.target.value)}
-              rows={2}
-            />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>공개수업 참관 의향</Label>
+              <select className={SELECT_CLS} value={opinion.openClassObservation} onChange={(e) => updateOpinion("openClassObservation", e.target.value)}>
+                <option value="">선택</option>
+                <option value="참관 희망">참관 희망</option>
+                <option value="참관 불필요">참관 불필요</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label>현장체험학습 참여 의향</Label>
+              <select className={SELECT_CLS} value={opinion.fieldTrip} onChange={(e) => updateOpinion("fieldTrip", e.target.value)}>
+                <option value="">선택</option>
+                <option value="참여 희망">참여 희망</option>
+                <option value="개별 상담 후 결정">개별 상담 후 결정</option>
+                <option value="불참">불참</option>
+              </select>
+            </div>
           </div>
-          
-          <div className="space-y-2 pt-4 border-t">
-            <Label className="text-base font-bold">담임 선생님께 전하고 싶은 말</Label>
-            <Textarea
-              placeholder="학교에 바라는 점, 기타 하고 싶은 내용을 자유롭게 적어주세요."
-              value={opinion.messageToTeacher}
-              onChange={(e) => updateOpinion("messageToTeacher", e.target.value)}
-              rows={4}
-            />
+        </CardContent>
+      </Card>
+
+      {/* ───── 진로 및 장기 비전 ───── */}
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">진로 및 장기적 비전</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>5년 후 기대하는 모습</Label>
+            <textarea rows={3} className={TEXTAREA_CLS} placeholder="예: 중학교에 진학하여 스스로 대중교통을 이용하고 혼자 장보기를 할 수 있기를 바랍니다." value={opinion.fiveYearVision} onChange={(e) => updateOpinion("fiveYearVision", e.target.value)} />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>졸업 후 진로 희망</Label>
+              <select className={SELECT_CLS} value={opinion.careerDirection} onChange={(e) => updateOpinion("careerDirection", e.target.value)}>
+                <option value="">선택</option>
+                <option value="상급학교 진학">상급학교 진학</option>
+                <option value="전공과 진학">전공과(전환교육) 진학</option>
+                <option value="보호 작업장">보호 작업장</option>
+                <option value="일반 취업">일반 취업</option>
+                <option value="아직 모르겠음">아직 모르겠음</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            {opinion.careerDirection === "기타" && (
+              <div className="space-y-2">
+                <Label>기타 진로 상세</Label>
+                <Input placeholder="희망하시는 진로를 적어주세요" value={opinion.careerDirectionOther} onChange={(e) => updateOpinion("careerDirectionOther", e.target.value)} />
+              </div>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label>교육에서 가장 중요하게 여기는 가치</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 안전하게 생활하는 것, 자립 능력을 기르는 것이 가장 중요합니다." value={opinion.educationValue} onChange={(e) => updateOpinion("educationValue", e.target.value)} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ───── 기타 사항 ───── */}
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">기타 참고 사항</CardTitle>
+          <CardDescription>담임 선생님께 전하고 싶은 이야기가 있으시면 적어주세요.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>최근 건강·복약 변화</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 지난달 약 용량이 변경되었습니다." value={opinion.healthChanges} onChange={(e) => updateOpinion("healthChanges", e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>가정 내 변화</Label>
+            <textarea rows={2} className={TEXTAREA_CLS} placeholder="예: 최근 동생이 태어나 적응 중입니다." value={opinion.familyChanges} onChange={(e) => updateOpinion("familyChanges", e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>담임 선생님께 하고 싶은 말</Label>
+            <textarea rows={3} className={TEXTAREA_CLS} placeholder="자유롭게 적어주세요." value={opinion.messageToTeacher} onChange={(e) => updateOpinion("messageToTeacher", e.target.value)} />
           </div>
         </CardContent>
       </Card>
     </div>
   );
 }
-

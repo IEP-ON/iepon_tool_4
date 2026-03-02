@@ -292,13 +292,21 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">치료지원 (교육청)</th>
                 <td className="border border-black px-2 py-1.5" colSpan={3}>
-                  {isEmptyForm ? "" : opinion.therapySupportList && opinion.therapySupportList.length > 0 ? opinion.therapySupportList.map(t => `${t.institution}(${t.area}, ${t.days})`).join(" / ") : "이용하지 않음"}
+                  {isEmptyForm ? "" : (
+                    opinion.therapySupportList && opinion.therapySupportList.length > 0 ? 
+                      opinion.therapySupportList.map(t => `${t.institution}(${t.area}, ${t.days})`).join(" / ") : 
+                      "이용하지 않음"
+                  )}
                 </td>
               </tr>
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">발달재활 (복지부)</th>
                 <td className="border border-black px-2 py-1.5" colSpan={3}>
-                  {isEmptyForm ? "" : opinion.rehabServiceList && opinion.rehabServiceList.length > 0 ? opinion.rehabServiceList.map(t => `${t.institution}(${t.area}, ${t.days})`).join(" / ") : "이용하지 않음"}
+                  {isEmptyForm ? "" : (
+                    opinion.rehabServiceList && opinion.rehabServiceList.length > 0 ? 
+                      opinion.rehabServiceList.map(t => `${t.institution}(${t.area}, ${t.days})`).join(" / ") : 
+                      "이용하지 않음"
+                  )}
                 </td>
               </tr>
               <tr>
