@@ -16,8 +16,8 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
 
   const renderCheck = (label: string, isAgreed: boolean | null, expected: boolean) => (
     <span className="inline-flex items-center ml-3">
-      <span className={`w-3.5 h-3.5 inline-block border border-black mr-1 ${isChecked(isAgreed, expected) ? 'bg-black text-white text-center text-[10px] leading-[14px]' : ''}`}>
-        {isChecked(isAgreed, expected) ? '✓' : ''}
+      <span className={`w-3.5 h-3.5 inline-block border border-black mr-1 ${isChecked(isAgreed, expected) ? "bg-black text-white text-center text-[10px] leading-[14px]" : ""}`}>
+        {isChecked(isAgreed, expected) ? "✓" : ""}
       </span>
       {label}
     </span>
@@ -27,7 +27,7 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
   const showSchoolTrip = isEmptyForm || consent.consent8_schoolTrip !== null;
 
   return (
-    <div className={`mx-auto w-[210mm] min-h-[297mm] px-10 py-8 bg-white print:p-0 print:shadow-none text-[9.5pt] leading-snug ${isEmptyForm ? 'print-empty-form' : ''}`}>
+    <div className={`mx-auto w-[210mm] min-h-[297mm] px-10 py-8 bg-white print:p-0 print:shadow-none text-[9.5pt] leading-snug ${isEmptyForm ? "print-empty-form" : ""}`}>
       <div className="text-center mb-4 border-b-2 border-black pb-3">
         <h1 className="text-[18pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -42,10 +42,7 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
         <section>
           <h2 className="text-[10pt] font-bold bg-gray-100 p-1.5 border border-black">1. 필수 동의 사항 (교육 및 지원을 위해 반드시 필요)</h2>
           <table className="w-full border-collapse border border-black mt-[-1px] text-[9pt]">
-            <colgroup>
-              <col className="w-[73%]" />
-              <col className="w-[27%]" />
-            </colgroup>
+            <colgroup><col className="w-[73%]" /><col className="w-[27%]" /></colgroup>
             <tbody>
               <tr>
                 <td className="border border-black px-2 py-1.5">
@@ -87,14 +84,11 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
           </table>
         </section>
 
-        {/* 2. 생명·안전 (응급처치) */}
+        {/* 2. 생명·안전 */}
         <section>
           <h2 className="text-[10pt] font-bold bg-gray-100 p-1.5 border border-black">2. 생명 및 안전 보호 (응급처치 동의 — 필수)</h2>
           <table className="w-full border-collapse border border-black mt-[-1px] text-[9pt]">
-            <colgroup>
-              <col className="w-[73%]" />
-              <col className="w-[27%]" />
-            </colgroup>
+            <colgroup><col className="w-[73%]" /><col className="w-[27%]" /></colgroup>
             <tbody>
               <tr>
                 <td className="border border-black px-2 py-1.5">
@@ -168,14 +162,11 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
           </table>
         </section>
 
-        {/* 3. 교육활동 참여 및 초상권 (선택/권장) */}
+        {/* 3. 교육활동 참여 및 초상권 */}
         <section>
           <h2 className="text-[10pt] font-bold bg-gray-100 p-1.5 border border-black">3. 교육활동 참여 및 초상권 (선택/권장)</h2>
           <table className="w-full border-collapse border border-black mt-[-1px] text-[9pt]">
-            <colgroup>
-              <col className="w-[73%]" />
-              <col className="w-[27%]" />
-            </colgroup>
+            <colgroup><col className="w-[73%]" /><col className="w-[27%]" /></colgroup>
             <tbody>
               <tr>
                 <td className="border border-black px-2 py-1.5">

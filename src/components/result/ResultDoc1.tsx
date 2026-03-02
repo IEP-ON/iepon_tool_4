@@ -15,8 +15,8 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
     return `${d.getMonth() + 1}월 ${d.getDate()}일`;
   };
 
-  const formatDeadline = (dateStr: string, day: string) => {
-    if (!dateStr) return "__월 __일(__요일)";
+  const formatDeadline = (dateStr: string) => {
+    if (!dateStr) return "__월 __일";
     const d = new Date(dateStr);
     return `${d.getMonth() + 1}월 ${d.getDate()}일`;
   };
@@ -43,7 +43,7 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
         <p className="text-justify leading-loose">
           안녕하세요. {teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}입니다.
           <br /><br />
-          새 학기가 시작되었습니다. 우리 아이의 즐거운 학교생활과 의미 있는 성장을 위해, 
+          새 학기가 시작되었습니다. 우리 아이의 즐거운 학교생활과 의미 있는 성장을 위해,
           가정과 학교가 함께 이번 학기 교육 계획(IEP)을 의논하는 자리를 마련하고자 합니다.
           <br /><br />
           보호자님의 소중한 의견이 교육 계획에 잘 반영될 수 있도록 많은 관심과 참여 부탁드립니다.
@@ -84,7 +84,7 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
             참석 방법 (택 1)
           </h2>
           <div className="pl-5">
-            <p className="mb-3 text-gray-700">편하신 방법으로 협의회에 참여하실 수 있습니다. 스마트폰으로 희망하시는 날짜와 시간을 선택해 주시면 일정을 조율하여 연락드리겠습니다.</p>
+            <p className="mb-3 text-gray-700">편하신 방법으로 협의회에 참여하실 수 있습니다.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11pt]">
               <div className="border border-gray-200 p-4 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-2">① 학교 방문 (대면)</p>
@@ -99,9 +99,6 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
                 <p className="text-gray-600">일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다.</p>
               </div>
             </div>
-            <p className="text-[11pt] font-medium text-red-600 print:text-black mt-3 flex items-center gap-2">
-              <span className="text-lg">💡</span> 참석이 어려우시더라도 스마트폰으로 의견서는 꼭 작성해 주세요.
-            </p>
           </div>
         </section>
 
@@ -112,7 +109,7 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
           </h2>
           <div className="pl-5">
             <p className="mb-3">
-              아래의 QR코드를 스마트폰 카메라로 스캔하여 <strong className="text-red-600 print:text-black underline underline-offset-4">{formatDeadline(teacher.submissionDeadline, teacher.submissionDay)}까지</strong> 작성해 주세요.
+              아래의 QR코드를 스마트폰 카메라로 스캔하여 <strong className="text-red-600 print:text-black underline underline-offset-4">{formatDeadline(teacher.submissionDeadline)}까지</strong> 작성해 주세요.
             </p>
             <div className="flex gap-6 items-center p-6 border-2 border-gray-300 rounded-xl bg-gray-50 print:bg-transparent">
               <div className="w-28 h-28 bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1.5">

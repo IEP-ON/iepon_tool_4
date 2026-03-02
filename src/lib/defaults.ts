@@ -1,4 +1,4 @@
-import { FullFormData, TeacherInput, ParentOpinion, ConsentForm } from "./types";
+import type { TeacherInput, ParentOpinion, ConsentForm, FullFormData } from "./types";
 
 export const defaultTeacherInput: TeacherInput = {
   schoolName: "",
@@ -98,15 +98,7 @@ export const defaultParentOpinion: ParentOpinion = {
   transportSupport: "해당 없음",
   assistantSupport: "필요 없음",
   assistantSupportDetail: "",
-  
-  therapySupportInstitution: "",
-  therapySupportDays: "",
-  therapySupportArea: "",
   therapySupportList: [],
-  
-  rehabServiceInstitution: "",
-  rehabServiceDays: "",
-  rehabServiceArea: "",
   rehabServiceList: [],
 
   survivalSwimming: "",
@@ -124,7 +116,6 @@ export const defaultParentOpinion: ParentOpinion = {
   healthChanges: "",
   familyChanges: "",
   messageToTeacher: "",
-
   writeDate: "",
 };
 
@@ -138,30 +129,16 @@ export const defaultConsentForm: ConsentForm = {
   consent1: null,
   consent2: null,
   consent3: null,
-  consent4_iep: null,
-  consent4_curriculum: null,
-  consent4_services: null,
-  consent4_records: null,
   consent4_handover: null,
 
   consent6_photoRecord: null,
-  consent6_internalUse: null,
-  consent6_parentShare: null,
   consent6_homepage: null,
-  consent6_sns: null,
-  consent6_classChannel: null,
 
   consent7_supervision: null,
-  consent7_parentOpen: null,
-  consent7_peerObservation: null,
-  consent7_competition: null,
-  consent7_externalMaterial: null,
 
   consent8_specialFieldTrip: null,
   consent8_inclusiveFieldTrip: null,
-  consent8_otherActivities: null,
   consent8_publicTransport: null,
-  consent8_schoolInsurance: null,
   consent8_survivalSwimming: null,
   consent8_schoolTrip: null,
 
