@@ -5,6 +5,23 @@ import { useSearchParams } from "next/navigation";
 import { defaultTeacherInput, defaultParentOpinion, defaultConsentForm } from "@/lib/defaults";
 import type { TeacherInput, ParentOpinion, ConsentForm } from "@/lib/types";
 import { generateKey, encryptData, sha256 } from "@/lib/encryption";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+
+// Step Components (will be implemented next)
+import { Step1Basic } from "@/components/form/Step1Basic";
+import { Step2Health } from "@/components/form/Step2Health";
+import { Step3Education } from "@/components/form/Step3Education";
+import { Step4Consent } from "@/components/form/Step4Consent";
+
+const STEPS = [
+  { id: "basic", title: "기본 정보" },
+  { id: "health", title: "건강 및 특성" },
+  { id: "education", title: "교육 및 지원" },
+  { id: "consent", title: "동의 및 서명" },
+];
 
 function FormContent() {
   const searchParams = useSearchParams();
@@ -15,6 +32,7 @@ function FormContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
     if (!iepId) {
@@ -48,8 +66,26 @@ function FormContent() {
     setConsent((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleNext = () => {
+    if (currentStep < STEPS.length - 1) {
+      setCurrentStep((p) => p + 1);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep((p) => p - 1);
+      window.scrollTo(0, 0);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!iepId) return;
+    if (!consent.consentGuardianName || !consent.consentTypingConfirm) {
+      alert("서명란의 보호자 성명과 확인 문구를 입력해주세요.");
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -86,104 +122,115 @@ function FormContent() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">불러오는 중...</p></div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-500 font-medium">폼을 불러오는 중...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-red-500">{error}</p></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <Card className="max-w-md w-full text-center p-6 py-12">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-600 text-xl font-bold">!</span>
+          </div>
+          <p className="text-gray-900 font-medium text-lg">{error}</p>
+        </Card>
+      </div>
+    );
   }
 
+  const progress = ((currentStep + 1) / STEPS.length) * 100;
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">보호자 의견서 및 동의서</h1>
-          <p className="text-gray-500 mt-1">{teacher.schoolName} · {teacher.teacherName} 선생님</p>
-          <p className="text-sm text-gray-400">학생: {teacher.studentName}</p>
-        </div>
-
-        {/* 기본 정보 섹션 - 플레이스홀더 (디자인은 다른 LLM이 담당) */}
-        <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-          <h2 className="font-bold text-gray-800 border-b pb-2">1. 기본 정보</h2>
-          <div className="grid sm:grid-cols-2 gap-3">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans pb-24">
+      {/* Header (Sticky) */}
+      <header className="bg-white border-b sticky top-0 z-20 px-4 py-3 shadow-sm">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">보호자 성명</label>
-              <input className="w-full border rounded-lg px-3 py-2 text-base" value={opinion.guardianName} onChange={(e) => updateOpinion("guardianName", e.target.value)} />
+              <h1 className="font-bold text-gray-900">의견서 및 동의서 작성</h1>
+              <p className="text-xs text-gray-500">{teacher.schoolName} · {teacher.studentName} 학생</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">관계</label>
-              <select className="w-full border rounded-lg px-3 py-2 text-base bg-white" value={opinion.guardianRelation} onChange={(e) => updateOpinion("guardianRelation", e.target.value)}>
-                <option value="">선택</option>
-                <option value="어머니">어머니</option>
-                <option value="아버지">아버지</option>
-                <option value="조부모">조부모</option>
-                <option value="기타">기타</option>
-              </select>
+            <div className="flex items-center text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+              보안 암호화
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">연락처</label>
-              <input className="w-full border rounded-lg px-3 py-2 text-base" placeholder="010-0000-0000" value={opinion.guardianPhone} onChange={(e) => updateOpinion("guardianPhone", e.target.value)} />
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-gray-500 font-medium">
+              <span>{STEPS[currentStep].title}</span>
+              <span>{currentStep + 1} / {STEPS.length}</span>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">생년월일</label>
-              <input type="date" className="w-full border rounded-lg px-3 py-2 text-base" value={opinion.birthDate} onChange={(e) => updateOpinion("birthDate", e.target.value)} />
-            </div>
+            <Progress value={progress} className="h-1.5" />
           </div>
         </div>
+      </header>
 
-        {/* 동의서 간소화 섹션 */}
-        <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-          <h2 className="font-bold text-gray-800 border-b pb-2">동의서</h2>
-          <div className="space-y-3">
-            {[
-              { key: "consent1" as const, label: "기본 개인정보 수집·이용 동의" },
-              { key: "consent2" as const, label: "건강·장애 민감정보 수집·이용 동의" },
-              { key: "consent3" as const, label: "제3자 정보 제공 동의" },
-              { key: "consent4_handover" as const, label: "교내 정보 공유 동의" },
-              { key: "consent9_firstAid" as const, label: "응급처치 동의" },
-              { key: "consent9_119" as const, label: "119 신고 및 이송 동의" },
-            ].map((item) => (
-              <div key={item.key} className="flex items-center justify-between py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-700">{item.label}</span>
-                <div className="flex gap-3">
-                  <label className="flex items-center gap-1">
-                    <input type="radio" name={item.key} checked={consent[item.key] === true} onChange={() => updateConsent(item.key, true)} />
-                    <span className="text-sm">동의</span>
-                  </label>
-                  <label className="flex items-center gap-1">
-                    <input type="radio" name={item.key} checked={consent[item.key] === false} onChange={() => updateConsent(item.key, false)} />
-                    <span className="text-sm">미동의</span>
-                  </label>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Main Form Content */}
+      <main className="flex-1 max-w-2xl w-full mx-auto p-4 pt-6 space-y-6">
+        <div className={currentStep === 0 ? "block" : "hidden"}>
+          <Step1Basic opinion={opinion} updateOpinion={updateOpinion} />
         </div>
-
-        {/* 서명 */}
-        <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-          <h2 className="font-bold text-gray-800 border-b pb-2">서명</h2>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">보호자 성명 (서명자)</label>
-            <input className="w-full border rounded-lg px-3 py-2 text-base" value={consent.consentGuardianName} onChange={(e) => updateConsent("consentGuardianName", e.target.value)} />
-          </div>
-          <p className="text-xs text-gray-400">* 서명 패드는 디자인 단계에서 추가 예정 (현재는 텍스트 확인으로 대체)</p>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">확인 문구 입력</label>
-            <input className="w-full border rounded-lg px-3 py-2 text-base" placeholder="위 내용에 동의합니다" value={consent.consentTypingConfirm} onChange={(e) => updateConsent("consentTypingConfirm", e.target.value)} />
-          </div>
+        <div className={currentStep === 1 ? "block" : "hidden"}>
+          <Step2Health opinion={opinion} updateOpinion={updateOpinion} />
         </div>
+        <div className={currentStep === 2 ? "block" : "hidden"}>
+          <Step3Education opinion={opinion} updateOpinion={updateOpinion} />
+        </div>
+        <div className={currentStep === 3 ? "block" : "hidden"}>
+          <Step4Consent consent={consent} updateConsent={updateConsent} />
+        </div>
+      </main>
 
-        <div className="pb-12">
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {submitting ? "제출 중..." : "의견서 및 동의서 제출"}
-          </button>
+      {/* Bottom Navigation (Fixed) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+        <div className="max-w-2xl mx-auto flex gap-3">
+          {currentStep > 0 && (
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handlePrev}
+              disabled={submitting}
+              className="flex-1"
+            >
+              <ChevronLeft className="w-5 h-5 mr-1" />
+              이전
+            </Button>
+          )}
+          
+          {currentStep < STEPS.length - 1 ? (
+            <Button
+              size="lg"
+              onClick={handleNext}
+              className="flex-[2] bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              다음
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="flex-[2] bg-green-600 hover:bg-green-700 text-white"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  안전하게 제출 중...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  작성 완료 및 제출
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -192,7 +239,12 @@ function FormContent() {
 
 export default function FormPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">불러오는 중...</p></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-500">준비 중...</p>
+      </div>
+    }>
       <FormContent />
     </Suspense>
   );

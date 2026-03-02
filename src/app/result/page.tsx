@@ -8,6 +8,8 @@ import { decryptData } from "@/lib/encryption";
 import { ResultDoc1 } from "@/components/result/ResultDoc1";
 import { ResultDoc2 } from "@/components/result/ResultDoc2";
 import { ResultDoc3 } from "@/components/result/ResultDoc3";
+import { Button } from "@/components/ui/button";
+import { Printer, Loader2, AlertCircle } from "lucide-react";
 
 function ResultContent() {
   const searchParams = useSearchParams();
@@ -76,39 +78,53 @@ function ResultContent() {
   }, [iepId]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">데이터를 복호화하는 중...</p></div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-500 font-medium">데이터를 안전하게 복호화하는 중...</p>
+      </div>
+    );
   }
 
   if (error || !formData) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <p className="text-red-500 text-lg">{error || "데이터를 불러올 수 없습니다."}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white p-6 rounded-xl shadow-sm text-center max-w-md w-full border border-red-100">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-6 h-6 text-red-600" />
+          </div>
+          <p className="text-gray-900 font-medium">{error || "데이터를 불러올 수 없습니다."}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="print:hidden sticky top-0 z-10 bg-white border-b px-4 py-3 flex justify-between items-center">
-        <h1 className="font-bold text-gray-900">결과 문서</h1>
-        <button
-          onClick={() => window.print()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
-        >
-          인쇄
-        </button>
+    <div className="bg-gray-100 min-h-screen font-sans">
+      <div className="print:hidden sticky top-0 z-10 bg-white border-b shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex flex-col">
+            <h1 className="font-bold text-gray-900">제출 결과 확인 및 인쇄</h1>
+            <p className="text-xs text-gray-500">{formData.teacher.schoolName} - {formData.teacher.studentName} 학생</p>
+          </div>
+          <Button
+            onClick={() => window.print()}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Printer className="w-4 h-4 mr-2" />
+            전체 인쇄
+          </Button>
+        </div>
       </div>
 
-      <div className="space-y-8 py-8 print:space-y-0 print:py-0">
-        <div className="print:break-after-page">
+      <div className="space-y-8 py-8 px-4 print:space-y-0 print:py-0 print:px-0">
+        <div className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:break-after-page">
           <ResultDoc1 teacher={formData.teacher} />
         </div>
-        <div className="print:break-after-page">
+        <div className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:break-after-page">
           <ResultDoc2 teacher={formData.teacher} opinion={formData.opinion} />
         </div>
-        <div>
+        <div className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none">
           <ResultDoc3 teacher={formData.teacher} consent={formData.consent} />
         </div>
       </div>
@@ -118,7 +134,12 @@ function ResultContent() {
 
 export default function ResultPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">불러오는 중...</p></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-500 font-medium">로딩 중...</p>
+      </div>
+    }>
       <ResultContent />
     </Suspense>
   );
