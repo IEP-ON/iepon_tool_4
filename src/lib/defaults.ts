@@ -106,7 +106,8 @@ export const defaultParentOpinion: ParentOpinion = {
   schoolTrip: "",
   schoolTripReason: "",
   openClassObservation: "",
-  fieldTrip: "",
+  specialFieldTrip: "",
+  inclusiveFieldTrip: "",
 
   fiveYearVision: "",
   careerDirection: "",

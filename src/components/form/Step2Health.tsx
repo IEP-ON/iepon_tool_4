@@ -221,24 +221,6 @@ export function Step2Health({ opinion, updateOpinion }: Props) {
           </div>
         </CardContent>
       </Card>
-
-      {/* ───── 강점 및 고유 특성 ───── */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">강점 및 고유 특성</CardTitle>
-          <CardDescription>학생이 잘하는 것과 특별한 성향을 적어주세요.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="strengths">학생의 강점 및 관심사</Label>
-            <textarea id="strengths" rows={3} className={TEXTAREA_CLS} placeholder="예: 퍼즐 맞추기를 아주 좋아합니다. 숫자 기억력이 뛰어납니다." value={opinion.strengths} onChange={(e) => updateOpinion("strengths", e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="uniqueTraits">지도 시 유의해야 할 고유 특성</Label>
-            <textarea id="uniqueTraits" rows={3} className={TEXTAREA_CLS} placeholder="예: 큰 소리가 나면 귀를 막고 불안해합니다." value={opinion.uniqueTraits} onChange={(e) => updateOpinion("uniqueTraits", e.target.value)} />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

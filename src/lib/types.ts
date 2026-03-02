@@ -118,7 +118,8 @@ export interface ParentOpinion {
   schoolTrip: string;
   schoolTripReason: string;
   openClassObservation: string;
-  fieldTrip: string;
+  specialFieldTrip: string;
+  inclusiveFieldTrip: string;
 
   // 11. 진로/미래
   fiveYearVision: string;

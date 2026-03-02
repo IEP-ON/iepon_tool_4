@@ -14,12 +14,14 @@ import { ChevronLeft, ChevronRight, CheckCircle2, Loader2, ShieldCheck } from "l
 import { Step1Basic } from "@/components/form/Step1Basic";
 import { Step2Health } from "@/components/form/Step2Health";
 import { Step3Education } from "@/components/form/Step3Education";
+import { Step4Service } from "@/components/form/Step4Service";
 import { Step4Consent } from "@/components/form/Step4Consent";
 
 const STEPS = [
   { id: "basic", title: "기본 정보" },
-  { id: "health", title: "건강 및 특성" },
-  { id: "education", title: "교육 및 지원" },
+  { id: "health", title: "건강 및 의료" },
+  { id: "character", title: "특성 및 교육" },
+  { id: "service", title: "서비스 및 행사" },
   { id: "consent", title: "동의 및 서명" },
 ];
 
@@ -73,6 +75,7 @@ function FormContent() {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep((p) => p + 1);
       window.scrollTo(0, 0);
+      setTimeout(() => window.dispatchEvent(new Event("resize")), 150);
     }
   };
 
@@ -94,7 +97,7 @@ function FormContent() {
 
     if (!consent.consentGuardianName || !consent.consentTypingConfirm) {
       alert("서명란의 보호자 성명과 확인 문구를 입력해주세요.");
-      setCurrentStep(3);
+      setCurrentStep(4);
       return;
     }
 
@@ -105,14 +108,22 @@ function FormContent() {
 
     setSubmitting(true);
     try {
+      // 제출 시 자동 채움: 작성일, 보호자 관계 (Step1에서 이미 수집)
+      const now = new Date();
+      const autoFilledConsent: ConsentForm = {
+        ...consent,
+        consentDate: `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`,
+        consentGuardianRelation: consent.consentGuardianRelation || opinion.guardianRelation || "",
+      };
+
       const { encrypted: opinionEncrypted, iv: opinionIv } = await encryptData(opinion, encKey);
-      const { encrypted: consentEncrypted, iv: consentIv } = await encryptData(consent, encKey);
+      const { encrypted: consentEncrypted, iv: consentIv } = await encryptData(autoFilledConsent, encKey);
       const guardianNameHash = await sha256(opinion.guardianName || "anonymous");
       const studentNameHash = await sha256(opinion.studentName || "anonymous");
       
       // 위변조 방지 해시 생성 (의견서 + 동의서 + 서명 + 타임스탬프)
       const submissionTimestamp = new Date().toISOString();
-      const rawDataForHash = JSON.stringify(opinion) + JSON.stringify(consent) + submissionTimestamp;
+      const rawDataForHash = JSON.stringify(opinion) + JSON.stringify(autoFilledConsent) + submissionTimestamp;
       const submissionHash = await sha256(rawDataForHash);
 
       const res = await fetch(`/api/iep/${iepId}/submit`, {
@@ -128,7 +139,7 @@ function FormContent() {
           studentName: opinion.studentName,
           grade: opinion.grade,
           classNum: opinion.classNum,
-          signatureBase64: consent.consentSignatureBase64 || "",
+          signatureBase64: autoFilledConsent.consentSignatureBase64 || "",
           submissionHash,
           submissionTimestamp,
         }),
@@ -209,7 +220,10 @@ function FormContent() {
           <Step3Education opinion={opinion} updateOpinion={updateOpinion} />
         </div>
         <div className={currentStep === 3 ? "block" : "hidden"}>
-          <Step4Consent consent={consent} updateConsent={updateConsent} />
+          <Step4Service opinion={opinion} consent={consent} updateOpinion={updateOpinion} updateConsent={updateConsent} />
+        </div>
+        <div className={currentStep === 4 ? "block" : "hidden"}>
+          <Step4Consent consent={consent} updateConsent={updateConsent} teacher={teacher} />
         </div>
       </main>
 

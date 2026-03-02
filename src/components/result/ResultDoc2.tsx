@@ -37,7 +37,7 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
   );
 
   return (
-    <div className={`mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-0 print:shadow-none text-[10.5pt] leading-snug ${isEmptyForm ? 'print-empty-form' : ''}`}>
+    <div className={`mx-auto w-[210mm] min-h-[297mm] p-12 bg-white print:p-[10mm] print:shadow-none text-[10.5pt] leading-snug ${isEmptyForm ? 'print-empty-form' : ''}`}>
       <div className="text-center mb-6 border-b-2 border-black pb-3">
         <h1 className="text-xl font-bold tracking-tight">
           {teacher.year}학년도 {teacher.semester}학기 개별화교육계획(IEP) 수립을 위한 보호자 의견서
@@ -175,10 +175,10 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                       <p><span className="font-bold">[감각특성]</span> {opinion.sensoryIssues.join(", ")} {opinion.sensoryOther}</p>
                     )}
                     {!isEmptyForm && opinion.dietaryRestriction.length > 0 && !opinion.dietaryRestriction.includes("제한 없음") && (
-                      <p><span className="font-bold">[식단제한]</span> {opinion.dietaryRestriction.join(", ")}</p>
+                      <p><span className="font-bold">[식단제한]</span> {opinion.dietaryRestriction.join(", ")}{opinion.dietaryDiseaseDetail ? ` (${opinion.dietaryDiseaseDetail})` : ""}{opinion.dietaryCultureDetail ? ` (${opinion.dietaryCultureDetail})` : ""}</p>
                     )}
                     {!isEmptyForm && opinion.assistiveDevice.length > 0 && !opinion.assistiveDevice.includes("사용 안 함") && (
-                      <p><span className="font-bold">[보조기기]</span> {opinion.assistiveDevice.join(", ")}</p>
+                      <p><span className="font-bold">[보조기기]</span> {opinion.assistiveDevice.join(", ")}{opinion.assistiveDeviceOther ? ` (${opinion.assistiveDeviceOther})` : ""}</p>
                     )}
                     {!isEmptyForm && opinion.assistiveTech.length > 0 && !opinion.assistiveTech.includes("사용 안 함") && (
                       <p><span className="font-bold">[보조공학]</span> {opinion.assistiveTech.join(", ")} {opinion.assistiveTechOther}</p>
@@ -263,7 +263,8 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                     {!isEmptyForm && opinion.survivalSwimming && <p><span className="font-bold">[생존수영]</span> {opinion.survivalSwimming} {opinion.survivalSwimmingReason}</p>}
                     {!isEmptyForm && opinion.schoolTrip && <p><span className="font-bold">[수학·수련활동]</span> {opinion.schoolTrip} {opinion.schoolTripReason}</p>}
                     {!isEmptyForm && opinion.openClassObservation && <p><span className="font-bold">[공개수업]</span> {opinion.openClassObservation}</p>}
-                    {!isEmptyForm && opinion.fieldTrip && <p><span className="font-bold">[현장체험]</span> {opinion.fieldTrip}</p>}
+                    {!isEmptyForm && opinion.specialFieldTrip && <p><span className="font-bold">[현장체험-특수학급]</span> {opinion.specialFieldTrip}</p>}
+                    {!isEmptyForm && opinion.inclusiveFieldTrip && <p><span className="font-bold">[현장체험-통합학급]</span> {opinion.inclusiveFieldTrip}</p>}
                     {isEmptyForm && <div className="h-6"></div>}
                   </div>
                 </td>
@@ -281,7 +282,7 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
                 <th className="border border-black bg-gray-50 px-2 py-1.5 w-[15%] text-left">방과후 자유수강권</th>
                 <td className="border border-black px-2 py-1.5">
                   {isEmptyForm ? "" : (
-                    opinion.afterSchoolSpecialEd === "이용 중" ? 
+                    (opinion.afterSchoolSpecialEd === "교내이용" || opinion.afterSchoolSpecialEd === "교외이용") ? 
                       `이용 중 (교내: ${opinion.afterSchoolSpecialEdInSchool || '-'} / 교외: ${opinion.afterSchoolSpecialEdOutSchool || '-'})` : 
                       opinion.afterSchoolSpecialEd
                   )}
@@ -311,7 +312,7 @@ export function ResultDoc2({ teacher, opinion, isEmptyForm = false }: Props) {
               </tr>
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">특수교육 보조인력</th>
-                <td className="border border-black px-2 py-1.5" colSpan={3}>{getValue(opinion.assistantSupport)}</td>
+                <td className="border border-black px-2 py-1.5" colSpan={3}>{getValue(opinion.assistantSupport)}{!isEmptyForm && opinion.assistantSupportDetail ? ` (${opinion.assistantSupportDetail})` : ""}</td>
               </tr>
               <tr>
                 <th className="border border-black bg-gray-50 px-2 py-1.5 text-left">학교 밖 활동</th>
