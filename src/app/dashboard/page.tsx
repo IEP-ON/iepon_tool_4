@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, Loader2, CheckCircle2, Clock, Home, FileText, ArrowLeft, Lock, Eye, Users, Copy } from "lucide-react";
 import Link from "next/link";
-import { sha256 } from "@/lib/encryption";
+import { sha256, decryptData } from "@/lib/encryption";
 
 interface IepItem {
   iepId: string;
@@ -18,6 +18,9 @@ interface IepItem {
   maskedStudentName: string;
   batchId: string;
   createdAt: string;
+  encryptedOpinion?: string;
+  encryptionIv?: string;
+  decryptedStudentName?: string;
 }
 
 interface BatchGroup {
@@ -69,6 +72,29 @@ export default function DashboardPage() {
         setError(data.error);
       } else {
         const iepList: IepItem[] = data.ieps || [];
+
+        // 암호화 키가 있으면 학생명 복호화 시도
+        const key = sessionStorage.getItem("iep_enc_key");
+        if (key) {
+          await Promise.all(iepList.map(async (iep) => {
+            if (iep.encryptedOpinion && iep.encryptionIv) {
+              try {
+                // ParentOpinion 타입으로 복호화되지만 여기서는 studentName만 필요
+                const decrypted = await decryptData<{ studentName: string }>(
+                  iep.encryptedOpinion,
+                  iep.encryptionIv,
+                  key
+                );
+                if (decrypted && decrypted.studentName) {
+                  iep.decryptedStudentName = decrypted.studentName;
+                }
+              } catch (err) {
+                console.error(`Decryption failed for ${iep.iepId}`, err);
+              }
+            }
+          }));
+        }
+
         const batchMap = new Map<string, BatchGroup>();
         for (const iep of iepList) {
           const bid = iep.batchId || "단일";
@@ -252,8 +278,10 @@ export default function DashboardPage() {
                                 <span className="text-xs text-gray-400 w-5 text-center font-mono">{idx + 1}</span>
                                 <div>
                                   <div className="flex items-center gap-2">
-                                    <span className="font-medium text-gray-800 text-sm">
-                                      {iep.maskedStudentName !== "(이름 없음)" ? iep.maskedStudentName : `학생 ${idx + 1}`}
+                                    <span className="font-medium text-gray-800 text-sm" data-component-name="DashboardPage">
+                                      {iep.decryptedStudentName 
+                                        ? iep.decryptedStudentName 
+                                        : (iep.maskedStudentName !== "(이름 없음)" ? iep.maskedStudentName : `학생 ${idx + 1}`)}
                                     </span>
                                     {iep.grade && <span className="text-xs text-gray-400">{iep.grade} {iep.classNum && `${iep.classNum}반`}</span>}
                                     {iep.status === "submitted" ? (

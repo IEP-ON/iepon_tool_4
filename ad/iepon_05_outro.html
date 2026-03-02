@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEP-ON 피드 5 - 교사 수합</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; width: 1080px; height: 1080px; overflow: hidden; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .header { text-align: center; margin-bottom: 20px; z-index: 10; }
+        
+        .step-badge { 
+            background: #10b981;
+            color: white; 
+            padding: 10px 24px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 24px; 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .title { 
+            font-size: 70px; 
+            font-weight: 900; 
+            color: #065f46; 
+            margin: 0 0 15px 0; 
+            line-height: 1.2; 
+        }
+        
+        .highlight { color: #10b981; }
+        
+        .subtitle { 
+            font-size: 34px; 
+            font-weight: 600; 
+            color: #047857; 
+            margin: 0; 
+        }
+        
+        .dashboard-preview {
+            width: 850px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            border: 4px solid #fff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 35px;
+            box-sizing: border-box;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 38px;
+            font-weight: 900;
+        }
+        
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .student-card {
+            background: #f0fdf4;
+            border: 3px solid #86efac;
+            border-radius: 20px;
+            padding: 28px 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .student-avatar {
+            width: 70px;
+            height: 70px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .student-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: #065f46;
+        }
+        
+        .status-badge {
+            background: #10b981;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        
+        .cta-section {
+            background: white;
+            border: 4px dashed #10b981;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .cta-text {
+            font-size: 36px;
+            font-weight: 900;
+            color: #065f46;
+            margin-bottom: 15px;
+        }
+        
+        .cta-subtext {
+            font-size: 26px;
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .floating-icon { position: absolute; font-size: 140px; right: 80px; bottom: 120px; opacity: 0.12; filter: blur(2px); }
+        
+        .deco-circle {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: #a7f3d0;
+            border-radius: 50%;
+            top: -250px;
+            left: -250px;
+            opacity: 0.4;
+            filter: blur(80px);
+        }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle"></div>
+        <div class="floating-icon">✨</div>
+        
+        <div class="header">
+            <div class="step-badge">STEP 4. 교사 대시보드</div>
+            <h1 class="title">교사는 그냥<br><span class="highlight">예쁘게 수합</span>만 하면 끝!</h1>
+            <p class="subtitle">실시간 제출 현황 확인 & PDF 다운로드</p>
+        </div>
+        
+        <div class="dashboard-preview">
+            <div class="dashboard-header">
+                📊 우리반 의견서 제출 현황
+            </div>
+            
+            <div class="student-list">
+                <div class="student-card">
+                    <div class="student-info">
+                        <div class="student-avatar">👦</div>
+                        <div class="student-name">김○○ 학생</div>
+                    </div>
+                    <div class="status-badge">✅ 제출완료</div>
+                </div>
+                
+                <div class="student-card">
+                    <div class="student-info">
+                        <div class="student-avatar">👧</div>
+                        <div class="student-name">이○○ 학생</div>
+                    </div>
+                    <div class="status-badge">✅ 제출완료</div>
+                </div>
+                
+                <div class="student-card">
+                    <div class="student-info">
+                        <div class="student-avatar">👦</div>
+                        <div class="student-name">박○○ 학생</div>
+                    </div>
+                    <div class="status-badge">✅ 제출완료</div>
+                </div>
+            </div>
+            
+            <div class="cta-section">
+                <div class="cta-text">📄 PDF 다운로드 클릭!</div>
+                <div class="cta-subtext">타이핑 없이 바로 협의록 작성 가능</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

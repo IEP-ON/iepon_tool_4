@@ -25,8 +25,9 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("tool4_ieps")
-      .select("iep_id, status, school_name, grade, class_num, teacher_name, teacher_data, teacher_pin_hash, created_at")
+      .select("id, iep_id, status, school_name, grade, class_num, teacher_name, teacher_data, created_at")
       .eq("teacher_phone", phone)
+      .eq("teacher_pin_hash", pinHash)
       .order("created_at", { ascending: false })
       .limit(50);
 
@@ -45,18 +46,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // PIN 검증: 첫 번째 레코드의 pin hash와 비교
-    const storedPinHash = (data[0] as Record<string, string>).teacher_pin_hash;
-    if (storedPinHash && storedPinHash !== pinHash) {
-      return NextResponse.json(
-        { error: "비밀번호가 올바르지 않습니다." },
-        { status: 401 },
-      );
+    // 제출된 IEP들의 opinion 데이터 가져오기
+    const ids = data.map((d) => d.id);
+    const { data: opinions } = await supabase
+      .from("tool4_parent_opinions")
+      .select("iep_id, opinion_data_encrypted, encryption_iv")
+      .in("iep_id", ids);
+
+    const opinionMap = new Map();
+    if (opinions) {
+      opinions.forEach((op) => {
+        opinionMap.set(op.iep_id, op);
+      });
     }
 
     const ieps = (data || []).map((row) => {
+      // row.id is the int8 id
+      const op = opinionMap.get(row.id);
+      
       const studentName = (row.teacher_data as Record<string, string>)?.studentName || "";
       let maskedName = "";
+
       if (studentName.length === 0) {
         maskedName = "(이름 없음)";
       } else if (studentName.length === 1) {
@@ -78,6 +88,8 @@ export async function GET(request: NextRequest) {
         maskedStudentName: maskedName,
         batchId: td?.batchId || "",
         createdAt: row.created_at,
+        encryptedOpinion: op ? op.opinion_data_encrypted : null,
+        encryptionIv: op ? op.encryption_iv : null,
       };
     });
 

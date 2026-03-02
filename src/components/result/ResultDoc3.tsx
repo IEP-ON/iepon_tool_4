@@ -27,7 +27,7 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
   const showSchoolTrip = isEmptyForm || consent.consent8_schoolTrip !== null;
 
   return (
-    <div className={`mx-auto w-[210mm] h-[297mm] p-10 bg-white print:p-0 print:m-0 print:w-full print:h-full print:shadow-none text-[9pt] leading-snug flex flex-col justify-between overflow-hidden relative ${isEmptyForm ? "print-empty-form" : ""}`}>
+    <div className={`mx-auto w-[210mm] h-[297mm] p-10 bg-white print:p-[10mm] print:m-0 print:w-full print:h-full print:shadow-none text-[9pt] leading-snug flex flex-col justify-between overflow-hidden relative ${isEmptyForm ? "print-empty-form" : ""}`}>
       <div className="text-center mb-3 border-b-2 border-black pb-2">
         <h1 className="text-[16pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -267,7 +267,7 @@ export function ResultDoc3({ teacher, consent, isEmptyForm = false }: Props) {
           </div>
           <div className="flex justify-end gap-4 text-[9pt] items-end">
             <p className="mb-1">
-              작성일: {isEmptyForm ? "202  년   월   일" : consent.consentDate || `${new Date().getFullYear()}년 ${new Date().getMonth() + 1}월 ${new Date().getDate()}일`}
+              작성일: {isEmptyForm ? "202  년   월   일" : consent.consentDate || (consent.submissionTimestamp ? (() => { const d = new Date(consent.submissionTimestamp); return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`; })() : `${new Date().getFullYear()}년 ${new Date().getMonth() + 1}월 ${new Date().getDate()}일`)}
             </p>
             <div className="flex items-end gap-1">
               <span className="mb-1">보호자 성명:</span>

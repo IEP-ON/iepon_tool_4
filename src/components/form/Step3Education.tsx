@@ -31,7 +31,7 @@ export function Step3Education({ opinion, updateOpinion }: Props) {
             <textarea id="strengths" rows={3} className={TEXTAREA_CLS} placeholder="예: 퍼즐 맞추기를 아주 좋아합니다. 숫자 기억력이 뛰어납니다." value={opinion.strengths} onChange={(e) => updateOpinion("strengths", e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="uniqueTraits">지도 시 유의해야 할 고유 특성</Label>
+            <Label htmlFor="uniqueTraits">선생님이 알아두시면 좋을 특성</Label>
             <textarea id="uniqueTraits" rows={3} className={TEXTAREA_CLS} placeholder="예: 큰 소리가 나면 귀를 막고 불안해합니다." value={opinion.uniqueTraits} onChange={(e) => updateOpinion("uniqueTraits", e.target.value)} />
           </div>
         </CardContent>
@@ -50,7 +50,7 @@ export function Step3Education({ opinion, updateOpinion }: Props) {
             { key: "levelSocial", label: "사회성 (또래관계·규칙 이해)", ph: "예: 또래에 관심은 있으나 대화 시작이 어렵습니다." },
             { key: "levelSelfCare", label: "자조·일상생활 (식사·위생·옷입기)", ph: "예: 혼자 밥먹기 가능, 세수/양치 보조 필요" },
             { key: "levelMotor", label: "운동 (대근육·소근육)", ph: "예: 달리기 가능, 가위질과 글씨쓰기는 어려워합니다." },
-            { key: "levelBehavior", label: "행동 (특이행동·자기조절)", ph: "예: 관심 없는 활동 시 자리 이탈이 잦습니다." },
+            { key: "levelBehavior", label: "행동 (행동 특성·자기조절)", ph: "예: 관심 없는 활동 시 자리 이탈이 잦습니다." },
           ] as { key: keyof ParentOpinion; label: string; ph: string }[]).map(({ key, label, ph }) => (
             <div key={key} className="space-y-1">
               <Label className="text-sm">{label}</Label>

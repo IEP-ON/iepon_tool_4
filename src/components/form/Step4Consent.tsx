@@ -328,7 +328,7 @@ export function Step4Consent({ consent, updateConsent, teacher }: Props) {
             </div>
             
             <div className="space-y-2">
-              <Label>자필 서명 (선택사항)</Label>
+              <Label>자필 서명</Label>
               <SignaturePad 
                 initialSignature={consent.consentSignatureBase64}
                 onSignatureChange={(base64) => updateConsent("consentSignatureBase64", base64)} 

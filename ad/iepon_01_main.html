@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEP-ON 피드 1 - 문제 제기</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body { margin: 0; padding: 0; width: 1080px; height: 1080px; overflow: hidden; font-family: 'Pretendard', sans-serif; }
+        .feed-container { 
+            width: 1080px; 
+            height: 1080px; 
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); 
+        }
+        
+        .content { 
+            text-align: center; 
+            z-index: 10; 
+            padding: 70px 50px; 
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 40px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); 
+            border: 4px solid #fff; 
+            max-width: 850px;
+            width: 80%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .emoji-large {
+            font-size: 140px;
+            margin-bottom: 25px;
+        }
+        
+        .badge { 
+            background: #dc2626; 
+            color: white; 
+            padding: 12px 30px; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 28px; 
+            display: inline-block; 
+            margin-bottom: 30px; 
+            letter-spacing: 0.5px; 
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .title { 
+            font-size: 64px; 
+            font-weight: 900; 
+            color: #7c2d12; 
+            margin: 0 0 25px 0; 
+            line-height: 1.3; 
+            word-break: keep-all; 
+        }
+        
+        .highlight { color: #dc2626; }
+        
+        .subtitle { 
+            font-size: 36px; 
+            font-weight: 600; 
+            color: #78350f; 
+            margin: 0 0 45px 0; 
+            line-height: 1.5; 
+        }
+        
+        .problem-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+        
+        .problem-item {
+            background: #fef2f2;
+            padding: 28px 35px;
+            border-radius: 20px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #991b1b;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 3px solid #fecaca;
+        }
+        
+        .problem-icon {
+            font-size: 42px;
+        }
+        
+        .deco-circle-1 { 
+            position: absolute; 
+            width: 600px; 
+            height: 600px; 
+            border-radius: 50%; 
+            background: #fca5a5; 
+            opacity: 0.3; 
+            top: -150px; 
+            right: -150px; 
+            filter: blur(80px); 
+        }
+        .deco-circle-2 { 
+            position: absolute; 
+            width: 700px; 
+            height: 700px; 
+            border-radius: 50%; 
+            background: #fb923c; 
+            opacity: 0.25; 
+            bottom: -200px; 
+            left: -200px; 
+            filter: blur(100px); 
+        }
+    </style>
+</head>
+<body>
+    <div class="feed-container">
+        <div class="deco-circle-1"></div>
+        <div class="deco-circle-2"></div>
+        
+        <div class="content">
+            <div class="emoji-large">📄😰</div>
+            
+            <div class="badge">개별화교육 현실 체크</div>
+            <h1 class="title">보호자 의견서<br><span class="highlight">아직도 종이로</span> 수합하세요?</h1>
+            <p class="subtitle">돌아오지도 않고, 받아서<br>협의록 작성하기도 쉽지 않고...</p>
+            
+            <div class="problem-list">
+                <div class="problem-item">
+                    <span class="problem-icon">❓</span>
+                    <span>종이 인쇄하고 배부하고</span>
+                </div>
+                <div class="problem-item">
+                    <span class="problem-icon">⏳</span>
+                    <span>회수율 낮고 시간 오래 걸리고</span>
+                </div>
+                <div class="problem-item">
+                    <span class="problem-icon">❓</span>
+                    <span>손글씨 해독하고 타이핑하고</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

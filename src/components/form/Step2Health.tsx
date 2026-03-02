@@ -90,7 +90,7 @@ export function Step2Health({ opinion, updateOpinion }: Props) {
                   <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
                     <div className="space-y-1">
                       <Label className="text-xs">약물명</Label>
-                      <Input placeholder="예: 리스페리돈" value={med.name} onChange={(e) => updateMedication(idx, "name", e.target.value)} />
+                      <Input placeholder="예: 의사 처방 약물명" value={med.name} onChange={(e) => updateMedication(idx, "name", e.target.value)} />
                     </div>
                     <div className="space-y-1">
                       <Label className="text-xs">용량</Label>

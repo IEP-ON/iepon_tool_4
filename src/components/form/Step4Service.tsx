@@ -17,7 +17,9 @@ interface Props {
 const SELECT_CLS = "flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600";
 
 const THERAPY_AREAS = ["언어", "청각", "감각통합", "심리·행동", "작업", "신체·운동", "미술심리", "음악", "놀이심리", "인지"];
+const CUSTOM_SENTINEL = "__custom__";
 const TEXTAREA_CLS = "flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 resize-none";
+const NOTICE_CLS = "text-xs text-amber-800 bg-amber-50 border-l-2 border-amber-400 px-2 py-1.5 rounded-r";
 
 type EventConfig = {
   title: string;
@@ -101,7 +103,7 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 보조인력 */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-900">1. 특수교육 보조인력</h3>
-            <p className="text-xs text-gray-500 -mt-2">※ 신청하더라도 학교 상황 및 학교급에 따라 배치가 어려울 수 있습니다.</p>
+            <p className={NOTICE_CLS}>※ 신청하더라도 학교 상황 및 학교급에 따라 배치가 어려울 수 있습니다.</p>
             <select className={SELECT_CLS} value={opinion.assistantSupport} onChange={(e) => updateOpinion("assistantSupport", e.target.value)}>
               <option value="">선택</option>
               <option value="신청">신청함 (지원이 필요함)</option>
@@ -115,7 +117,7 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 통학비 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">2. 통학비 지원</h3>
-            <p className="text-xs text-gray-500 -mt-2">※ 신청 시 별도 서류 안내가 발송됩니다.</p>
+            <p className={NOTICE_CLS}>※ 신청 시 별도 서류 안내가 발송됩니다.</p>
             <select className={SELECT_CLS} value={opinion.transportSupport} onChange={(e) => updateOpinion("transportSupport", e.target.value)}>
               <option value="">선택</option>
               <option value="신청">신청함</option>
@@ -149,19 +151,25 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 치료지원 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">4. 치료지원 (교육청 바우처)</h3>
-            <p className="text-xs text-gray-500 -mt-2">※ 발달재활서비스(5번)와 동일 영역 중복 신청은 불가합니다.</p>
+            <p className={NOTICE_CLS}>※ 발달재활서비스(5번)와 동일 영역 중복 신청은 불가합니다.</p>
             {(opinion.therapySupportList || []).map((item, idx) => {
-              const usedInRehab = (opinion.rehabServiceList || []).map((r) => r.area).filter(Boolean);
+              const usedInRehab = (opinion.rehabServiceList || []).map((r) => r.area).filter(a => a && a !== CUSTOM_SENTINEL && THERAPY_AREAS.includes(a));
               const availableAreas = THERAPY_AREAS.filter((a) => a === item.area || !usedInRehab.includes(a));
+              const selectAreaVal = item.area === "" ? "" : THERAPY_AREAS.includes(item.area) ? item.area : CUSTOM_SENTINEL;
+              const isCustomArea = item.area !== "" && !THERAPY_AREAS.includes(item.area);
               return (
                 <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
                   <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("therapySupportList", idx, "institution", e.target.value)} /></div>
                   <div className="space-y-1">
                     <Label className="text-xs">영역</Label>
-                    <select className={SELECT_CLS} value={item.area} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value)}>
+                    <select className={SELECT_CLS} value={selectAreaVal} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value)}>
                       <option value="">선택</option>
                       {availableAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+                      <option value={CUSTOM_SENTINEL}>직접 입력...</option>
                     </select>
+                    {(isCustomArea || item.area === CUSTOM_SENTINEL) && (
+                      <Input className="mt-1" placeholder="영역명 직접 입력" value={item.area === CUSTOM_SENTINEL ? "" : item.area} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value || CUSTOM_SENTINEL)} />
+                    )}
                   </div>
                   <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주2회" value={item.days} onChange={(e) => updateListItem("therapySupportList", idx, "days", e.target.value)} /></div>
                   <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("therapySupportList", idx)}><Trash2 className="w-4 h-4" /></Button>
@@ -174,19 +182,25 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 재활서비스 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">5. 발달재활서비스 (복지부 바우처)</h3>
-            <p className="text-xs text-gray-500 -mt-2">※ 치료지원(4번)과 동일 영역 중복 신청은 불가합니다.</p>
+            <p className={NOTICE_CLS}>※ 치료지원(4번)과 동일 영역 중복 신청은 불가합니다.</p>
             {(opinion.rehabServiceList || []).map((item, idx) => {
-              const usedInTherapy = (opinion.therapySupportList || []).map((t) => t.area).filter(Boolean);
+              const usedInTherapy = (opinion.therapySupportList || []).map((t) => t.area).filter(a => a && a !== CUSTOM_SENTINEL && THERAPY_AREAS.includes(a));
               const availableAreas = THERAPY_AREAS.filter((a) => a === item.area || !usedInTherapy.includes(a));
+              const selectAreaVal = item.area === "" ? "" : THERAPY_AREAS.includes(item.area) ? item.area : CUSTOM_SENTINEL;
+              const isCustomArea = item.area !== "" && !THERAPY_AREAS.includes(item.area);
               return (
                 <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
                   <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("rehabServiceList", idx, "institution", e.target.value)} /></div>
                   <div className="space-y-1">
                     <Label className="text-xs">영역</Label>
-                    <select className={SELECT_CLS} value={item.area} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value)}>
+                    <select className={SELECT_CLS} value={selectAreaVal} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value)}>
                       <option value="">선택</option>
                       {availableAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+                      <option value={CUSTOM_SENTINEL}>직접 입력...</option>
                     </select>
+                    {(isCustomArea || item.area === CUSTOM_SENTINEL) && (
+                      <Input className="mt-1" placeholder="영역명 직접 입력" value={item.area === CUSTOM_SENTINEL ? "" : item.area} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value || CUSTOM_SENTINEL)} />
+                    )}
                   </div>
                   <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주1회" value={item.days} onChange={(e) => updateListItem("rehabServiceList", idx, "days", e.target.value)} /></div>
                   <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("rehabServiceList", idx)}><Trash2 className="w-4 h-4" /></Button>
