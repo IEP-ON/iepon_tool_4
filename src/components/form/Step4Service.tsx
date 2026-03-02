@@ -15,6 +15,8 @@ interface Props {
 }
 
 const SELECT_CLS = "flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600";
+
+const THERAPY_AREAS = ["언어", "청각", "감각통합", "심리·행동", "작업", "신체·운동", "미술심리", "음악", "놀이심리", "인지"];
 const TEXTAREA_CLS = "flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 resize-none";
 
 type EventConfig = {
@@ -99,6 +101,7 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 보조인력 */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-900">1. 특수교육 보조인력</h3>
+            <p className="text-xs text-gray-500 -mt-2">※ 신청하더라도 학교 상황 및 학교급에 따라 배치가 어려울 수 있습니다.</p>
             <select className={SELECT_CLS} value={opinion.assistantSupport} onChange={(e) => updateOpinion("assistantSupport", e.target.value)}>
               <option value="">선택</option>
               <option value="신청">신청함 (지원이 필요함)</option>
@@ -112,6 +115,7 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 통학비 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">2. 통학비 지원</h3>
+            <p className="text-xs text-gray-500 -mt-2">※ 신청 시 별도 서류 안내가 발송됩니다.</p>
             <select className={SELECT_CLS} value={opinion.transportSupport} onChange={(e) => updateOpinion("transportSupport", e.target.value)}>
               <option value="">선택</option>
               <option value="신청">신청함</option>
@@ -125,8 +129,8 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
             <select className={SELECT_CLS} value={opinion.afterSchoolSpecialEd} onChange={(e) => updateOpinion("afterSchoolSpecialEd", e.target.value)}>
               <option value="">선택</option>
               <option value="교내이용">교내 방과후 참여</option>
-              <option value="교외이용">교외 (전자카드 이용)</option>
-              <option value="이용하지 않음">이용 안 함</option>
+              <option value="교외이용">교외 자유수강권 사용</option>
+              <option value="이용하지 않음">이용 안함</option>
             </select>
             {(opinion.afterSchoolSpecialEd === "교내이용" || opinion.afterSchoolSpecialEd === "교외이용") && (
               <div className="grid sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-lg">
@@ -145,28 +149,50 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
           {/* 치료지원 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">4. 치료지원 (교육청 바우처)</h3>
-            {(opinion.therapySupportList || []).map((item, idx) => (
-              <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
-                <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("therapySupportList", idx, "institution", e.target.value)} /></div>
-                <div className="space-y-1"><Label className="text-xs">영역</Label><Input placeholder="예: 언어, 감각 등" value={item.area} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value)} /></div>
-                <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주2회" value={item.days} onChange={(e) => updateListItem("therapySupportList", idx, "days", e.target.value)} /></div>
-                <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("therapySupportList", idx)}><Trash2 className="w-4 h-4" /></Button>
-              </div>
-            ))}
+            <p className="text-xs text-gray-500 -mt-2">※ 발달재활서비스(5번)와 동일 영역 중복 신청은 불가합니다.</p>
+            {(opinion.therapySupportList || []).map((item, idx) => {
+              const usedInRehab = (opinion.rehabServiceList || []).map((r) => r.area).filter(Boolean);
+              const availableAreas = THERAPY_AREAS.filter((a) => a === item.area || !usedInRehab.includes(a));
+              return (
+                <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                  <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("therapySupportList", idx, "institution", e.target.value)} /></div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">영역</Label>
+                    <select className={SELECT_CLS} value={item.area} onChange={(e) => updateListItem("therapySupportList", idx, "area", e.target.value)}>
+                      <option value="">선택</option>
+                      {availableAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주2회" value={item.days} onChange={(e) => updateListItem("therapySupportList", idx, "days", e.target.value)} /></div>
+                  <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("therapySupportList", idx)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+              );
+            })}
             <Button type="button" variant="outline" size="sm" onClick={() => addListItem("therapySupportList")} className="w-full"><Plus className="w-4 h-4 mr-1" /> 치료지원 기관 추가</Button>
           </div>
 
           {/* 재활서비스 */}
           <div className="space-y-4 pt-2 border-t">
             <h3 className="text-sm font-medium text-gray-900">5. 발달재활서비스 (복지부 바우처)</h3>
-            {(opinion.rehabServiceList || []).map((item, idx) => (
-              <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
-                <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("rehabServiceList", idx, "institution", e.target.value)} /></div>
-                <div className="space-y-1"><Label className="text-xs">영역</Label><Input placeholder="예: 작업, 놀이 등" value={item.area} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value)} /></div>
-                <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주1회" value={item.days} onChange={(e) => updateListItem("rehabServiceList", idx, "days", e.target.value)} /></div>
-                <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("rehabServiceList", idx)}><Trash2 className="w-4 h-4" /></Button>
-              </div>
-            ))}
+            <p className="text-xs text-gray-500 -mt-2">※ 치료지원(4번)과 동일 영역 중복 신청은 불가합니다.</p>
+            {(opinion.rehabServiceList || []).map((item, idx) => {
+              const usedInTherapy = (opinion.therapySupportList || []).map((t) => t.area).filter(Boolean);
+              const availableAreas = THERAPY_AREAS.filter((a) => a === item.area || !usedInTherapy.includes(a));
+              return (
+                <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-end">
+                  <div className="space-y-1"><Label className="text-xs">기관명</Label><Input placeholder="기관명" value={item.institution} onChange={(e) => updateListItem("rehabServiceList", idx, "institution", e.target.value)} /></div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">영역</Label>
+                    <select className={SELECT_CLS} value={item.area} onChange={(e) => updateListItem("rehabServiceList", idx, "area", e.target.value)}>
+                      <option value="">선택</option>
+                      {availableAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1"><Label className="text-xs">요일/횟수</Label><Input placeholder="예: 주1회" value={item.days} onChange={(e) => updateListItem("rehabServiceList", idx, "days", e.target.value)} /></div>
+                  <Button type="button" variant="ghost" size="icon" className="text-red-400 hover:text-red-600 h-10 w-10" onClick={() => removeListItem("rehabServiceList", idx)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+              );
+            })}
             <Button type="button" variant="outline" size="sm" onClick={() => addListItem("rehabServiceList")} className="w-full"><Plus className="w-4 h-4 mr-1" /> 재활서비스 기관 추가</Button>
           </div>
 
@@ -257,7 +283,8 @@ export function Step4Service({ opinion, consent, updateOpinion, updateConsent }:
                 <option value="">선택</option>
                 <option value="상급학교 진학">상급학교 진학</option>
                 <option value="전공과 진학">전공과(전환교육) 진학</option>
-                <option value="보호 작업장">보호 작업장</option>
+                <option value="직업재활훈련">복지관·직업재활훈련</option>
+                <option value="자립생활">자립생활 준비 (자립지원 프로그램 등)</option>
                 <option value="일반 취업">일반 취업</option>
                 <option value="아직 모르겠음">아직 모르겠음</option>
                 <option value="기타">기타</option>

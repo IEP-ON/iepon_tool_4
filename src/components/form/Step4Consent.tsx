@@ -286,11 +286,6 @@ export function Step4Consent({ consent, updateConsent, teacher }: Props) {
             consentKey="consent6_homepage" 
             disagreeWarning="미동의 시, 모든 외부 공개 자료에서 학생의 얼굴은 모자이크 처리되거나 노출되지 않습니다."
           />
-          <ConsentRow 
-            title="3) 장애인식개선 관련 활동에 직접 참여" 
-            consentKey="consent11_participation" 
-            disagreeWarning="미동의 시, 직접적인 참여나 모델로서의 역할은 제외됩니다."
-          />
         </CardContent>
       </Card>
 
