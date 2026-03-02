@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowRight, ShieldCheck, Trash2, Lock, FileText, QrCode, ClipboardCheck, Printer, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useTutorial } from "@/hooks/useTutorial";
 
 const FLOW_STEPS = [
   {
@@ -46,6 +47,57 @@ export default function HomePage() {
   const router = useRouter();
   const allChecked = checked1 && checked2;
 
+  useTutorial({
+    tutorialId: "home-page-v1",
+    steps: [
+      {
+        element: "#tutorial-dashboard-link",
+        popover: {
+          title: "제출 현황 확인 (중요)",
+          description: "이미 생성한 문서세트가 있다면 여기를 클릭하세요. 학부모가 제출한 의견서를 수합하고, 개별 학생 링크를 관리하며, 결과를 열람할 수 있는 대시보드로 바로 이동합니다.",
+          side: "bottom",
+          align: "end",
+        },
+      },
+      {
+        element: "#tutorial-consent-section",
+        popover: {
+          title: "서비스 이용 동의",
+          description: "서비스 사용 전 반드시 하단의 안내사항을 읽고 두 가지 필수 항목에 체크해 주세요.",
+          side: "top",
+          align: "start",
+        },
+      },
+      {
+        element: "#tutorial-start-button",
+        popover: {
+          title: "새 문서세트 만들기",
+          description: "동의 후 이 버튼을 클릭하면 교사 정보 입력 페이지로 이동하여 새로운 IEP 안내장 세트를 생성할 수 있습니다.",
+          side: "top",
+          align: "center",
+        },
+      },
+      {
+        element: "#tutorial-flow-section",
+        popover: {
+          title: "사용 흐름 안내",
+          description: "IEP-ON의 전체 업무 흐름을 5단계로 확인하세요. 교사 입력부터 최종 인쇄까지의 과정이 한눈에 보입니다.",
+          side: "top",
+          align: "center",
+        },
+      },
+      {
+        element: "#tutorial-security-section",
+        popover: {
+          title: "개인정보 보호 및 보안",
+          description: "AES-256-GCM 암호화, 30일 자동 삭제 등 강력한 보안 정책을 확인하세요. 안전한 데이터 처리가 보장됩니다.",
+          side: "top",
+          align: "start",
+        },
+      },
+    ],
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
       {/* Header */}
@@ -61,7 +113,7 @@ export default function HomePage() {
               className="h-8 w-auto"
             />
           </div>
-          <Link href="/dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+          <Link href="/dashboard" id="tutorial-dashboard-link" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
             제출 현황 확인 →
           </Link>
         </div>
@@ -84,7 +136,7 @@ export default function HomePage() {
         </div>
 
         {/* 상단 배치: 동의 체크박스 + 시작 버튼 */}
-        <section className="bg-white border-2 border-blue-200 rounded-2xl shadow-lg p-6 md:p-8 space-y-6 transform transition-all hover:shadow-xl">
+        <section id="tutorial-consent-section" className="bg-white border-2 border-blue-200 rounded-2xl shadow-lg p-6 md:p-8 space-y-6 transform transition-all hover:shadow-xl">
           <div className="flex items-center gap-2 border-b pb-4">
             <CheckCircle2 className="w-6 h-6 text-blue-600" />
             <h2 className="text-lg font-bold text-gray-900">서비스 이용 동의 및 시작</h2>
@@ -115,7 +167,7 @@ export default function HomePage() {
               </span>
             </label>
           </div>
-          <div className="pt-2">
+          <div className="pt-2" id="tutorial-start-button">
             <Button
               size="lg"
               className={`w-full h-14 text-base font-bold rounded-xl shadow-md transition-all ${
@@ -136,7 +188,7 @@ export default function HomePage() {
         </section>
 
         {/* 사용 흐름 인포그래픽 */}
-        <section className="bg-white border rounded-2xl shadow-sm p-6 md:p-8 mt-12">
+        <section id="tutorial-flow-section" className="bg-white border rounded-2xl shadow-sm p-6 md:p-8 mt-12">
           <h2 className="text-lg font-bold text-gray-900 mb-6 text-center">사용 흐름 한눈에 보기</h2>
           <div className="flex flex-col md:flex-row gap-6 md:gap-2 md:items-start justify-between">
             {FLOW_STEPS.map((step, i) => (
@@ -180,7 +232,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="p-6 md:p-8 space-y-4">
+          <div id="tutorial-security-section" className="p-6 md:p-8 space-y-4">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Lock className="w-5 h-5 text-green-500" /> 개인정보 처리 및 강력한 보안
             </h2>
