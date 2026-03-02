@@ -42,8 +42,14 @@ export default function HomePage() {
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/teacher">
               <Button size="lg" className="w-full sm:w-auto text-base h-14 px-8 rounded-full shadow-lg hover:shadow-xl transition-all">
-                교사용 시작하기
+                새 문서세트 만들기
                 <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/dashboard">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-base h-14 px-8 rounded-full border-2 hover:bg-gray-50 transition-all">
+                <FileText className="mr-2 w-5 h-5" />
+                제출 현황 확인
               </Button>
             </Link>
           </div>

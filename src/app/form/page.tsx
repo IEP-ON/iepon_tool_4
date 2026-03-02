@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { defaultTeacherInput, defaultParentOpinion, defaultConsentForm } from "@/lib/defaults";
 import type { TeacherInput, ParentOpinion, ConsentForm } from "@/lib/types";
-import { generateKey, encryptData, sha256 } from "@/lib/encryption";
+import { encryptData, sha256 } from "@/lib/encryption";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,6 +33,13 @@ function FormContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [encKey, setEncKey] = useState("");
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const keyMatch = hash.match(/key=([a-f0-9]+)/);
+    if (keyMatch) setEncKey(keyMatch[1]);
+  }, []);
 
   useEffect(() => {
     if (!iepId) {
@@ -87,11 +94,15 @@ function FormContent() {
       return;
     }
 
+    if (!encKey) {
+      alert("암호화 키가 없습니다. QR코드를 다시 스캔해주세요.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const key = await generateKey();
-      const { encrypted: opinionEncrypted, iv: opinionIv } = await encryptData(opinion, key);
-      const { encrypted: consentEncrypted, iv: consentIv } = await encryptData(consent, key);
+      const { encrypted: opinionEncrypted, iv: opinionIv } = await encryptData(opinion, encKey);
+      const { encrypted: consentEncrypted, iv: consentIv } = await encryptData(consent, encKey);
       const guardianNameHash = await sha256(opinion.guardianName || "anonymous");
 
       const res = await fetch(`/api/iep/${iepId}/submit`, {
@@ -113,7 +124,7 @@ function FormContent() {
         return;
       }
 
-      window.location.href = `/result?iepId=${iepId}#key=${key}`;
+      window.location.href = `/result?iepId=${iepId}#key=${encKey}`;
     } catch {
       alert("제출 중 오류가 발생했습니다.");
     } finally {

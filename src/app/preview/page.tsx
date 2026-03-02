@@ -6,7 +6,8 @@ import type { TeacherInput } from "@/lib/types";
 import { defaultTeacherInput } from "@/lib/defaults";
 import { ResultDoc1 } from "@/components/result/ResultDoc1";
 import { Button } from "@/components/ui/button";
-import { Printer, Copy, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Printer, Copy, CheckCircle2, Loader2, ArrowLeft, Bookmark, ExternalLink, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 function PreviewContent() {
@@ -15,7 +16,15 @@ function PreviewContent() {
   const [teacher, setTeacher] = useState<TeacherInput>(defaultTeacherInput);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copiedParent, setCopiedParent] = useState(false);
+  const [copiedManage, setCopiedManage] = useState(false);
+  const [encKey, setEncKey] = useState("");
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const keyMatch = hash.match(/key=([a-f0-9]+)/);
+    if (keyMatch) setEncKey(keyMatch[1]);
+  }, []);
 
   useEffect(() => {
     if (!iepId) {
@@ -62,13 +71,29 @@ function PreviewContent() {
     );
   }
 
-  const formUrl = typeof window !== "undefined" ? `${window.location.origin}/form?iepId=${iepId}` : "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const formUrl = encKey
+    ? `${origin}/form?iepId=${iepId}#key=${encKey}`
+    : `${origin}/form?iepId=${iepId}`;
+  const manageUrl = encKey
+    ? `${origin}/manage?iepId=${iepId}#key=${encKey}`
+    : "";
 
-  const handleCopy = async () => {
+  const handleCopyParent = async () => {
     try {
       await navigator.clipboard.writeText(formUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedParent(true);
+      setTimeout(() => setCopiedParent(false), 2000);
+    } catch {
+      alert("링크 복사에 실패했습니다.");
+    }
+  };
+
+  const handleCopyManage = async () => {
+    try {
+      await navigator.clipboard.writeText(manageUrl);
+      setCopiedManage(true);
+      setTimeout(() => setCopiedManage(false), 2000);
     } catch {
       alert("링크 복사에 실패했습니다.");
     }
@@ -86,12 +111,12 @@ function PreviewContent() {
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <Button
-              onClick={handleCopy}
-              variant={copied ? "default" : "outline"}
-              className={`flex-1 sm:flex-none ${copied ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              onClick={handleCopyParent}
+              variant={copiedParent ? "default" : "outline"}
+              className={`flex-1 sm:flex-none ${copiedParent ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
             >
-              {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-              {copied ? "복사됨!" : "학부모 링크 복사"}
+              {copiedParent ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+              {copiedParent ? "복사됨!" : "학부모 링크 복사"}
             </Button>
             <Button
               onClick={() => window.print()}
@@ -103,6 +128,48 @@ function PreviewContent() {
           </div>
         </div>
       </div>
+
+      {/* 교사용 관리 링크 안내 */}
+      {manageUrl && (
+        <div className="print:hidden max-w-4xl mx-auto px-4 pt-6">
+          <Card className="border-2 border-amber-300 bg-amber-50">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-start gap-3 mb-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-bold text-amber-900 text-base">교사용 관리 링크 — 반드시 저장하세요!</h3>
+                  <p className="text-sm text-amber-800 mt-1">
+                    아래 링크로 보호자 제출 현황 확인 및 결과 열람이 가능합니다.<br />
+                    이 링크를 잃어버리면 제출된 결과를 복호화할 수 없습니다.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-xs text-gray-600 break-all font-mono select-all">
+                  {manageUrl}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <Button
+                    onClick={handleCopyManage}
+                    size="sm"
+                    variant={copiedManage ? "default" : "outline"}
+                    className={copiedManage ? "bg-green-600 hover:bg-green-700 text-white" : "border-amber-300"}
+                  >
+                    {copiedManage ? <CheckCircle2 className="w-4 h-4 mr-1" /> : <Bookmark className="w-4 h-4 mr-1" />}
+                    {copiedManage ? "복사됨!" : "링크 복사"}
+                  </Button>
+                  <Link href={manageUrl} target="_blank">
+                    <Button size="sm" variant="outline" className="border-amber-300">
+                      <ExternalLink className="w-4 h-4 mr-1" />
+                      열기
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       <div className="py-8 px-4 print:py-0 print:px-0">
         <div className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none">

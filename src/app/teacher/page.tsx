@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Loader2, School, User, CalendarDays } from "lucide-react";
+import { generateKey } from "@/lib/encryption";
 
 export default function TeacherPage() {
   const router = useRouter();
@@ -55,7 +56,8 @@ export default function TeacherPage() {
       }
 
       const { iepId } = await res.json();
-      router.push(`/preview?iepId=${iepId}`);
+      const key = await generateKey();
+      window.location.href = `/preview?iepId=${iepId}#key=${key}`;
     } catch {
       alert("네트워크 오류가 발생했습니다.");
     } finally {
