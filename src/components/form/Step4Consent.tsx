@@ -4,6 +4,7 @@ import type { ConsentForm } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SignaturePad } from "./SignaturePad";
 
 interface Props {
   consent: ConsentForm;
@@ -134,25 +135,34 @@ export function Step4Consent({ consent, updateConsent }: Props) {
             본인은 「개인정보보호법」 및 관련 법령에 의거하여 위 사항들을 충분히 숙지하였으며, 학생의 원활한 교육 지원을 위해 동의합니다.
           </div>
           
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="consentGuardianName">서명자 (보호자 성명) <span className="text-red-500">*</span></Label>
-              <Input
-                id="consentGuardianName"
-                placeholder="예: 홍길동"
-                value={consent.consentGuardianName}
-                onChange={(e) => updateConsent("consentGuardianName", e.target.value)}
-              />
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="consentGuardianName">서명자 (보호자 성명) <span className="text-red-500">*</span></Label>
+                <Input
+                  id="consentGuardianName"
+                  placeholder="예: 홍길동"
+                  value={consent.consentGuardianName}
+                  onChange={(e) => updateConsent("consentGuardianName", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="consentTypingConfirm">전자 서명 (확인 문구 입력) <span className="text-red-500">*</span></Label>
+                <Input
+                  id="consentTypingConfirm"
+                  placeholder="'동의합니다' 라고 입력해주세요"
+                  value={consent.consentTypingConfirm}
+                  onChange={(e) => updateConsent("consentTypingConfirm", e.target.value)}
+                />
+              </div>
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="consentTypingConfirm">전자 서명 (확인 문구 입력) <span className="text-red-500">*</span></Label>
-              <Input
-                id="consentTypingConfirm"
-                placeholder="'동의합니다' 라고 입력해주세요"
-                value={consent.consentTypingConfirm}
-                onChange={(e) => updateConsent("consentTypingConfirm", e.target.value)}
+              <Label>자필 서명 (선택사항)</Label>
+              <SignaturePad 
+                initialSignature={consent.consentSignatureBase64}
+                onSignatureChange={(base64) => updateConsent("consentSignatureBase64", base64)} 
               />
-              <p className="text-xs text-gray-500 mt-1">※ 손글씨 서명 기능은 추후 추가됩니다.</p>
             </div>
           </div>
         </CardContent>
