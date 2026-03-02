@@ -1,24 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { defaultTeacherInput } from "@/lib/defaults";
 import type { TeacherInput } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Loader2, School, User, CalendarDays } from "lucide-react";
-import { generateKey } from "@/lib/encryption";
+import { ArrowRight, Loader2, School, User, CalendarDays, Lock, AlertCircle, Info } from "lucide-react";
+import { generateKey, sha256 } from "@/lib/encryption";
 
 export default function TeacherPage() {
-  const router = useRouter();
   const [data, setData] = useState<TeacherInput>(defaultTeacherInput);
   const [loading, setLoading] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
 
   const update = (key: keyof TeacherInput, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
+
+  const isPinValid = () => pin.length === 4 && /^[0-9]{4}$/.test(pin) && pin === pinConfirm;
 
   const isFormValid = () => {
     return !!(
@@ -30,7 +32,8 @@ export default function TeacherPage() {
       data.meetingStartDate &&
       data.meetingEndDate &&
       data.meetingPlace &&
-      data.submissionDeadline
+      data.submissionDeadline &&
+      isPinValid()
     );
   };
 
@@ -42,10 +45,11 @@ export default function TeacherPage() {
 
     setLoading(true);
     try {
+      const teacherPinHash = await sha256(pin);
       const res = await fetch("/api/iep", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ teacherInput: data }),
+        body: JSON.stringify({ teacherInput: data, teacherPinHash }),
       });
 
       if (!res.ok) {
@@ -89,11 +93,13 @@ export default function TeacherPage() {
                 <div className="space-y-2">
                   <Label htmlFor="adminTeacherName">교무부장 (선택)</Label>
                   <Input id="adminTeacherName" placeholder="성명 입력" value={data.adminTeacherName} onChange={(e) => update("adminTeacherName", e.target.value)} />
+                  <p className="text-xs text-gray-400 flex items-start gap-1"><Info className="w-3 h-3 mt-0.5 shrink-0" />안내장 발신 섹션에 표기됩니다.</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="principalName">교장 성명 (선택)</Label>
                 <Input id="principalName" placeholder="성명 입력" value={data.principalName} onChange={(e) => update("principalName", e.target.value)} />
+                <p className="text-xs text-gray-400 flex items-start gap-1"><Info className="w-3 h-3 mt-0.5 shrink-0" />안내장 하단 학교장 결재란에 표기됩니다.</p>
               </div>
             </CardContent>
           </Card>
@@ -157,13 +163,65 @@ export default function TeacherPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="teacherPhone">연락처 <span className="text-red-500">*</span></Label>
-                  <Input id="teacherPhone" placeholder="010-0000-0000" value={data.teacherPhone} onChange={(e) => update("teacherPhone", e.target.value)} />
+                  <Input id="teacherPhone" placeholder="예: 02-1234-5678 (내선번호 권장)" value={data.teacherPhone} onChange={(e) => update("teacherPhone", e.target.value)} />
+                  <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5 flex items-start gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <span><strong>이 번호가 열람·관리 번호로 활용됩니다.</strong> 개인정보 보호를 위해 학교 대표번호 또는 내선번호 사용을 권장합니다.</span>
+                  </p>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="consultTime">상담 가능 시간 (선택)</Label>
                 <Input id="consultTime" placeholder="예: 평일 14:00~16:30" value={data.consultTime} onChange={(e) => update("consultTime", e.target.value)} />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center text-lg">
+                <Lock className="w-5 h-5 mr-2 text-red-600" />
+                열람 비밀번호 설정
+              </CardTitle>
+              <p className="text-sm text-gray-500 mt-1">위 연락처와 이 비밀번호(4자리) 조합으로 대시보드 관리·열람이 가능합니다.</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="pin">비밀번호 (숫자 4자리) <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="pin"
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={4}
+                    placeholder="숫자 4자리"
+                    value={pin}
+                    onChange={(e) => {
+                      setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 4));
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pinConfirm">비밀번호 확인 <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="pinConfirm"
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={4}
+                    placeholder="동일하게 재입력"
+                    value={pinConfirm}
+                    onChange={(e) => {
+                      setPinConfirm(e.target.value.replace(/[^0-9]/g, "").slice(0, 4));
+                    }}
+                  />
+                </div>
+              </div>
+              {pin.length === 4 && pinConfirm.length > 0 && pin !== pinConfirm && (
+                <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+              )}
+              {isPinValid() && (
+                <p className="text-xs text-green-600">비밀번호가 일치합니다.</p>
+              )}
             </CardContent>
           </Card>
 

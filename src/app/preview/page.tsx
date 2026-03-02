@@ -3,17 +3,24 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import type { TeacherInput } from "@/lib/types";
-import { defaultTeacherInput } from "@/lib/defaults";
 import { ResultDoc1 } from "@/components/result/ResultDoc1";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Printer, Copy, CheckCircle2, Loader2, ArrowLeft, Bookmark, ExternalLink, AlertTriangle, Users } from "lucide-react";
+import { Printer, Copy, CheckCircle2, Loader2, ArrowLeft, Users, Pencil, X } from "lucide-react";
 import Link from "next/link";
 
 interface BatchIep {
   iep_id: string;
   status: string;
   teacher_data: TeacherInput;
+}
+
+export interface Doc1Overrides {
+  introText?: string;
+  estimatedTime?: string;
+  method1Desc?: string;
+  method2Desc?: string;
+  method3Desc?: string;
 }
 
 function PreviewContent() {
@@ -24,14 +31,19 @@ function PreviewContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copiedParent, setCopiedParent] = useState<string | null>(null);
-  const [copiedManage, setCopiedManage] = useState(false);
   const [encKey, setEncKey] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [overridesMap, setOverridesMap] = useState<Record<string, Doc1Overrides>>({});
 
   useEffect(() => {
     const hash = window.location.hash;
     const keyMatch = hash.match(/key=([a-f0-9]+)/);
-    if (keyMatch) setEncKey(keyMatch[1]);
-  }, []);
+    if (keyMatch) {
+      setEncKey(keyMatch[1]);
+      sessionStorage.setItem("iep_enc_key", keyMatch[1]);
+    }
+    if (batchId) sessionStorage.setItem("iep_batch_id", batchId);
+  }, [batchId]);
 
   useEffect(() => {
     if (!iepId && !batchId) {
@@ -93,10 +105,10 @@ function PreviewContent() {
   }
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  
-  const getFormUrl = (id: string) => encKey ? `${origin}/form?iepId=${id}#key=${encKey}` : `${origin}/form?iepId=${id}`;
-  
-  // Dashboard URL로 대체 (개별 manage URL 대신 전체 확인)
+
+  const getFormUrl = (id: string) =>
+    encKey ? `${origin}/form?iepId=${id}#key=${encKey}` : `${origin}/form?iepId=${id}`;
+
   const dashboardUrl = `${origin}/dashboard`;
 
   const handleCopyParent = async (id: string) => {
@@ -109,8 +121,11 @@ function PreviewContent() {
     }
   };
 
-  const handleCopyManage = async () => {
-    // Deprecated: 대시보드로 이동
+  const updateOverride = (iepId: string, key: keyof Doc1Overrides, value: string) => {
+    setOverridesMap((prev) => ({
+      ...prev,
+      [iepId]: { ...prev[iepId], [key]: value },
+    }));
   };
 
   return (
@@ -146,13 +161,23 @@ function PreviewContent() {
                 <p className="text-sm text-blue-800 mt-1 mb-3">
                   아래 안내장을 일괄 인쇄하여 학부모님께 배부하시거나, 개별 링크를 복사하여 메신저로 전달하실 수 있습니다.
                 </p>
-                <div className="bg-white/60 p-3 rounded-md text-sm border border-blue-100 flex items-center justify-between">
-                  <span>추후 <strong>홈 &gt; 제출 현황 확인(대시보드)</strong>에서 <strong>내 전화번호</strong>로 전체 제출 상태를 확인할 수 있습니다.</span>
-                  <Link href={dashboardUrl}>
-                    <Button size="sm" variant="outline" className="border-blue-300 text-blue-700 bg-white">
-                      대시보드 이동
+                <div className="bg-white/60 p-3 rounded-md text-sm border border-blue-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <span>추후 <strong>관리 대시보드</strong>에서 연락처+비밀번호로 열람·관리가 가능합니다.</span>
+                  <div className="flex gap-2 shrink-0">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEditMode((v) => !v)}
+                      className={editMode ? "border-orange-400 text-orange-700 bg-orange-50" : "border-gray-300 text-gray-700 bg-white"}
+                    >
+                      {editMode ? <><X className="w-3 h-3 mr-1" />편집 종료</> : <><Pencil className="w-3 h-3 mr-1" />내용 편집</>}
                     </Button>
-                  </Link>
+                    <Link href={dashboardUrl}>
+                      <Button size="sm" variant="outline" className="border-blue-300 text-blue-700 bg-white">
+                        대시보드 이동
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -177,8 +202,46 @@ function PreviewContent() {
               </Button>
             </div>
 
-            {/* 개별 문서 렌더링 (단일 페이지 강제) */}
-            <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} />
+            {/* 개별 문서 렌더링 */}
+            {editMode && (
+              <div className="print:hidden absolute top-12 right-4 z-10 bg-white border border-orange-200 rounded-xl shadow-lg p-3 w-72 space-y-2 text-xs">
+                <p className="font-semibold text-orange-700 mb-1">편집 가능 항목</p>
+                <div>
+                  <label className="text-gray-500 block mb-0.5">인사말 본문 (최대 150자)</label>
+                  <textarea
+                    className="w-full border rounded p-1.5 text-[11px] resize-none focus:outline-none focus:ring-1 focus:ring-orange-400"
+                    rows={3}
+                    maxLength={150}
+                    value={overridesMap[iep.iep_id]?.introText ?? ""}
+                    placeholder="기본 인사말 유지"
+                    onChange={(e) => updateOverride(iep.iep_id, "introText", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-gray-500 block mb-0.5">예상 소요시간 (최대 20자)</label>
+                  <input
+                    className="w-full border rounded p-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-orange-400"
+                    maxLength={20}
+                    value={overridesMap[iep.iep_id]?.estimatedTime ?? ""}
+                    placeholder="약 30~40분"
+                    onChange={(e) => updateOverride(iep.iep_id, "estimatedTime", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-gray-500 block mb-0.5">① 학교 방문 설명 (최대 60자)</label>
+                  <input className="w-full border rounded p-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-orange-400" maxLength={60} value={overridesMap[iep.iep_id]?.method1Desc ?? ""} placeholder="기본 안내 유지" onChange={(e) => updateOverride(iep.iep_id, "method1Desc", e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-gray-500 block mb-0.5">② 전화 상담 설명 (최대 60자)</label>
+                  <input className="w-full border rounded p-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-orange-400" maxLength={60} value={overridesMap[iep.iep_id]?.method2Desc ?? ""} placeholder="기본 안내 유지" onChange={(e) => updateOverride(iep.iep_id, "method2Desc", e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-gray-500 block mb-0.5">③ 서면 참여 설명 (최대 60자)</label>
+                  <input className="w-full border rounded p-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-orange-400" maxLength={60} value={overridesMap[iep.iep_id]?.method3Desc ?? ""} placeholder="기본 안내 유지" onChange={(e) => updateOverride(iep.iep_id, "method3Desc", e.target.value)} />
+                </div>
+              </div>
+            )}
+            <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} overrides={overridesMap[iep.iep_id]} />
           </div>
         ))}
       </div>

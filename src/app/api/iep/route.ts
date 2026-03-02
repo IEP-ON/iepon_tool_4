@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const teacherInput = body.teacherInput;
+    const teacherPinHash: string | undefined = body.teacherPinHash;
 
     if (!teacherInput || !teacherInput.schoolName || !teacherInput.teacherName || !teacherInput.studentCount) {
       return NextResponse.json(
@@ -49,7 +50,8 @@ export async function POST(request: NextRequest) {
         meeting_place: teacherInput.meetingPlace || "",
         submission_deadline: teacherInput.submissionDeadline || null,
         submission_day: teacherInput.submissionDay || "",
-        student_name_hash: "pending", // 학부모 제출 시 업데이트 또는 그대로 둠
+        student_name_hash: "pending",
+        teacher_pin_hash: teacherPinHash || null,
         teacher_data: { ...teacherInput, batchId },
       });
     }

@@ -3,12 +3,22 @@
 import type { TeacherInput } from "@/lib/types";
 import { QRCodeSVG } from "qrcode.react";
 
+interface Doc1Overrides {
+  introText?: string;
+  estimatedTime?: string;
+  method1Desc?: string;
+  method2Desc?: string;
+  method3Desc?: string;
+}
+
 interface Props {
   teacher: TeacherInput;
   formUrl?: string;
+  overrides?: Doc1Overrides;
 }
 
-export function ResultDoc1({ teacher, formUrl }: Props) {
+export function ResultDoc1({ teacher, formUrl, overrides }: Props) {
+  const DEFAULT_INTRO = `안녕하세요. ${teacher.schoolName} 특수학급 담임교사 ${teacher.teacherName}입니다.\n새 학기가 시작되었습니다. 우리 아이의 즐거운 학교생활과 의미 있는 성장을 위해, 가정과 학교가 함께 이번 학기 교육 계획(IEP)을 의논하는 자리를 마련하고자 합니다.\n보호자님의 소중한 의견이 교육 계획에 잘 반영될 수 있도록 많은 관심과 참여 부탁드립니다.`;
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "____년 __월 __일";
     const d = new Date(dateStr);
@@ -40,13 +50,8 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
       </div>
 
       <div className="mb-6 bg-blue-50/50 print:bg-transparent p-4 rounded-xl">
-        <p className="text-justify leading-relaxed text-[10pt]">
-          안녕하세요. {teacher.schoolName} 특수학급 담임교사 {teacher.teacherName}입니다.
-          <br />
-          새 학기가 시작되었습니다. 우리 아이의 즐거운 학교생활과 의미 있는 성장을 위해,
-          가정과 학교가 함께 이번 학기 교육 계획(IEP)을 의논하는 자리를 마련하고자 합니다.
-          <br />
-          보호자님의 소중한 의견이 교육 계획에 잘 반영될 수 있도록 많은 관심과 참여 부탁드립니다.
+        <p className="text-justify leading-relaxed text-[10pt] whitespace-pre-line">
+          {overrides?.introText || DEFAULT_INTRO}
         </p>
       </div>
 
@@ -71,7 +76,7 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
                 </tr>
                 <tr>
                   <th className="border border-gray-300 px-4 py-3 text-left bg-gray-50">예상 소요시간</th>
-                  <td className="border border-gray-300 px-4 py-3">약 30~40분</td>
+                  <td className="border border-gray-300 px-4 py-3">{overrides?.estimatedTime || "약 30~40분"}</td>
                 </tr>
               </tbody>
             </table>
@@ -88,15 +93,15 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
             <div className="grid grid-cols-3 gap-3 text-[9.5pt]">
               <div className="border border-gray-200 p-3 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-1">① 학교 방문 (대면)</p>
-                <p className="text-gray-600 leading-snug">안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다.</p>
+                <p className="text-gray-600 leading-snug">{overrides?.method1Desc || "안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다."}</p>
               </div>
               <div className="border border-gray-200 p-3 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-1">② 전화 상담 (유선)</p>
-                <p className="text-gray-600 leading-snug">희망하시는 시간에 담임교사가 전화를 드립니다.</p>
+                <p className="text-gray-600 leading-snug">{overrides?.method2Desc || "희망하시는 시간에 담임교사가 전화를 드립니다."}</p>
               </div>
               <div className="border border-gray-200 p-3 rounded-lg bg-gray-50/50 print:bg-transparent print:border-gray-300">
                 <p className="font-bold text-blue-800 print:text-black mb-1">③ 서면 참여</p>
-                <p className="text-gray-600 leading-snug">일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다.</p>
+                <p className="text-gray-600 leading-snug">{overrides?.method3Desc || "일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다."}</p>
               </div>
             </div>
           </div>
@@ -120,12 +125,24 @@ export function ResultDoc1({ teacher, formUrl }: Props) {
                 )}
               </div>
               <div className="space-y-1.5">
-                <p className="font-bold text-[11pt]">스마트폰 간편 제출 안내</p>
+                <p className="font-bold text-[11pt]">간편 제출 안내</p>
                 <ul className="list-disc pl-4 text-gray-700 space-y-0.5 text-[9.5pt]">
-                  <li>기본 카메라 앱을 켜고 왼쪽 QR코드를 비춰주세요.</li>
-                  <li>화면에 나타나는 링크를 누르시면 작성 화면으로 이동합니다.</li>
-                  <li className="text-[8.5pt] text-gray-500 mt-1 list-none -ml-4">※ 제출하신 내용은 안전하게 암호화되어 담임교사에게만 전달됩니다.</li>
+                  <li><strong>스마트폰:</strong> 기본 카메라 앱으로 QR코드를 비춰 링크를 누르세요.</li>
+                  <li><strong>PC:</strong> 아래 주소를 주소창에 입력하거나, 담임교사에게 링크 전달을 요청하세요.</li>
+                  <li className="text-[8.5pt] text-gray-500 mt-1 list-none -ml-4">※ 제출 내용은 암호화되어 담임교사에게만 전달됩니다.</li>
                 </ul>
+                {formUrl && (
+                  <div className="mt-1.5 bg-gray-100 print:bg-gray-50 rounded px-2 py-1 text-[8pt] font-mono text-gray-600 break-all select-all">
+                    {(() => {
+                      try {
+                        const u = new URL(formUrl);
+                        return `${u.origin}${u.pathname}${u.search}`;
+                      } catch {
+                        return formUrl.split("#")[0];
+                      }
+                    })()}
+                  </div>
+                )}
               </div>
             </div>
           </div>
