@@ -5,9 +5,7 @@ export const defaultTeacherInput: TeacherInput = {
   schoolAddress: "",
   principalName: "",
   adminTeacherName: "",
-  studentName: "",
-  grade: "",
-  classNum: "",
+  studentCount: "1",
   year: new Date().getFullYear().toString(),
   semester: new Date().getMonth() < 7 ? "1" : "2",
   teacherName: "",
@@ -22,6 +20,8 @@ export const defaultTeacherInput: TeacherInput = {
 
 export const defaultParentOpinion: ParentOpinion = {
   studentName: "",
+  grade: "",
+  classNum: "",
   birthDate: "",
   guardianName: "",
   guardianRelation: "",

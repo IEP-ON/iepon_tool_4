@@ -3,9 +3,7 @@ export interface TeacherInput {
   schoolAddress: string;
   principalName: string;
   adminTeacherName: string;
-  studentName: string;
-  grade: string;
-  classNum: string;
+  studentCount: string; // 추가됨
   year: string;
   semester: string;
   teacherName: string;
@@ -16,11 +14,14 @@ export interface TeacherInput {
   meetingPlace: string;
   submissionDeadline: string;
   submissionDay: string;
+  batchId?: string;
 }
 
 export interface ParentOpinion {
   // 기본 정보
   studentName: string;
+  grade: string;
+  classNum: string;
   birthDate: string;
   guardianName: string;
   guardianRelation: string;
@@ -138,6 +139,8 @@ export interface ConsentForm {
   consentSignatureBase64: string;
   consentTypingConfirm: string;
   consentDate: string;
+  submissionHash?: string; // 추가됨: 무결성 증명 해시
+  submissionTimestamp?: string; // 추가됨: 제출 일시
 
   // 필수 동의
   consent1: boolean | null;

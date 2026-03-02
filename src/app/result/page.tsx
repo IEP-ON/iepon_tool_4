@@ -105,7 +105,7 @@ function ResultContent() {
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex flex-col">
             <h1 className="font-bold text-gray-900">제출 결과 확인 및 인쇄</h1>
-            <p className="text-xs text-gray-500">{formData.teacher.schoolName} - {formData.teacher.studentName} 학생</p>
+            <p className="text-xs text-gray-500">{formData.teacher.schoolName} - {formData.opinion?.studentName || "학생"} 학생</p>
           </div>
           <Button
             onClick={() => window.print()}

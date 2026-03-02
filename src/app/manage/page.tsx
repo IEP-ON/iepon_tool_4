@@ -149,7 +149,7 @@ function ManageContent() {
               <div>
                 <h2 className="text-xl font-bold text-gray-900">보호자 제출 대기 중</h2>
                 <p className="text-gray-500 mt-1">
-                  {formData.teacher.schoolName} · {formData.teacher.studentName} 학생
+                  {formData.teacher.schoolName}
                 </p>
               </div>
               <p className="text-sm text-gray-600">
@@ -194,7 +194,7 @@ function ManageContent() {
                 제출 완료
               </span>
             </div>
-            <p className="text-xs text-gray-500">{formData.teacher.schoolName} · {formData.teacher.studentName} 학생</p>
+            <p className="text-xs text-gray-500">{formData.teacher.schoolName} · {formData.opinion?.studentName || "학생"} 학생</p>
           </div>
           <div className="flex gap-2">
             <Link href="/">

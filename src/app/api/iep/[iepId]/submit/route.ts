@@ -17,7 +17,13 @@ export async function POST(
       consentEncrypted,
       consentIv,
       guardianNameHash,
+      studentNameHash,
+      studentName,
+      grade,
+      classNum,
       signatureBase64,
+      submissionHash,
+      submissionTimestamp,
     } = body;
 
     if (!opinionEncrypted || !consentEncrypted) {
@@ -107,6 +113,8 @@ export async function POST(
         guardian_name_hash: guardianNameHash || "",
         ip_address: ipAddress,
         user_agent: userAgent,
+        // (optional) submissionHash는 별도 컬럼 없이 consent_data_encrypted 안에 함께 암호화되어 저장되지만,
+        // 필요 시 DB에 평문 해시를 남겨 대조용으로 쓸 수 있음 (현재는 암호화된 consent 객체 내에서 복호화 후 확인)
       });
 
     if (consentError) {
@@ -117,10 +125,16 @@ export async function POST(
       );
     }
 
-    // IEP 상태 업데이트
+    // IEP 상태 업데이트 및 학부모가 입력한 학생 정보(학년, 반) 반영 (studentName은 해시만 저장)
     await supabase
       .from("tool4_ieps")
-      .update({ status: "submitted", updated_at: new Date().toISOString() })
+      .update({ 
+        status: "submitted", 
+        grade,
+        class_num: classNum,
+        student_name_hash: studentNameHash,
+        updated_at: new Date().toISOString() 
+      })
       .eq("id", iep.id);
 
     // 감사 로그
@@ -130,7 +144,11 @@ export async function POST(
       actor: "parent",
       ip_address: ipAddress,
       user_agent: userAgent,
-      details: { guardian_name_hash: guardianNameHash },
+      details: { 
+        guardian_name_hash: guardianNameHash,
+        submission_hash: submissionHash,
+        submission_timestamp: submissionTimestamp
+      },
     });
 
     return NextResponse.json({ success: true });

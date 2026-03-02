@@ -55,10 +55,6 @@ function FormContent() {
           setError(data.error);
         } else {
           setTeacher(data.teacherData);
-          setOpinion((prev) => ({
-            ...prev,
-            studentName: data.teacherData.studentName || "",
-          }));
         }
       })
       .catch(() => setError("데이터 로드에 실패했습니다."))
@@ -89,8 +85,16 @@ function FormContent() {
 
   const handleSubmit = async () => {
     if (!iepId) return;
+
+    if (!opinion.studentName || !opinion.grade || !opinion.classNum) {
+      alert("기본 정보의 학생 성명, 학년, 반을 입력해주세요.");
+      setCurrentStep(0);
+      return;
+    }
+
     if (!consent.consentGuardianName || !consent.consentTypingConfirm) {
       alert("서명란의 보호자 성명과 확인 문구를 입력해주세요.");
+      setCurrentStep(3);
       return;
     }
 
@@ -104,6 +108,12 @@ function FormContent() {
       const { encrypted: opinionEncrypted, iv: opinionIv } = await encryptData(opinion, encKey);
       const { encrypted: consentEncrypted, iv: consentIv } = await encryptData(consent, encKey);
       const guardianNameHash = await sha256(opinion.guardianName || "anonymous");
+      const studentNameHash = await sha256(opinion.studentName || "anonymous");
+      
+      // 위변조 방지 해시 생성 (의견서 + 동의서 + 서명 + 타임스탬프)
+      const submissionTimestamp = new Date().toISOString();
+      const rawDataForHash = JSON.stringify(opinion) + JSON.stringify(consent) + submissionTimestamp;
+      const submissionHash = await sha256(rawDataForHash);
 
       const res = await fetch(`/api/iep/${iepId}/submit`, {
         method: "POST",
@@ -114,7 +124,13 @@ function FormContent() {
           consentEncrypted,
           consentIv,
           guardianNameHash,
+          studentNameHash,
+          studentName: opinion.studentName,
+          grade: opinion.grade,
+          classNum: opinion.classNum,
           signatureBase64: consent.consentSignatureBase64 || "",
+          submissionHash,
+          submissionTimestamp,
         }),
       });
 
@@ -164,7 +180,7 @@ function FormContent() {
           <div className="flex justify-between items-center mb-3">
             <div>
               <h1 className="font-bold text-gray-900">의견서 및 동의서 작성</h1>
-              <p className="text-xs text-gray-500">{teacher.schoolName} · {teacher.studentName} 학생</p>
+              <p className="text-xs text-gray-500">{teacher.schoolName} · 특수교육대상학생</p>
             </div>
             <div className="flex items-center text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
               <ShieldCheck className="w-3.5 h-3.5 mr-1" />

@@ -20,6 +20,59 @@ export function Step1Basic({ opinion, updateOpinion }: Props) {
 
       <Card>
         <CardHeader className="pb-4">
+          <CardTitle className="text-lg">학생 정보</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="studentName">학생 성명</Label>
+              <Input
+                id="studentName"
+                placeholder="성명 입력"
+                value={opinion.studentName}
+                onChange={(e) => updateOpinion("studentName", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="birthDate">학생 생년월일</Label>
+              <Input
+                id="birthDate"
+                type="date"
+                value={opinion.birthDate}
+                onChange={(e) => updateOpinion("birthDate", e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="grade">학년</Label>
+              <select
+                id="grade"
+                className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                value={opinion.grade}
+                onChange={(e) => updateOpinion("grade", e.target.value)}
+              >
+                <option value="">선택해주세요</option>
+                {["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "중1", "중2", "중3", "고1", "고2", "고3"].map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="classNum">반</Label>
+              <Input
+                id="classNum"
+                placeholder="예: 3"
+                value={opinion.classNum}
+                onChange={(e) => updateOpinion("classNum", e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-4">
           <CardTitle className="text-lg">보호자 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -71,15 +124,6 @@ export function Step1Basic({ opinion, updateOpinion }: Props) {
                 placeholder="010-0000-0000"
                 value={opinion.guardianPhone}
                 onChange={(e) => updateOpinion("guardianPhone", e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="birthDate">학생 생년월일</Label>
-              <Input
-                id="birthDate"
-                type="date"
-                value={opinion.birthDate}
-                onChange={(e) => updateOpinion("birthDate", e.target.value)}
               />
             </div>
           </div>

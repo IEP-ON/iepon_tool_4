@@ -23,9 +23,8 @@ export default function TeacherPage() {
   const isFormValid = () => {
     return !!(
       data.schoolName &&
-      data.studentName &&
-      data.grade &&
-      data.classNum &&
+      data.studentCount &&
+      parseInt(data.studentCount) > 0 &&
       data.teacherName &&
       data.teacherPhone &&
       data.meetingStartDate &&
@@ -55,9 +54,9 @@ export default function TeacherPage() {
         return;
       }
 
-      const { iepId } = await res.json();
+      const { batchId } = await res.json();
       const key = await generateKey();
-      window.location.href = `/preview?iepId=${iepId}#key=${key}`;
+      window.location.href = `/preview?batchId=${batchId}#key=${key}`;
     } catch {
       alert("네트워크 오류가 발생했습니다.");
     } finally {
@@ -107,28 +106,19 @@ export default function TeacherPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-12 sm:col-span-6 space-y-2">
-                  <Label htmlFor="studentName">학생 성명 <span className="text-red-500">*</span></Label>
-                  <Input id="studentName" placeholder="성명 입력" value={data.studentName} onChange={(e) => update("studentName", e.target.value)} />
-                </div>
-                <div className="col-span-6 sm:col-span-3 space-y-2">
-                  <Label htmlFor="grade">학년 <span className="text-red-500">*</span></Label>
-                  <select 
-                    id="grade"
-                    className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600" 
-                    value={data.grade} 
-                    onChange={(e) => update("grade", e.target.value)}
-                  >
-                    <option value="">선택</option>
-                    {["1학년", "2학년", "3학년", "4학년", "5학년", "6학년", "중1", "중2", "중3", "고1", "고2", "고3"].map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="col-span-6 sm:col-span-3 space-y-2">
-                  <Label htmlFor="classNum">반 <span className="text-red-500">*</span></Label>
-                  <Input id="classNum" placeholder="예: 3" value={data.classNum} onChange={(e) => update("classNum", e.target.value)} />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="studentCount">해당 학급 특수교육대상학생 수 <span className="text-red-500">*</span></Label>
+                  <Input 
+                    id="studentCount" 
+                    type="number" 
+                    min="1" 
+                    max="100"
+                    placeholder="예: 5" 
+                    value={data.studentCount} 
+                    onChange={(e) => update("studentCount", e.target.value)} 
+                  />
+                  <p className="text-xs text-gray-500">입력한 수만큼 개별 학생용 문서세트(QR)가 생성됩니다.</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">

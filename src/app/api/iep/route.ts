@@ -10,24 +10,27 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const teacherInput = body.teacherInput;
 
-    if (!teacherInput || !teacherInput.schoolName || !teacherInput.teacherName) {
+    if (!teacherInput || !teacherInput.schoolName || !teacherInput.teacherName || !teacherInput.studentCount) {
       return NextResponse.json(
         { error: "필수 항목이 누락되었습니다." },
         { status: 400 },
       );
     }
 
-    const iepId = `iep_${nanoid(10)}`;
+    const count = parseInt(teacherInput.studentCount, 10);
+    if (isNaN(count) || count < 1 || count > 100) {
+      return NextResponse.json(
+        { error: "학생 수는 1에서 100 사이여야 합니다." },
+        { status: 400 },
+      );
+    }
 
-    // studentName 해시 생성 (서버 측 — crypto 모듈 사용)
-    const { createHash } = await import("crypto");
-    const studentNameHash = createHash("sha256")
-      .update(teacherInput.studentName || "")
-      .digest("hex");
+    const batchId = `batch_${nanoid(10)}`;
+    const inserts = [];
 
-    const { data, error } = await supabase
-      .from("tool4_ieps")
-      .insert({
+    for (let i = 0; i < count; i++) {
+      const iepId = `iep_${nanoid(10)}`;
+      inserts.push({
         iep_id: iepId,
         status: "draft",
         school_name: teacherInput.schoolName,
@@ -36,8 +39,8 @@ export async function POST(request: NextRequest) {
         admin_teacher_name: teacherInput.adminTeacherName || "",
         school_year: teacherInput.year,
         semester: teacherInput.semester,
-        grade: teacherInput.grade,
-        class_num: teacherInput.classNum,
+        grade: "", // 학부모가 입력
+        class_num: "", // 학부모가 입력
         teacher_name: teacherInput.teacherName,
         teacher_phone: teacherInput.teacherPhone,
         consult_time: teacherInput.consultTime || "",
@@ -46,11 +49,15 @@ export async function POST(request: NextRequest) {
         meeting_place: teacherInput.meetingPlace || "",
         submission_deadline: teacherInput.submissionDeadline || null,
         submission_day: teacherInput.submissionDay || "",
-        student_name_hash: studentNameHash,
-        teacher_data: teacherInput,
-      })
-      .select("id, iep_id")
-      .single();
+        student_name_hash: "pending", // 학부모 제출 시 업데이트 또는 그대로 둠
+        teacher_data: { ...teacherInput, batchId },
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("tool4_ieps")
+      .insert(inserts)
+      .select("id, iep_id");
 
     if (error) {
       console.error("Supabase insert error:", error.message);
@@ -60,17 +67,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 감사 로그
-    await supabase.from("tool4_audit_logs").insert({
-      iep_id: data.id,
+    // 감사 로그 (배치 생성)
+    const logInserts = data.map((d) => ({
+      iep_id: d.id,
       action: "create",
       actor: "teacher",
       ip_address: request.headers.get("x-forwarded-for") || "",
       user_agent: request.headers.get("user-agent") || "",
-      details: { iep_id: iepId },
-    });
+      details: { iep_id: d.iep_id, batch_id: batchId },
+    }));
 
-    return NextResponse.json({ iepId: data.iep_id, id: data.id });
+    await supabase.from("tool4_audit_logs").insert(logInserts);
+
+    return NextResponse.json({ batchId, count: data.length });
   } catch (err) {
     console.error("IEP create error:", err);
     return NextResponse.json(
