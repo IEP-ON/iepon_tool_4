@@ -373,20 +373,25 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
       
       {/* ── 문서 목록 ── */}
       <div className="py-6 px-4 sm:px-6 print:py-0 print:px-0">
-        {ieps.map((iep, index) => (
+        {ieps.map((iep, i) => (
           <div
             key={iep.iep_id}
-            ref={(el) => { docRefs.current[iep.iep_id] = el; }}
-            className="max-w-[210mm] mx-auto mb-8 print:mb-0 print:break-after-page scroll-mt-20"
+            id={iep.iep_id}
+            ref={(el) => {
+              docRefs.current[iep.iep_id] = el;
+            }}
+            className={`flex flex-col gap-6 scroll-mt-24 ${
+              isHandwrittenPrint && i > 0 ? "print:hidden" : ""
+            }`}
           >
             {/* 문서 상단 툴바 (화면에만) */}
             <div className="print:hidden flex items-center justify-between mb-3 px-1">
               <div className="flex items-center gap-2.5">
                 <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold shadow-sm">
-                  {index + 1}
+                  {i + 1}
                 </span>
                 <span className="text-sm font-semibold text-gray-700">
-                  {`학생 ${index + 1}`}
+                  {`학생 ${i + 1}`}
                 </span>
                 {iep.status === "submitted" && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">

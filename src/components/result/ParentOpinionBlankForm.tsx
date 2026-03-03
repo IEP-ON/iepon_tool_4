@@ -18,7 +18,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
 
       <div className="space-y-6 text-[10pt]">
         {/* 기본 정보 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 flex items-center text-gray-900 border-b pb-1">
             1. 기본 정보
           </h2>
@@ -47,7 +47,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
         </section>
 
         {/* 건강 및 의료 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 flex items-center text-gray-900 border-b pb-1">
             2. 건강 및 의료 정보
           </h2>
@@ -68,7 +68,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
         </section>
 
         {/* 교육적 요구 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 flex items-center text-gray-900 border-b pb-1">
             3. 교육적 요구 및 학부모 의견
           </h2>
@@ -93,7 +93,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
         </section>
 
         {/* 협의회 참석 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 flex items-center text-gray-900 border-b pb-1">
             4. 협의회 참석 방법
           </h2>
@@ -124,7 +124,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
         </section>
 
         {/* 서명 */}
-        <section className="mt-8 pt-4 border-t-2 border-gray-300">
+        <section className="mt-8 pt-4 border-t-2 border-gray-300 print:break-inside-avoid">
           <div className="flex justify-between items-end">
             <div className="space-y-1">
               <p className="text-[9pt] text-gray-600">작성일자:</p>

@@ -43,7 +43,7 @@ export function ConsentBlankForm({ teacher }: Props) {
 
       <div className="space-y-5 text-[10pt]">
         {/* 기본 정보 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 pb-3 border-b">
             <div className="flex items-center gap-2">
               <span className="text-gray-700 font-medium min-w-[80px]">학생 성명:</span>
@@ -65,7 +65,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 필수 동의 */}
-        <section className="border border-blue-200 rounded-lg p-4 bg-blue-50/30">
+        <section className="border border-blue-200 rounded-lg p-4 bg-blue-50/30 print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 text-blue-900 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
             1. 필수 동의 사항
@@ -87,7 +87,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 선택 동의 */}
-        <section className="border border-gray-200 rounded-lg p-4">
+        <section className="border border-gray-200 rounded-lg p-4 print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 text-gray-900 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
             2. 선택 동의 사항
@@ -102,7 +102,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 개인정보 제3자 제공 */}
-        <section className="border border-amber-200 rounded-lg p-4 bg-amber-50/30">
+        <section className="border border-amber-200 rounded-lg p-4 bg-amber-50/30 print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-3 text-amber-900 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-amber-600 rounded-full"></span>
             3. 개인정보 제3자 제공 동의
@@ -115,7 +115,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 긴급 연락망 */}
-        <section>
+        <section className="print:break-inside-avoid">
           <h2 className="text-[11pt] font-bold mb-2 text-gray-900 border-b pb-1">
             4. 긴급 연락망
           </h2>
@@ -136,7 +136,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 타이핑 확인 */}
-        <section className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+        <section className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50 print:break-inside-avoid">
           <p className="text-sm text-gray-800 font-medium mb-2">
             위 내용을 확인하였으며, 선택한 항목에 동의합니다.
           </p>
@@ -148,7 +148,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </section>
 
         {/* 서명 */}
-        <section className="mt-6 pt-4 border-t-2 border-gray-300">
+        <section className="mt-6 pt-4 border-t-2 border-gray-300 print:break-inside-avoid">
           <div className="flex justify-between items-end">
             <div className="space-y-1">
               <p className="text-[9pt] text-gray-600">작성일자:</p>
