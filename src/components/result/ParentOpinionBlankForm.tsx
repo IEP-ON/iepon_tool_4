@@ -116,7 +116,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
           </section>
 
           {/* 협의회 참석 */}
-          <section className="print:break-inside-avoid mt-8">
+          <section className="print:break-inside-avoid mt-12">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
               4. 협의회 참석 방법 (택 1)
             </h2>
