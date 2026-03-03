@@ -76,6 +76,11 @@
   .print\:break-after-page {
     page-break-after: always;
   }
+  /* 텍스트 잘림 방지 (페이지 경계에서 최소 줄 수 보장) */
+  p, li, span, td, th, div {
+    orphans: 3;
+    widows: 3;
+  }
   /* 빈 폼 인쇄 시 라인 두께 조절 */
   .print-empty-form * {
     border-color: #000 !important;
