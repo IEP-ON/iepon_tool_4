@@ -15,9 +15,10 @@ interface Props {
   teacher: TeacherInput;
   formUrl?: string;
   overrides?: Doc1Overrides;
+  handwrittenMode?: boolean;
 }
 
-export function ResultDoc1({ teacher, formUrl, overrides }: Props) {
+export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Props) {
   const DEFAULT_INTRO = `안녕하세요. ${teacher.schoolName} 특수학급 담임교사 ${teacher.teacherName}입니다.
 새로운 학기를 맞이하여, 우리 아이가 학교에서 한 뼘 더 성장하고 행복한 일상을 누릴 수 있도록 개별화교육계획(IEP)을 수립할 시기가 되었습니다.
 학생 개개인의 교육적 요구에 꼭 맞는 맞춤형 지원을 위해, 가정과 학교가 함께 지혜를 모으는 뜻깊은 자리를 마련하고자 합니다.
@@ -109,27 +110,48 @@ export function ResultDoc1({ teacher, formUrl, overrides }: Props) {
             의견서 및 동의서 제출 방법
           </h2>
           <div className="pl-3.5">
-            <p className="mb-1 text-[9.5pt] text-gray-800">
-              아래의 QR코드를 카메라로 스캔하여 <strong className="text-gray-900 underline underline-offset-2">{formatDeadline(teacher.submissionDeadline)}까지</strong> 작성해 주세요.
-            </p>
-            <div className="flex gap-3 items-center p-2.5 border border-gray-300 rounded-xl bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
-              <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1">
-                {formUrl ? (
-                  <QRCodeSVG value={formUrl} size={72} level="H" includeMargin={false} />
-                ) : (
-                  <span className="text-xs text-gray-400 text-center">QR코드<br/>영역</span>
-                )}
+            {handwrittenMode ? (
+              <div className="border-2 border-dashed border-gray-400 rounded-xl p-4 bg-[#f2fcf9] print:bg-transparent">
+                <p className="font-bold text-[10.5pt] text-gray-900 mb-2">자필 작성 및 직접 제출 안내</p>
+                <p className="text-[9.5pt] text-gray-700 leading-relaxed mb-3">
+                  이 안내장과 함께 배부된 <strong>의견서 및 개인정보 수집·이용 동의서</strong>를 자필로 작성하시어,
+                  <strong> {formatDeadline(teacher.submissionDeadline)}까지</strong> 담임교사에게 직접 제출해 주세요.
+                </p>
+                <div className="grid grid-cols-2 gap-3 text-[9pt] border-t border-gray-300 pt-3">
+                  <div>
+                    <p className="text-gray-600 font-medium">담임 특수교사</p>
+                    <p className="font-bold text-gray-900 mt-0.5">{teacher.teacherName}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">연락처</p>
+                    <p className="font-bold text-gray-900 mt-0.5">{teacher.teacherPhone}</p>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-0.5">
-                <p className="font-bold text-[10pt] text-gray-900">간편 제출 안내</p>
-                <ul className="list-disc pl-3.5 text-gray-700 space-y-0.5 text-[9pt]">
-                  <li><strong>스마트폰:</strong> 기본 카메라 앱으로 QR코드를 비춰 링크를 누르세요.</li>
-                  <li><strong>PC:</strong> 담임교사에게 링크 전달을 요청하세요.</li>
-                  <li className="text-[8.5pt] text-gray-500 mt-0.5 list-none -ml-3.5">※ 제출 내용은 암호화되어 담임교사에게만 전달됩니다.</li>
-                </ul>
-
-              </div>
-            </div>
+            ) : (
+              <>
+                <p className="mb-1 text-[9.5pt] text-gray-800">
+                  아래의 QR코드를 카메라로 스캔하여 <strong className="text-gray-900 underline underline-offset-2">{formatDeadline(teacher.submissionDeadline)}까지</strong> 작성해 주세요.
+                </p>
+                <div className="flex gap-3 items-center p-2.5 border border-gray-300 rounded-xl bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
+                  <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1">
+                    {formUrl ? (
+                      <QRCodeSVG value={formUrl} size={72} level="H" includeMargin={false} />
+                    ) : (
+                      <span className="text-xs text-gray-400 text-center">QR코드<br/>영역</span>
+                    )}
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-[10pt] text-gray-900">간편 제출 안내</p>
+                    <ul className="list-disc pl-3.5 text-gray-700 space-y-0.5 text-[9pt]">
+                      <li><strong>스마트폰:</strong> 기본 카메라 앱으로 QR코드를 비춰 링크를 누르세요.</li>
+                      <li><strong>PC:</strong> 담임교사에게 링크 전달을 요청하세요.</li>
+                      <li className="text-[8.5pt] text-gray-500 mt-0.5 list-none -ml-3.5">※ 제출 내용은 암호화되어 담임교사에게만 전달됩니다.</li>
+                    </ul>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </section>
       </div>

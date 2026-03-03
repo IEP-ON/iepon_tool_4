@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Printer, Copy, CheckCircle2, Loader2, ArrowLeft,
   FileText, Pencil, X, ExternalLink, ChevronDown, ChevronUp, Send,
-  LayoutDashboard,
+  LayoutDashboard, PenLine,
 } from "lucide-react";
 import Link from "next/link";
 import { useTutorial } from "@/hooks/useTutorial";
@@ -35,6 +35,8 @@ function PreviewContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copiedParent, setCopiedParent] = useState<string | null>(null);
+  const [copyCountMap, setCopyCountMap] = useState<Record<string, number>>({});
+  const [isHandwrittenPrint, setIsHandwrittenPrint] = useState(false);
   const [encKey, setEncKey] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [overridesMap, setOverridesMap] = useState<Record<string, Doc1Overrides>>({});
@@ -42,7 +44,7 @@ function PreviewContent() {
   const docRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useTutorial({
-    tutorialId: "preview-page-v1",
+    tutorialId: "preview-page-v2",
     steps: [
       {
         element: "#tutorial-preview-header",
@@ -57,9 +59,27 @@ function PreviewContent() {
         element: "#tutorial-preview-actions",
         popover: {
           title: "인쇄 및 편집 버튼",
-          description: "전체 인쇄 버튼으로 모든 안내장을 한 번에 인쇄하거나, 내용 편집으로 인사말과 참석 방법을 수정할 수 있습니다.",
+          description: "전체 인쇄로 QR 포함 안내장을 인쇄하거나, 내용 편집으로 인사말·참석 방법을 수정할 수 있습니다.",
           side: "bottom",
           align: "end",
+        },
+      },
+      {
+        element: "#tutorial-handwritten-btn",
+        popover: {
+          title: "자필문서 출력",
+          description: "QR코드·링크 사용이 어려운 가정을 위한 종이 문서입니다. 클릭하면 QR 대신 자필 제출 안내가 담긴 버전으로 인쇄됩니다. 함께 출력된 의견서·동의서에 직접 서명·작성하여 제출받으세요.",
+          side: "bottom",
+          align: "end",
+        },
+      },
+      {
+        element: "#tutorial-student-nav",
+        popover: {
+          title: "학생별 빠른 이동 및 메시지 복사",
+          description: "학생 번호를 클릭하면 해당 안내장으로 스크롤됩니다. 아래 복사 버튼으로 각 학생의 메신저 링크를 바로 복사할 수 있으며, 복사 횟수가 표시됩니다.",
+          side: "top",
+          align: "start",
         },
       },
       {
@@ -189,10 +209,19 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
 
       await navigator.clipboard.writeText(message);
       setCopiedParent(id);
+      setCopyCountMap((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
       setTimeout(() => setCopiedParent(null), 2000);
     } catch {
       alert("링크 복사에 실패했습니다.");
     }
+  };
+
+  const handleHandwrittenPrint = () => {
+    setIsHandwrittenPrint(true);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setIsHandwrittenPrint(false), 300);
+    }, 250);
   };
 
   const updateOverride = (iepId: string, key: keyof Doc1Overrides, value: string) => {
@@ -254,6 +283,16 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
                 <span className="hidden sm:inline">{editMode ? "편집 종료" : "내용 편집"}</span>
               </Button>
               <Button
+                id="tutorial-handwritten-btn"
+                onClick={handleHandwrittenPrint}
+                size="sm"
+                variant="outline"
+                className="border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-none gap-1.5"
+              >
+                <PenLine className="w-4 h-4" />
+                <span className="hidden sm:inline">자필문서</span>
+              </Button>
+              <Button
                 onClick={() => window.print()}
                 size="sm"
                 className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm gap-1.5"
@@ -282,17 +321,36 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
                 일괄 인쇄하여 학부모님께 배부하거나, 각 학생별 <strong className="text-teal-900 font-semibold">메시지 복사</strong> 버튼으로 메신저에 전달하세요.
               </p>
             </div>
-            {/* 우측 퀵 네비 */}
-            <div className="flex flex-wrap gap-1.5 sm:flex-col sm:items-end shrink-0">
+            {/* 우측 퀵 네비 - 가로 배치 */}
+            <div id="tutorial-student-nav" className="flex flex-wrap gap-2 shrink-0">
               {ieps.map((iep, i) => (
-                <button
-                  key={iep.iep_id}
-                  onClick={() => scrollToDoc(iep.iep_id)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-teal-200 hover:bg-teal-50 text-teal-800 text-sm font-medium transition-colors"
-                >
-                  <span className="w-5 h-5 rounded-md bg-teal-100 flex items-center justify-center text-xs font-bold text-teal-700">{i + 1}</span>
-                  <span className="truncate max-w-[8rem]">{`학생 ${i + 1}`}</span>
-                </button>
+                <div key={iep.iep_id} className="flex flex-col gap-1">
+                  <button
+                    onClick={() => scrollToDoc(iep.iep_id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-teal-200 hover:bg-teal-50 text-teal-800 text-sm font-medium transition-colors"
+                  >
+                    <span className="w-5 h-5 rounded-md bg-teal-100 flex items-center justify-center text-xs font-bold text-teal-700">{i + 1}</span>
+                    <span className="truncate max-w-[6rem]">{`학생 ${i + 1}`}</span>
+                  </button>
+                  <button
+                    onClick={() => handleCopyParent(iep.iep_id, iep.teacher_data)}
+                    className={`inline-flex items-center justify-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
+                      copiedParent === iep.iep_id
+                        ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                        : "bg-white border border-teal-100 text-teal-600 hover:bg-teal-50"
+                    }`}
+                  >
+                    {copiedParent === iep.iep_id ? (
+                      <CheckCircle2 className="w-3 h-3" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    <span>복사</span>
+                    {(copyCountMap[iep.iep_id] || 0) > 0 && (
+                      <span className="ml-0.5 text-[10px] text-teal-400 font-mono">{copyCountMap[iep.iep_id]}</span>
+                    )}
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -446,7 +504,7 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
 
             {/* 문서 본체 */}
             <div className="bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200/60 print:shadow-none print:rounded-none print:ring-0">
-              <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} overrides={overridesMap[iep.iep_id]} />
+              <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} overrides={overridesMap[iep.iep_id]} handwrittenMode={isHandwrittenPrint} />
             </div>
           </div>
         ))}

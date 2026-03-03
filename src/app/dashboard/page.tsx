@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Loader2, CheckCircle2, Clock, Home, FileText, ArrowLeft, Lock, Eye, Users, Copy } from "lucide-react";
+import { Search, Loader2, CheckCircle2, Clock, Home, FileText, ArrowLeft, Lock, Eye, Users, Copy, Pencil } from "lucide-react";
 import Link from "next/link";
 import { sha256, decryptData } from "@/lib/encryption";
 
@@ -258,6 +258,16 @@ export default function DashboardPage() {
                             <span className="text-xs text-gray-500">
                               {submittedCount}/{batch.ieps.length}명 제출
                             </span>
+                            <a href={getPreviewUrl(batch.batchId)} target="_blank" rel="noreferrer">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-xs h-7 border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100"
+                              >
+                                <Pencil className="w-3 h-3 mr-1" />
+                                편집·인쇄
+                              </Button>
+                            </a>
                             <Button
                               size="sm"
                               variant="outline"
