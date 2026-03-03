@@ -286,13 +286,17 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
               </Button>
               <Button
                 id="tutorial-handwritten-btn"
-                onClick={handleHandwrittenPrint}
+                onClick={() => setIsHandwrittenPrint(!isHandwrittenPrint)}
                 size="sm"
                 variant="outline"
-                className="border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-none gap-1.5"
+                className={
+                  isHandwrittenPrint
+                    ? "border-amber-500 bg-amber-100 text-amber-900 hover:bg-amber-200 shadow-none gap-1.5"
+                    : "border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-none gap-1.5"
+                }
               >
                 <PenLine className="w-4 h-4" />
-                <span className="hidden sm:inline">자필문서</span>
+                <span className="hidden sm:inline">{isHandwrittenPrint ? "자필모드 끄기" : "자필모드 켜기"}</span>
               </Button>
               <Button
                 onClick={() => window.print()}
@@ -300,7 +304,7 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
                 className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm gap-1.5"
               >
                 <Printer className="w-4 h-4" />
-                <span className="hidden sm:inline">전체 인쇄</span>
+                <span className="hidden sm:inline">인쇄하기</span>
               </Button>
             </div>
           </div>
@@ -441,86 +445,25 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
               </div>
             </div>
 
-            {/* 인라인 편집 패널 */}
-            {editMode && expandedEdit === iep.iep_id && (
-              <div className="print:hidden mb-3 bg-amber-50/80 border border-amber-200 rounded-xl p-4 sm:p-5 shadow-sm animate-in fade-in duration-200">
-                <div className="flex items-center gap-2 mb-4">
-                  <Pencil className="w-4 h-4 text-amber-600" />
-                  <h4 className="font-semibold text-amber-800 text-sm">안내장 내용 편집</h4>
-                  <span className="text-xs text-amber-500 ml-auto">수정 사항은 아래 문서에 즉시 반영됩니다</span>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs font-medium text-gray-600 mb-1 block">인사말 본문 <span className="text-gray-400">(최대 300자)</span></label>
-                    <textarea
-                      className="w-full border border-amber-200 rounded-lg px-3 py-2.5 text-sm resize-none bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 placeholder:text-gray-400 transition-shadow"
-                      rows={3}
-                      maxLength={300}
-                      value={overridesMap[iep.iep_id]?.introText ?? ""}
-                      placeholder="기본 인사말 유지"
-                      onChange={(e) => updateOverride(iep.iep_id, "introText", e.target.value)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">예상 소요시간 <span className="text-gray-400">(최대 30자)</span></label>
-                      <input
-                        className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 placeholder:text-gray-400 transition-shadow"
-                        maxLength={30}
-                        value={overridesMap[iep.iep_id]?.estimatedTime ?? ""}
-                        placeholder="약 30~40분"
-                        onChange={(e) => updateOverride(iep.iep_id, "estimatedTime", e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">① 학교 방문 설명</label>
-                      <input
-                        className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 placeholder:text-gray-400 transition-shadow"
-                        maxLength={100}
-                        value={overridesMap[iep.iep_id]?.method1Desc ?? ""}
-                        placeholder="기본 안내 유지"
-                        onChange={(e) => updateOverride(iep.iep_id, "method1Desc", e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">② 전화 상담 설명</label>
-                      <input
-                        className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 placeholder:text-gray-400 transition-shadow"
-                        maxLength={100}
-                        value={overridesMap[iep.iep_id]?.method2Desc ?? ""}
-                        placeholder="기본 안내 유지"
-                        onChange={(e) => updateOverride(iep.iep_id, "method2Desc", e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-600 mb-1 block">③ 서면 참여 설명</label>
-                      <input
-                        className="w-full border border-amber-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 placeholder:text-gray-400 transition-shadow"
-                        maxLength={100}
-                        value={overridesMap[iep.iep_id]?.method3Desc ?? ""}
-                        placeholder="기본 안내 유지"
-                        onChange={(e) => updateOverride(iep.iep_id, "method3Desc", e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* 문서 본체 */}
             <div className="bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200/60 print:shadow-none print:rounded-none print:ring-0">
-              <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} overrides={overridesMap[iep.iep_id]} handwrittenMode={isHandwrittenPrint} />
+              <ResultDoc1 
+                teacher={iep.teacher_data} 
+                formUrl={getFormUrl(iep.iep_id)} 
+                overrides={overridesMap[iep.iep_id]} 
+                handwrittenMode={isHandwrittenPrint}
+                isEditing={editMode}
+                onUpdate={(key, value) => updateOverride(iep.iep_id, key, value)}
+              />
             </div>
             
             {/* 자필문서 인쇄 시 의견서·동의서 빈 양식 추가 */}
             {isHandwrittenPrint && (
               <>
-                <div className="hidden print:block">
+                <div className="mt-8 bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200/60 print:shadow-none print:rounded-none print:ring-0 print:mt-0 print:break-before-page">
                   <ParentOpinionBlankForm teacher={iep.teacher_data} />
                 </div>
-                <div className="hidden print:block">
+                <div className="mt-8 bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200/60 print:shadow-none print:rounded-none print:ring-0 print:mt-0 print:break-before-page">
                   <ConsentBlankForm teacher={iep.teacher_data} />
                 </div>
               </>

@@ -2,6 +2,7 @@
 
 import type { TeacherInput } from "@/lib/types";
 import { QRCodeSVG } from "qrcode.react";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 
 interface Doc1Overrides {
   introText?: string;
@@ -16,13 +17,16 @@ interface Props {
   formUrl?: string;
   overrides?: Doc1Overrides;
   handwrittenMode?: boolean;
+  isEditing?: boolean;
+  onUpdate?: (key: keyof Doc1Overrides, value: string) => void;
 }
 
-export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Props) {
+export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode, isEditing, onUpdate }: Props) {
   const DEFAULT_INTRO = `안녕하세요. ${teacher.schoolName} 특수학급 담임교사 ${teacher.teacherName}입니다.
 새로운 학기를 맞이하여, 우리 아이가 학교에서 한 뼘 더 성장하고 행복한 일상을 누릴 수 있도록 개별화교육계획(IEP)을 수립할 시기가 되었습니다.
 학생 개개인의 교육적 요구에 꼭 맞는 맞춤형 지원을 위해, 가정과 학교가 함께 지혜를 모으는 뜻깊은 자리를 마련하고자 합니다.
 보호자님의 귀한 의견이 우리 아이를 위한 교육 계획의 소중한 밑거름이 될 수 있도록 따뜻한 관심과 참여를 부탁드립니다.`;
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "____년 __월 __일";
     const d = new Date(dateStr);
@@ -33,6 +37,34 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
     if (!dateStr) return "__월 __일";
     const d = new Date(dateStr);
     return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+  };
+
+  const renderEditableText = (
+    key: keyof Doc1Overrides, 
+    defaultValue: string, 
+    className: string, 
+    maxLength?: number,
+    placeholder?: string
+  ) => {
+    const value = overrides?.[key] || defaultValue;
+    
+    if (isEditing && onUpdate) {
+      return (
+        <AutoResizeTextarea
+          value={overrides?.[key] ?? defaultValue}
+          onChangeValue={(val) => onUpdate(key, val)}
+          className={`${className} border border-dashed border-amber-300 bg-amber-50/30`}
+          placeholder={placeholder}
+          maxLength={maxLength}
+        />
+      );
+    }
+    
+    return (
+      <p className={`${className} whitespace-pre-line`}>
+        {value}
+      </p>
+    );
   };
 
   return (
@@ -47,9 +79,12 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
       </div>
 
       <div className="mb-4 bg-[#f2fcf9] print:bg-transparent p-3.5 rounded-xl border border-teal-100/50 print:border-none print:p-0 shrink-0">
-        <p className="text-justify leading-relaxed text-[10.5pt] whitespace-pre-line font-serif text-gray-800">
-          {overrides?.introText || DEFAULT_INTRO}
-        </p>
+        {renderEditableText(
+          "introText", 
+          DEFAULT_INTRO, 
+          "text-justify leading-relaxed text-[10.5pt] font-serif text-gray-800",
+          300
+        )}
       </div>
 
       <div className="flex-1 min-h-0 flex flex-col space-y-5">
@@ -73,7 +108,9 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
                 </tr>
                 <tr>
                   <th className="border border-gray-400 px-3 py-1.5 text-left bg-[#f2fcf9] font-bold text-gray-800">예상 소요시간</th>
-                  <td className="border border-gray-400 px-3 py-1.5 text-gray-900">{overrides?.estimatedTime || "약 30~40분"}</td>
+                  <td className="border border-gray-400 px-3 py-1.5 text-gray-900">
+                    {renderEditableText("estimatedTime", "약 30~40분", "", 30)}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -90,19 +127,20 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
             <div className="grid grid-cols-3 gap-2 text-[9pt]">
               <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">① 학교 방문 (대면)</p>
-                <p className="text-gray-700 leading-snug">{overrides?.method1Desc || "안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다."}</p>
+                {renderEditableText("method1Desc", "안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다.", "text-gray-700 leading-snug", 100)}
               </div>
               <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">② 전화 상담 (유선)</p>
-                <p className="text-gray-700 leading-snug">{overrides?.method2Desc || "희망하시는 시간에 담임교사가 전화를 드립니다."}</p>
+                {renderEditableText("method2Desc", "희망하시는 시간에 담임교사가 전화를 드립니다.", "text-gray-700 leading-snug", 100)}
               </div>
               <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">③ 서면 참여</p>
-                <p className="text-gray-700 leading-snug">{overrides?.method3Desc || "일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다."}</p>
+                {renderEditableText("method3Desc", "일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다.", "text-gray-700 leading-snug", 100)}
               </div>
             </div>
           </div>
         </section>
+
 
         <section className="shrink-0">
           <h2 className="text-[11pt] font-bold mb-1.5 flex items-center text-gray-900">
