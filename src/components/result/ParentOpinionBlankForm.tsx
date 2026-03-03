@@ -69,6 +69,22 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
               </div>
             </div>
           </section>
+          {/* 교육적 요구 */}
+          <section className="print:break-inside-avoid mt-8">
+            <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
+              3. 교육적 요구 및 학부모 의견
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <p className="text-gray-700 font-medium mb-2">학생의 강점 (좋아하고 잘하는 것):</p>
+                <div className="border border-gray-300 rounded-lg p-3 min-h-[120px]"></div>
+              </div>
+              <div>
+                <p className="text-gray-700 font-medium mb-2">개선이 필요한 영역 (도움이 필요한 부분):</p>
+                <div className="border border-gray-300 rounded-lg p-3 min-h-[120px]"></div>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div className="mt-8 pt-3 border-t border-gray-300 text-[8.5pt] text-gray-600 text-center">
@@ -90,23 +106,15 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
 
       <div className="flex-1 flex flex-col justify-between">
         <div className="space-y-8 text-[10pt]">
-          {/* 교육적 요구 */}
+          {/* 교육적 요구 (계속) */}
           <section className="print:break-inside-avoid">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
-              3. 교육적 요구 및 학부모 의견
+              3. 교육적 요구 및 학부모 의견 (계속)
             </h2>
             <div className="space-y-6">
               <div>
-                <p className="text-gray-700 font-medium mb-2">학생의 강점 (좋아하고 잘하는 것):</p>
-                <div className="border border-gray-300 rounded-lg p-3 min-h-[140px]"></div>
-              </div>
-              <div>
-                <p className="text-gray-700 font-medium mb-2">개선이 필요한 영역 (도움이 필요한 부분):</p>
-                <div className="border border-gray-300 rounded-lg p-3 min-h-[140px]"></div>
-              </div>
-              <div>
                 <p className="text-gray-700 font-medium mb-2">협의회에서 논의하고 싶은 사항:</p>
-                <div className="border border-gray-300 rounded-lg p-3 min-h-[160px]"></div>
+                <div className="border border-gray-300 rounded-lg p-3 min-h-[140px]"></div>
               </div>
               <div>
                 <p className="text-gray-700 font-medium mb-2">학교에 바라는 지원 (보조공학기기, 행동지원 등):</p>
@@ -116,8 +124,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
           </section>
 
           {/* 협의회 참석 */}
-          <div className="h-16"></div>
-          <section className="print:break-inside-avoid">
+          <section className="print:break-inside-avoid mt-8">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
               4. 협의회 참석 방법 (택 1)
             </h2>
