@@ -36,7 +36,7 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
   };
 
   return (
-    <div className="mx-auto w-[210mm] h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:h-[297mm] print:shadow-none text-[10pt] leading-tight flex flex-col relative print:break-after-page overflow-hidden">
+    <div className="mx-auto w-[210mm] h-[297mm] p-[12mm] bg-white print:p-0 print:m-0 print:w-full print:h-auto print:shadow-none text-[10pt] leading-tight flex flex-col relative print:break-after-page overflow-hidden">
       <div className="text-center mb-4 border-b-2 border-black pb-2 shrink-0">
         <h1 className="text-[15pt] font-bold tracking-tight">
           {teacher.year}학년도 {teacher.semester}학기 개별화교육지원팀 협의회 안내
@@ -46,13 +46,13 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
         </div>
       </div>
 
-      <div className="mb-4 bg-[#f2fcf9] print:bg-transparent p-3.5 rounded-xl border border-teal-100/50 print:border-none print:p-0 shrink-0">
-        <p className="text-justify leading-relaxed text-[10.5pt] whitespace-pre-line font-serif text-gray-800">
+      <div className="mb-4 print:mb-2 bg-[#f2fcf9] print:bg-transparent p-3.5 print:p-0 rounded-xl border border-teal-100/50 print:border-none shrink-0">
+        <p className="text-justify leading-relaxed text-[10.5pt] print:text-[10pt] whitespace-pre-line font-serif text-gray-800">
           {overrides?.introText || DEFAULT_INTRO}
         </p>
       </div>
 
-      <div className="flex-1 min-h-0 flex flex-col space-y-5">
+      <div className="flex-1 min-h-0 flex flex-col space-y-5 print:space-y-3">
         <section className="shrink-0">
           <h2 className="text-[11pt] font-bold mb-1.5 flex items-center text-gray-900">
             <span className="w-1.5 h-1.5 bg-gray-800 rounded-full mr-2 print:bg-black"></span>
@@ -62,18 +62,18 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
             <table className="w-full border-collapse border border-gray-400">
               <tbody>
                 <tr>
-                  <th className="border border-gray-400 px-3 py-1.5 text-left bg-[#f2fcf9] w-[25%] font-bold text-gray-800">운영 기간</th>
-                  <td className="border border-gray-400 px-3 py-1.5 font-bold text-gray-900">
+                  <th className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 text-left bg-[#f2fcf9] w-[25%] font-bold text-gray-800">운영 기간</th>
+                  <td className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 font-bold text-gray-900">
                     {formatDate(teacher.meetingStartDate)} ~ {formatDate(teacher.meetingEndDate)}
                   </td>
                 </tr>
                 <tr>
-                  <th className="border border-gray-400 px-3 py-1.5 text-left bg-[#f2fcf9] font-bold text-gray-800">장소</th>
-                  <td className="border border-gray-400 px-3 py-1.5 text-gray-900">{teacher.schoolName} {teacher.meetingPlace}</td>
+                  <th className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 text-left bg-[#f2fcf9] font-bold text-gray-800">장소</th>
+                  <td className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 text-gray-900">{teacher.schoolName} {teacher.meetingPlace}</td>
                 </tr>
                 <tr>
-                  <th className="border border-gray-400 px-3 py-1.5 text-left bg-[#f2fcf9] font-bold text-gray-800">예상 소요시간</th>
-                  <td className="border border-gray-400 px-3 py-1.5 text-gray-900">{overrides?.estimatedTime || "약 30~40분"}</td>
+                  <th className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 text-left bg-[#f2fcf9] font-bold text-gray-800">예상 소요시간</th>
+                  <td className="border border-gray-400 px-3 py-1.5 print:px-2 print:py-1 text-gray-900">{overrides?.estimatedTime || "약 30~40분"}</td>
                 </tr>
               </tbody>
             </table>
@@ -88,15 +88,15 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
           <div className="pl-3.5">
             <p className="mb-1 text-gray-700 text-[9.5pt]">편하신 방법으로 협의회에 참여하실 수 있습니다.</p>
             <div className="grid grid-cols-3 gap-2 text-[9pt]">
-              <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
+              <div className="border border-gray-300 p-2 print:p-1.5 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">① 학교 방문 (대면)</p>
                 <p className="text-gray-700 leading-snug">{overrides?.method1Desc || "안내된 기간 중 희망하시는 일시에 학교로 방문해 주시면 됩니다."}</p>
               </div>
-              <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
+              <div className="border border-gray-300 p-2 print:p-1.5 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">② 전화 상담 (유선)</p>
                 <p className="text-gray-700 leading-snug">{overrides?.method2Desc || "희망하시는 시간에 담임교사가 전화를 드립니다."}</p>
               </div>
-              <div className="border border-gray-300 p-2 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
+              <div className="border border-gray-300 p-2 print:p-1.5 rounded-lg bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
                 <p className="font-bold text-gray-900 mb-0.5">③ 서면 참여</p>
                 <p className="text-gray-700 leading-snug">{overrides?.method3Desc || "일정 조율이 어려우신 경우, 의견서만 작성하여 제출해 주셔도 됩니다."}</p>
               </div>
@@ -133,10 +133,10 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
                 <p className="mb-1 text-[9.5pt] text-gray-800">
                   아래의 QR코드를 카메라로 스캔하여 <strong className="text-gray-900 underline underline-offset-2">{formatDeadline(teacher.submissionDeadline)}까지</strong> 작성해 주세요.
                 </p>
-                <div className="flex gap-3 items-center p-2.5 border border-gray-300 rounded-xl bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
-                  <div className="w-[100px] h-[100px] bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1">
+                <div className="flex gap-3 items-center p-2.5 print:p-1.5 border border-gray-300 rounded-xl bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
+                  <div className="w-[100px] h-[100px] print:w-[85px] print:h-[85px] bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1">
                     {formUrl ? (
-                      <QRCodeSVG value={formUrl} size={90} level="H" includeMargin={false} />
+                      <QRCodeSVG value={formUrl} size={90} className="print:w-[80px] print:h-[80px]" level="H" includeMargin={false} />
                     ) : (
                       <span className="text-xs text-gray-400 text-center">QR코드<br/>영역</span>
                     )}

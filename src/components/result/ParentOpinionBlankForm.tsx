@@ -7,7 +7,7 @@ interface Props {
 export function ParentOpinionBlankForm({ teacher }: Props) {
   return (
     <>
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-0 print:m-0 print:w-full print:min-h-0 print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
       <div className="text-center mb-4 border-b-2 border-black pb-2">
         <h1 className="text-[15pt] font-bold tracking-tight">
           개별화교육지원팀 협의회 학부모 의견서
@@ -19,7 +19,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
 
       {/* --- 1페이지 --- */}
       <div className="flex-1 flex flex-col justify-between">
-        <div className="space-y-8 text-[10pt]">
+        <div className="space-y-6 text-[10pt]">
           {/* 기본 정보 */}
           <section className="print:break-inside-avoid">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
@@ -78,10 +78,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
     </div>
 
     {/* --- 2페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
-      {/* 인쇄 시 상단 잘림 방지용 투명 스페이서 */}
-      <div className="h-4 hidden print:block" aria-hidden="true"></div>
-      
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-0 print:m-0 print:w-full print:min-h-0 print:shadow-none text-[10pt] leading-tight flex flex-col">
       <div className="text-center mb-6 border-b-2 border-black pb-3 hidden print:block">
         <h1 className="text-[15pt] font-bold tracking-tight">
           개별화교육지원팀 협의회 학부모 의견서
@@ -92,7 +89,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
       </div>
 
       <div className="flex-1 flex flex-col justify-between">
-        <div className="space-y-8 text-[10pt]">
+        <div className="space-y-8 print:space-y-6 text-[10pt]">
           {/* 교육적 요구 */}
           <section className="print:break-inside-avoid">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
@@ -119,7 +116,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
           </section>
 
           {/* 협의회 참석 */}
-          <section className="print:break-inside-avoid mt-8">
+          <section className="print:break-inside-avoid mt-8 print:mt-4">
             <h2 className="text-[12pt] font-bold mb-4 flex items-center text-gray-900 border-b-2 border-gray-800 pb-2">
               4. 협의회 참석 방법 (택 1)
             </h2>
@@ -153,7 +150,7 @@ export function ParentOpinionBlankForm({ teacher }: Props) {
           </section>
 
           {/* 서명 */}
-          <section className="mt-12 pt-6 border-t-2 border-gray-800 print:break-inside-avoid">
+          <section className="mt-12 pt-6 print:mt-6 print:pt-4 border-t-2 border-gray-800 print:break-inside-avoid">
             <div className="flex justify-between items-end mb-4">
               <div className="space-y-1">
                 <p className="text-[10pt] text-gray-600 font-medium">작성일자:</p>

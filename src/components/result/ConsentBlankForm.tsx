@@ -28,7 +28,7 @@ export function ConsentBlankForm({ teacher }: Props) {
   return (
     <>
     {/* --- 1페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-0 print:m-0 print:w-full print:min-h-0 print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
       <div className="text-center mb-6 border-b-2 border-black pb-3">
         <h1 className="text-[15pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -44,7 +44,7 @@ export function ConsentBlankForm({ teacher }: Props) {
       </div>
 
       <div className="flex-1 flex flex-col justify-between">
-        <div className="space-y-6 text-[10.5pt]">
+        <div className="space-y-6 print:space-y-4 text-[10.5pt]">
           {/* 기본 정보 */}
           <section className="print:break-inside-avoid">
             <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-6 pb-4 border-b border-gray-300">
@@ -68,8 +68,8 @@ export function ConsentBlankForm({ teacher }: Props) {
           </section>
 
           {/* 필수 동의 */}
-          <section className="border-2 border-blue-200 rounded-xl p-5 bg-blue-50/30 print:break-inside-avoid">
-            <h2 className="text-[12pt] font-bold mb-4 text-blue-900 flex items-center gap-2 border-b-2 border-blue-200 pb-2">
+          <section className="border-2 border-blue-200 rounded-xl p-5 print:p-3 bg-blue-50/30 print:break-inside-avoid">
+            <h2 className="text-[12pt] font-bold mb-4 print:mb-2 text-blue-900 flex items-center gap-2 border-b-2 border-blue-200 pb-2">
               <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
               1. 필수 동의 사항
             </h2>
@@ -81,8 +81,8 @@ export function ConsentBlankForm({ teacher }: Props) {
           </section>
 
           {/* 선택 동의 */}
-          <section className="border-2 border-gray-200 rounded-xl p-5 print:break-inside-avoid mt-6">
-            <h2 className="text-[12pt] font-bold mb-4 text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
+          <section className="border-2 border-gray-200 rounded-xl p-5 print:p-3 print:break-inside-avoid mt-6 print:mt-4">
+            <h2 className="text-[12pt] font-bold mb-4 print:mb-2 text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
               <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
               2. 선택 동의 사항
             </h2>
@@ -103,10 +103,7 @@ export function ConsentBlankForm({ teacher }: Props) {
     </div>
 
     {/* --- 2페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col">
-      {/* 인쇄 시 상단 잘림 방지용 투명 스페이서 */}
-      <div className="h-4 hidden print:block" aria-hidden="true"></div>
-      
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-0 print:m-0 print:w-full print:min-h-0 print:shadow-none text-[10pt] leading-tight flex flex-col">
       <div className="text-center mb-6 border-b-2 border-black pb-3 hidden print:block">
         <h1 className="text-[15pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -117,10 +114,10 @@ export function ConsentBlankForm({ teacher }: Props) {
       </div>
 
       <div className="flex-1 flex flex-col justify-between">
-        <div className="space-y-8 text-[10.5pt]">
+        <div className="space-y-8 print:space-y-6 text-[10.5pt]">
           {/* 개인정보 제3자 제공 */}
-          <section className="border-2 border-amber-200 rounded-xl p-5 bg-amber-50/30 print:break-inside-avoid">
-            <h2 className="text-[12pt] font-bold mb-4 text-amber-900 flex items-center gap-2 border-b-2 border-amber-200 pb-2">
+          <section className="border-2 border-amber-200 rounded-xl p-5 print:p-3 bg-amber-50/30 print:break-inside-avoid">
+            <h2 className="text-[12pt] font-bold mb-4 print:mb-2 text-amber-900 flex items-center gap-2 border-b-2 border-amber-200 pb-2">
               <span className="w-2 h-2 bg-amber-600 rounded-full"></span>
               3. 개인정보 제3자 제공 동의
             </h2>
@@ -132,8 +129,8 @@ export function ConsentBlankForm({ teacher }: Props) {
           </section>
 
           {/* 긴급 연락망 */}
-          <section className="print:break-inside-avoid border-2 border-gray-200 rounded-xl p-5">
-            <h2 className="text-[12pt] font-bold mb-4 text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
+          <section className="print:break-inside-avoid border-2 border-gray-200 rounded-xl p-5 print:p-3">
+            <h2 className="text-[12pt] font-bold mb-4 print:mb-2 text-gray-900 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
               <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
               4. 긴급 연락망
             </h2>
@@ -156,8 +153,8 @@ export function ConsentBlankForm({ teacher }: Props) {
           </section>
 
           {/* 타이핑 확인 */}
-          <section className="border-2 border-gray-800 rounded-xl p-6 bg-gray-50 print:break-inside-avoid mt-8">
-            <p className="text-[11pt] text-gray-900 font-bold mb-4 text-center">
+          <section className="border-2 border-gray-800 rounded-xl p-6 print:p-4 bg-gray-50 print:break-inside-avoid mt-8 print:mt-4">
+            <p className="text-[11pt] text-gray-900 font-bold mb-4 print:mb-2 text-center">
               위 내용을 확인하였으며, 선택한 항목에 동의합니다.
             </p>
             <div className="flex items-center gap-4 mt-6 max-w-lg mx-auto">
@@ -171,7 +168,7 @@ export function ConsentBlankForm({ teacher }: Props) {
           </section>
 
           {/* 서명 */}
-          <section className="mt-12 pt-6 border-t-2 border-gray-800 print:break-inside-avoid">
+          <section className="mt-12 pt-6 print:mt-6 print:pt-4 border-t-2 border-gray-800 print:break-inside-avoid">
             <div className="flex justify-between items-end mb-4">
               <div className="space-y-1">
                 <p className="text-[10pt] text-gray-600 font-medium">작성일자:</p>
