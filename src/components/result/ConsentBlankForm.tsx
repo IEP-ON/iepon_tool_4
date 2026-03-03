@@ -103,7 +103,7 @@ export function ConsentBlankForm({ teacher }: Props) {
     </div>
 
     {/* --- 2페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight break-after-page print:break-before-page flex flex-col">
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-before-page">
       <div className="text-center mb-6 border-b-2 border-black pb-3">
         <h1 className="text-[15pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -113,7 +113,7 @@ export function ConsentBlankForm({ teacher }: Props) {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-between">
+      <div className="flex-1 flex flex-col">
         <div className="space-y-8 text-[10.5pt]">
           {/* 개인정보 제3자 제공 */}
           <section className="border-2 border-amber-200 rounded-xl p-5 bg-amber-50/30 print:break-inside-avoid">
