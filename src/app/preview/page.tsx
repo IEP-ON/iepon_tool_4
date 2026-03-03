@@ -372,7 +372,7 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
       </div>
       
       {/* ── 문서 목록 ── */}
-      <div className="py-6 px-4 sm:px-6 print:py-0 print:px-0">
+      <div className="py-6 px-4 sm:px-6 print:py-0 print:px-0 max-w-5xl mx-auto">
         {ieps.map((iep, i) => (
           <div
             key={iep.iep_id}
