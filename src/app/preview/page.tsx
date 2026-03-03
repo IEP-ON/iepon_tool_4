@@ -308,9 +308,9 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
       {/* ── 안내 배너 ── */}
       <div className="print:hidden max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-2">
         <div className="rounded-2xl bg-teal-50 border border-teal-100 p-5 sm:p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            {/* 좌측 메시지 */}
-            <div className="flex-1 min-w-0">
+          <div className="flex flex-col gap-4">
+            {/* 상단 메시지 */}
+            <div className="w-full">
               <div className="flex items-center gap-2.5 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0">
                   <FileText className="w-4.5 h-4.5 text-teal-700" />
@@ -321,8 +321,8 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
                 일괄 인쇄하여 학부모님께 배부하거나, 각 학생별 <strong className="text-teal-900 font-semibold">메시지 복사</strong> 버튼으로 메신저에 전달하세요.
               </p>
             </div>
-            {/* 우측 퀵 네비 - 가로 배치 */}
-            <div id="tutorial-student-nav" className="flex flex-wrap gap-2 shrink-0">
+            {/* 학생 퀵 네비 - 가로 배치 */}
+            <div id="tutorial-student-nav" className="flex flex-wrap gap-2">
               {ieps.map((iep, i) => (
                 <div key={iep.iep_id} className="flex flex-col gap-1">
                   <button
