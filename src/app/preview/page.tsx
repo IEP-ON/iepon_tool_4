@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState, useRef } from "react";
 import type { TeacherInput } from "@/lib/types";
 import { ResultDoc1 } from "@/components/result/ResultDoc1";
+import { ParentOpinionBlankForm } from "@/components/result/ParentOpinionBlankForm";
+import { ConsentBlankForm } from "@/components/result/ConsentBlankForm";
 import { Button } from "@/components/ui/button";
 import {
   Printer, Copy, CheckCircle2, Loader2, ArrowLeft,
@@ -506,6 +508,18 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
             <div className="bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200/60 print:shadow-none print:rounded-none print:ring-0">
               <ResultDoc1 teacher={iep.teacher_data} formUrl={getFormUrl(iep.iep_id)} overrides={overridesMap[iep.iep_id]} handwrittenMode={isHandwrittenPrint} />
             </div>
+            
+            {/* 자필문서 인쇄 시 의견서·동의서 빈 양식 추가 */}
+            {isHandwrittenPrint && (
+              <>
+                <div className="hidden print:block">
+                  <ParentOpinionBlankForm teacher={iep.teacher_data} />
+                </div>
+                <div className="hidden print:block">
+                  <ConsentBlankForm teacher={iep.teacher_data} />
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
