@@ -28,7 +28,10 @@ export function ConsentBlankForm({ teacher }: Props) {
   return (
     <>
     {/* --- 1페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:px-[10mm] print:py-0 print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col print:break-after-page">
+      {/* 인쇄 시 페이지 상단 잘림 방지용 강제 여백 */}
+      <div className="hidden print:block h-[15mm] shrink-0"></div>
+
       <div className="text-center mb-6 border-b-2 border-black pb-3">
         <h1 className="text-[15pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
@@ -103,7 +106,10 @@ export function ConsentBlankForm({ teacher }: Props) {
     </div>
 
     {/* --- 2페이지 --- */}
-    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:p-[10mm] print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col">
+    <div className="mx-auto w-[210mm] min-h-[297mm] p-[12mm] bg-white print:px-[10mm] print:py-0 print:m-0 print:w-full print:shadow-none text-[10pt] leading-tight flex flex-col">
+      {/* 인쇄 시 페이지 상단 잘림 방지용 강제 여백 */}
+      <div className="hidden print:block h-[15mm] shrink-0"></div>
+
       <div className="text-center mb-6 border-b-2 border-black pb-3 hidden print:block">
         <h1 className="text-[15pt] font-bold tracking-tight">
           특수교육대상자 교육지원 및 정보제공 동의서
