@@ -330,12 +330,18 @@ export default function DashboardPage() {
                           <div className="flex items-start gap-2">
                             <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-amber-800">암호화 키 미등록</p>
-                              <p className="text-xs text-amber-700 mt-0.5">이 문서세트는 업데이트 이전에 생성되어 열람 키가 저장되지 않았습니다. 기존 미리보기 URL을 가지고 계시다면 키를 복구할 수 있습니다.</p>
+                              <p className="text-sm font-medium text-amber-800">이전에 생성된 문서 — 열람을 위한 추가 확인이 필요합니다</p>
+                              <p className="text-xs text-amber-700 mt-0.5">이 문서세트는 시스템 업데이트 이전에 만들어져, 열람에 필요한 보안 정보가 자동 저장되지 않았습니다.</p>
+                              <p className="text-xs text-amber-700 mt-1 font-medium">📋 아래 중 하나의 링크를 찾아 붙여넣으시면 복구할 수 있습니다:</p>
+                              <ul className="text-xs text-amber-700 mt-1 space-y-0.5 list-none">
+                                <li>• 문서 생성 직후 열렸던 <strong>안내장 편집 페이지</strong> 주소</li>
+                                <li>• 학부모에게 공유한 <strong>QR코드/링크 복사</strong> 이력 (카카오톡 등)</li>
+                                <li>• 브라우저 <strong>방문 기록</strong>에서 <code className="bg-amber-100 px-1 rounded">tool4.vercel.app/preview</code> 또는 <code className="bg-amber-100 px-1 rounded">tool4.vercel.app/manage</code>로 시작하는 주소</li>
+                              </ul>
                               {recoverBatchId === batch.batchId ? (
                                 <div className="mt-2 space-y-2">
                                   <Input
-                                    placeholder="미리보기 URL을 붙여넣으세요 (예: https://tool4.vercel.app/preview?batchId=...#key=...)"
+                                    placeholder="링크 전체를 붙여넣으세요 (주소창에서 복사한 전체 URL)"
                                     value={recoverUrl}
                                     onChange={(e) => { setRecoverUrl(e.target.value); setRecoverError(""); }}
                                     className="text-xs h-8"
@@ -354,7 +360,7 @@ export default function DashboardPage() {
                                 </div>
                               ) : (
                                 <Button size="sm" variant="outline" className="text-xs h-7 mt-2 border-amber-300 text-amber-700" onClick={() => setRecoverBatchId(batch.batchId)}>
-                                  <KeyRound className="w-3 h-3 mr-1" /> URL로 키 복구
+                                  <KeyRound className="w-3 h-3 mr-1" /> 기존 링크로 복구하기
                                 </Button>
                               )}
                             </div>
