@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("tool4_ieps")
-      .select("id, iep_id, status, school_name, grade, class_num, teacher_name, teacher_data, created_at")
+      .select("id, iep_id, status, school_name, grade, class_num, teacher_name, teacher_data, encryption_key, created_at")
       .eq("teacher_phone", phone)
       .eq("teacher_pin_hash", pinHash)
       .order("created_at", { ascending: false })
@@ -88,6 +88,7 @@ export async function GET(request: NextRequest) {
         maskedStudentName: maskedName,
         batchId: td?.batchId || "",
         createdAt: row.created_at,
+        encryptionKey: (row as Record<string, unknown>).encryption_key || null,
         encryptedOpinion: op ? op.opinion_data_encrypted : null,
         encryptionIv: op ? op.encryption_iv : null,
       };

@@ -18,6 +18,7 @@ interface IepItem {
   maskedStudentName: string;
   batchId: string;
   createdAt: string;
+  encryptionKey?: string;
   encryptedOpinion?: string;
   encryptionIv?: string;
   decryptedStudentName?: string;
@@ -73,27 +74,25 @@ export default function DashboardPage() {
       } else {
         const iepList: IepItem[] = data.ieps || [];
 
-        // 암호화 키가 있으면 학생명 복호화 시도
-        const key = sessionStorage.getItem("iep_enc_key");
-        if (key) {
-          await Promise.all(iepList.map(async (iep) => {
-            if (iep.encryptedOpinion && iep.encryptionIv) {
-              try {
-                // ParentOpinion 타입으로 복호화되지만 여기서는 studentName만 필요
-                const decrypted = await decryptData<{ studentName: string }>(
-                  iep.encryptedOpinion,
-                  iep.encryptionIv,
-                  key
-                );
-                if (decrypted && decrypted.studentName) {
-                  iep.decryptedStudentName = decrypted.studentName;
-                }
-              } catch (err) {
-                console.error(`Decryption failed for ${iep.iepId}`, err);
+        // 각 IEP의 encryptionKey(DB) 또는 sessionStorage 키로 학생명 복호화
+        const fallbackKey = sessionStorage.getItem("iep_enc_key") || "";
+        await Promise.all(iepList.map(async (iep) => {
+          const key = iep.encryptionKey || fallbackKey;
+          if (key && iep.encryptedOpinion && iep.encryptionIv) {
+            try {
+              const decrypted = await decryptData<{ studentName: string }>(
+                iep.encryptedOpinion,
+                iep.encryptionIv,
+                key
+              );
+              if (decrypted && decrypted.studentName) {
+                iep.decryptedStudentName = decrypted.studentName;
               }
+            } catch (err) {
+              console.error(`Decryption failed for ${iep.iepId}`, err);
             }
-          }));
-        }
+          }
+        }));
 
         const batchMap = new Map<string, BatchGroup>();
         for (const iep of iepList) {
@@ -124,17 +123,18 @@ export default function DashboardPage() {
     return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
   };
 
-  const getManageUrl = (iepId: string) => {
+  const getManageUrl = (iep: IepItem) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    if (sessionKey) return `${origin}/manage?iepId=${iepId}#key=${sessionKey}`;
-    return `${origin}/manage?iepId=${iepId}`;
+    const key = iep.encryptionKey || sessionKey;
+    if (key) return `${origin}/manage?iepId=${iep.iepId}#key=${key}`;
+    return `${origin}/manage?iepId=${iep.iepId}`;
   };
 
-  const getPreviewUrl = (batchId: string) => {
+  const getPreviewUrl = (batch: BatchGroup) => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    if (sessionKey && sessionBatchId === batchId)
-      return `${origin}/preview?batchId=${batchId}#key=${sessionKey}`;
-    return `${origin}/preview?batchId=${batchId}`;
+    const key = batch.ieps[0]?.encryptionKey || (sessionBatchId === batch.batchId ? sessionKey : "");
+    if (key) return `${origin}/preview?batchId=${batch.batchId}#key=${key}`;
+    return `${origin}/preview?batchId=${batch.batchId}`;
   };
 
   const handleCopy = async (text: string, id: string) => {
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                             <span className="text-xs text-gray-500">
                               {submittedCount}/{batch.ieps.length}명 제출
                             </span>
-                            <a href={getPreviewUrl(batch.batchId)} target="_blank" rel="noreferrer">
+                            <a href={getPreviewUrl(batch)} target="_blank" rel="noreferrer">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                               size="sm"
                               variant="outline"
                               className="text-xs h-7"
-                              onClick={() => handleCopy(getPreviewUrl(batch.batchId), `preview-${batch.batchId}`)}
+                              onClick={() => handleCopy(getPreviewUrl(batch), `preview-${batch.batchId}`)}
                             >
                               {copiedId === `preview-${batch.batchId}` ? <CheckCircle2 className="w-3 h-3 mr-1 text-green-600" /> : <Copy className="w-3 h-3 mr-1" />}
                               안내장 링크
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                               </div>
                               <div className="flex gap-1.5">
                                 {iep.status === "submitted" && (
-                                  <a href={getManageUrl(iep.iepId)} target="_blank" rel="noreferrer">
+                                  <a href={getManageUrl(iep)} target="_blank" rel="noreferrer">
                                     <Button size="sm" variant="default" className="text-xs h-7 bg-blue-600 hover:bg-blue-700">
                                       <Eye className="w-3 h-3 mr-1" /> 열람
                                     </Button>
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                                   size="sm"
                                   variant="outline"
                                   className="text-xs h-7"
-                                  onClick={() => handleCopy(getManageUrl(iep.iepId), iep.iepId)}
+                                  onClick={() => handleCopy(getManageUrl(iep), iep.iepId)}
                                 >
                                   {copiedId === iep.iepId ? <CheckCircle2 className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
                                 </Button>
@@ -332,12 +332,6 @@ export default function DashboardPage() {
                   );
                 })}
 
-                {!sessionKey && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-                    <p className="font-medium mb-1">제출된 문서 열람 안내</p>
-                    <p>보호자가 제출한 문서를 복호화하려면 <strong>문서 생성 시 사용한 미리보기 URL의 암호화 키</strong>가 필요합니다. 해당 세션에서 대시보드를 열거나, 미리보기 URL을 북마크에 저장해 두세요.</p>
-                  </div>
-                )}
 
                 <Link href="/teacher">
                   <Button variant="outline" className="w-full">

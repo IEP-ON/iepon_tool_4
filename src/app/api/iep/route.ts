@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const teacherInput = body.teacherInput;
     const teacherPinHash: string | undefined = body.teacherPinHash;
+    const encryptionKey: string | undefined = body.encryptionKey;
 
     if (!teacherInput || !teacherInput.schoolName || !teacherInput.teacherName || !teacherInput.studentCount) {
       return NextResponse.json(
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
         submission_day: teacherInput.submissionDay || "",
         student_name_hash: "pending",
         teacher_pin_hash: teacherPinHash || null,
+        encryption_key: encryptionKey || null,
         teacher_data: { ...teacherInput, batchId },
       });
     }

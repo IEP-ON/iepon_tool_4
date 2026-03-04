@@ -98,10 +98,11 @@ export default function TeacherPage() {
     setLoading(true);
     try {
       const teacherPinHash = await sha256(pin);
+      const key = await generateKey();
       const res = await fetch("/api/iep", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ teacherInput: data, teacherPinHash }),
+        body: JSON.stringify({ teacherInput: data, teacherPinHash, encryptionKey: key }),
       });
 
       if (!res.ok) {
@@ -111,7 +112,6 @@ export default function TeacherPage() {
       }
 
       const { batchId } = await res.json();
-      const key = await generateKey();
       window.location.href = `/preview?batchId=${batchId}#key=${key}`;
     } catch {
       alert("네트워크 오류가 발생했습니다.");
