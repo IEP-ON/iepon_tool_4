@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Loader2, CheckCircle2, Clock, Home, FileText, ArrowLeft, Lock, Eye, Users, Copy, Pencil } from "lucide-react";
+import { Search, Loader2, CheckCircle2, Clock, Home, FileText, ArrowLeft, Lock, Eye, Users, Copy, Pencil, KeyRound, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { sha256, decryptData } from "@/lib/encryption";
 
@@ -42,6 +42,11 @@ export default function DashboardPage() {
   const [sessionKey, setSessionKey] = useState("");
   const [sessionBatchId, setSessionBatchId] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [recoverBatchId, setRecoverBatchId] = useState<string | null>(null);
+  const [recoverUrl, setRecoverUrl] = useState("");
+  const [recoverLoading, setRecoverLoading] = useState(false);
+  const [recoverError, setRecoverError] = useState("");
+  const [recoverSuccess, setRecoverSuccess] = useState("");
 
   useEffect(() => {
     const key = sessionStorage.getItem("iep_enc_key") || "";
@@ -146,6 +151,46 @@ export default function DashboardPage() {
       alert("복사에 실패했습니다.");
     }
   };
+
+  const handleRecoverKey = async () => {
+    setRecoverError("");
+    setRecoverSuccess("");
+    // URL에서 #key= 추출
+    const hashMatch = recoverUrl.match(/#key=([a-f0-9]+)/i);
+    if (!hashMatch) {
+      setRecoverError("URL에서 암호화 키를 찾을 수 없습니다. 미리보기 URL 전체를 붙여넣어 주세요.");
+      return;
+    }
+    const key = hashMatch[1];
+    setRecoverLoading(true);
+    try {
+      const pinHash = await sha256(pin);
+      const res = await fetch("/api/recover-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ batchId: recoverBatchId, encryptionKey: key, phone: phone.trim(), pinHash }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRecoverError(data.error || "키 복구에 실패했습니다.");
+      } else {
+        setRecoverSuccess(`키가 복구되었습니다. (${data.updated}건 업데이트)`);
+        // 2초 후 자동으로 다시 조회
+        setTimeout(() => {
+          setRecoverBatchId(null);
+          setRecoverUrl("");
+          setRecoverSuccess("");
+          handleSearch();
+        }, 1500);
+      }
+    } catch {
+      setRecoverError("네트워크 오류가 발생했습니다.");
+    } finally {
+      setRecoverLoading(false);
+    }
+  };
+
+  const batchNeedsKey = (batch: BatchGroup) => !batch.ieps[0]?.encryptionKey;
 
   const totalSubmitted = batches.flatMap((b) => b.ieps).filter((i) => i.status === "submitted").length;
   const totalCount = batches.flatMap((b) => b.ieps).length;
@@ -280,6 +325,42 @@ export default function DashboardPage() {
                           </div>
                         </div>
                       </CardHeader>
+                      {batchNeedsKey(batch) && (
+                        <div className="mx-4 mt-3 mb-1 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-amber-800">암호화 키 미등록</p>
+                              <p className="text-xs text-amber-700 mt-0.5">이 문서세트는 업데이트 이전에 생성되어 열람 키가 저장되지 않았습니다. 기존 미리보기 URL을 가지고 계시다면 키를 복구할 수 있습니다.</p>
+                              {recoverBatchId === batch.batchId ? (
+                                <div className="mt-2 space-y-2">
+                                  <Input
+                                    placeholder="미리보기 URL을 붙여넣으세요 (예: https://tool4.vercel.app/preview?batchId=...#key=...)"
+                                    value={recoverUrl}
+                                    onChange={(e) => { setRecoverUrl(e.target.value); setRecoverError(""); }}
+                                    className="text-xs h-8"
+                                  />
+                                  {recoverError && <p className="text-xs text-red-600">{recoverError}</p>}
+                                  {recoverSuccess && <p className="text-xs text-green-600">{recoverSuccess}</p>}
+                                  <div className="flex gap-2">
+                                    <Button size="sm" className="text-xs h-7 bg-amber-600 hover:bg-amber-700" onClick={handleRecoverKey} disabled={recoverLoading || !recoverUrl}>
+                                      {recoverLoading ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <KeyRound className="w-3 h-3 mr-1" />}
+                                      키 복구
+                                    </Button>
+                                    <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => { setRecoverBatchId(null); setRecoverUrl(""); setRecoverError(""); }}>
+                                      취소
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <Button size="sm" variant="outline" className="text-xs h-7 mt-2 border-amber-300 text-amber-700" onClick={() => setRecoverBatchId(batch.batchId)}>
+                                  <KeyRound className="w-3 h-3 mr-1" /> URL로 키 복구
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <CardContent className="p-0">
                         <div className="divide-y">
                           {batch.ieps.map((iep, idx) => (
