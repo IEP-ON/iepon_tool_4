@@ -16,6 +16,8 @@ interface Props {
   formUrl?: string;
   overrides?: Doc1Overrides;
   handwrittenMode?: boolean;
+  isEditing?: boolean;
+  onUpdate?: (key: keyof Doc1Overrides, value: string) => void;
 }
 
 export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Props) {
