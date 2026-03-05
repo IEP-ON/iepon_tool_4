@@ -286,17 +286,13 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
               </Button>
               <Button
                 id="tutorial-handwritten-btn"
-                onClick={() => setIsHandwrittenPrint(!isHandwrittenPrint)}
+                onClick={handleHandwrittenPrint}
                 size="sm"
                 variant="outline"
-                className={
-                  isHandwrittenPrint
-                    ? "border-amber-500 bg-amber-100 text-amber-900 hover:bg-amber-200 shadow-none gap-1.5"
-                    : "border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-none gap-1.5"
-                }
+                className="border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 shadow-none gap-1.5"
               >
                 <PenLine className="w-4 h-4" />
-                <span className="hidden sm:inline">{isHandwrittenPrint ? "자필모드 끄기" : "자필모드 켜기"}</span>
+                <span className="hidden sm:inline">자필문서</span>
               </Button>
               <Button
                 onClick={() => window.print()}
