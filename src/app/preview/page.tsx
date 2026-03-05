@@ -382,7 +382,7 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
             }}
             className={`flex flex-col gap-6 scroll-mt-24 ${
               isHandwrittenPrint && i > 0 ? "print:hidden" : ""
-            }`}
+            } ${i > 0 && !isHandwrittenPrint ? "print:break-before-page print:mt-0" : ""}`}
           >
             {/* 문서 상단 툴바 (화면에만) */}
             <div className="print:hidden flex items-center justify-between mb-3 px-1">
