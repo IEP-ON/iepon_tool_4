@@ -38,7 +38,7 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
   };
 
   return (
-    <div className="mx-auto w-[210mm] h-[297mm] p-[12mm] bg-white print:p-[2mm] print:m-0 print:w-full print:h-[281mm] print:shadow-none text-[10pt] leading-tight flex flex-col relative print:break-after-page overflow-hidden">
+    <div className="mx-auto w-[210mm] h-[297mm] p-[12mm] bg-white print:p-[2mm] print:m-0 print:w-full print:h-auto print:shadow-none text-[10pt] leading-tight flex flex-col relative overflow-hidden">
       <div className="text-center mb-4 border-b-2 border-black pb-2 shrink-0">
         <h1 className="text-[15pt] font-bold tracking-tight">
           {teacher.year}학년도 {teacher.semester}학기 개별화교육지원팀 협의회 안내
