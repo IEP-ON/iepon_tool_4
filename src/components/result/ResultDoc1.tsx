@@ -18,9 +18,10 @@ interface Props {
   handwrittenMode?: boolean;
   isEditing?: boolean;
   onUpdate?: (key: keyof Doc1Overrides, value: string) => void;
+  studentLabel?: string;
 }
 
-export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Props) {
+export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode, isEditing: _isEditing, onUpdate: _onUpdate, studentLabel }: Props) {
   const DEFAULT_INTRO = `안녕하세요. ${teacher.schoolName} 특수학급 담임교사 ${teacher.teacherName}입니다.
 새로운 학기를 맞이하여, 우리 아이가 학교에서 한 뼘 더 성장하고 행복한 일상을 누릴 수 있도록 개별화교육계획(IEP)을 수립할 시기가 되었습니다.
 학생 개개인의 교육적 요구에 꼭 맞는 맞춤형 지원을 위해, 가정과 학교가 함께 지혜를 모으는 뜻깊은 자리를 마련하고자 합니다.
@@ -136,11 +137,14 @@ export function ResultDoc1({ teacher, formUrl, overrides, handwrittenMode }: Pro
                   아래의 QR코드를 카메라로 스캔하여 <strong className="text-gray-900 underline underline-offset-2">{formatDeadline(teacher.submissionDeadline)}까지</strong> 작성해 주세요.
                 </p>
                 <div className="flex gap-3 items-center p-2.5 border border-gray-300 rounded-xl bg-[#f2fcf9] print:bg-transparent print:border-gray-400">
-                  <div className="w-[100px] h-[100px] bg-white rounded-lg flex items-center justify-center border border-gray-300 shrink-0 p-1">
+                  <div className="w-[100px] bg-white rounded-lg flex flex-col items-center justify-center border border-gray-300 shrink-0 p-1 gap-0.5">
                     {formUrl ? (
                       <QRCodeSVG value={formUrl} size={90} level="H" includeMargin={false} />
                     ) : (
                       <span className="text-xs text-gray-400 text-center">QR코드<br/>영역</span>
+                    )}
+                    {studentLabel && (
+                      <span className="text-[7.5pt] font-semibold text-gray-600 tracking-wide">{studentLabel}</span>
                     )}
                   </div>
                   <div className="space-y-0.5">

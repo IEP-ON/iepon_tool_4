@@ -518,6 +518,7 @@ ${teacher.submissionDeadline ? new Date(teacher.submissionDeadline).toLocaleDate
                 handwrittenMode={isHandwrittenPrint}
                 isEditing={editMode}
                 onUpdate={(key, value) => updateOverride(iep.iep_id, key, value)}
+                studentLabel={`학생 ${i + 1}`}
               />
             </div>
             
